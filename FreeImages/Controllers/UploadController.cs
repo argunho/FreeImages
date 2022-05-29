@@ -31,7 +31,7 @@ public class UploadController : ControllerBase
         {
         using (var stream = upploadedFile.OpenReadStream())
         {
-            _container.UploadBlob(model.ImgName, stream);
+            _container.UploadBlob(model.Img, stream);
         }
         }catch (Exception ex)
         {

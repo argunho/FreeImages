@@ -1,0 +1,19 @@
+form {
+  width: 95%;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+form, form input, form label {
+  font-family: "Courier New", Courier, monospace !important;
+}
+
+.form-title {
+  margin-bottom: 20px;
+}
+
+form .fields {
+  width: 100%;
+  margin-bottom: 30px;
+}
