@@ -10,14 +10,14 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "ImgName",
-                table: "Images");
+                table: "UploadedImages");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "ImgName",
-                table: "Images",
+                table: "UploadedImages",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");

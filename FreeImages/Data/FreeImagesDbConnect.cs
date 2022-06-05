@@ -8,7 +8,7 @@ public class FreeImagesDbConnect : IdentityDbContext<User>
     public FreeImagesDbConnect(DbContextOptions<FreeImagesDbConnect> options) : base(options) { }
 
     public DbSet<User>? User { get; set; }
-    public DbSet<UploadedImage>? Images { get; set; }
+    public DbSet<UploadedImage>? UploadedImages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,17 +1,18 @@
-import React, { useRef, useState } from 'react';
-import { Button, CircularProgress } from '@mui/material';
-import { Refresh } from '@mui/icons-material';
+import { CircularProgress } from '@mui/material';
+import React, { useRef, useState } from 'react'
 
-import upload from './../../images/upload.png';
 import './../../css/fileUpload.css';
 
-export default function FileUpload(props) {
+import upload from './../../images/upload.png';
+
+export default function FileUpload() {
 
     const [loading, setLoading] = useState(false);
+    const [file, setFile] = useState();
     const [image, setImage] = useState();
     const [error, setError] = useState();
 
-    const uploadFile = useRef(null);
+    const uploadFile = useRef(null)
 
     const onFileChange = ev => {
         ev.preventDefault();
@@ -39,9 +40,8 @@ export default function FileUpload(props) {
                 image.src = e.target.result;
 
                 setImage(image.src);
-                if (file) props.onUploadChange(file);
+                setFile(file);
             };
-
             setLoading(false);
 
             reader.readAsDataURL(file);
@@ -49,26 +49,18 @@ export default function FileUpload(props) {
     }
 
     return (
-        <div className='upload-file-container'>
-
-            {/* Uploaded image */}
-            {image ? <div className='uploaded-image-wrapper'>
-                <img src={image} alt="" className="uploaded-image" />
-                <Button variant='outlined' size="small" onClick={() => uploadFile.current.click()}>
-                    <Refresh />
-                </Button>
-            </div> :
-                <div className="upload-file-wrapper" onClick={() => uploadFile.current.click()}>
+        <div className="upload-file-container">
+            <div className="upload-file-wrapper" onClick={() => uploadFile.current.click()}>
                     {(loading) ? <CircularProgress className="upload-symbol image-load-symbol" />
                         : <img className='upload-file-symbol' height="90" src={upload} alt="Upload File" />}
-                    <br />
-                    <p className='upload-file-label'>Ladda upp en bild</p>
-                </div>}
+                        <br/>
+            <p className='upload-file-label'>Ladda upp en bild</p>
+            </div>
+                    
 
-
-            {/* File upload input */}
-            <input type="file" className="none" ref={uploadFile}
-                onChange={e => onFileChange(e)} disabled={loading} accept="image/*" />
+                {/* File upload input */}
+                <input type="file" className="none" ref={uploadFile}
+                    onChange={e => onFileChange(e)} disabled={loading} accept="image/*" />{/*capture="environment"*/}
         </div>
     )
 }

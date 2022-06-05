@@ -50,7 +50,7 @@ namespace FreeImages.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Images",
+                name: "UploadedImages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -230,7 +230,7 @@ namespace FreeImages.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Images");
+                name: "UploadedImages");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -5,9 +5,9 @@
     border-radius: 5px;
     border: 1px solid #acacac;
     position: relative;
-    display: block;
     overflow: hidden;
     margin: 30px 0;
+    transition: all 0.5s ease-in-out;
 }
 
 .upload-file-wrapper {
@@ -40,8 +40,27 @@
     text-align: center;
 }
 
-/* .upload-input {
-    display: none !important;
-    visibility: hidden;
-    z-index: -1;
-} */
+.uploaded-image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #FFF;
+    z-index: 5000;
+    display: flex;
+    justify-content: center;
+    transition: all 0.5 ease-ut;
+}
+
+.uploaded-image {
+    height: 90%;  
+    margin: auto;
+}
+
+.uploaded-image-wrapper > button {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    min-width: 50px !important;
+}

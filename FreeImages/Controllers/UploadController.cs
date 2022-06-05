@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using FreeImages.Data;
+using FreeImages.Intefaces;
 using FreeImages.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,35 +9,51 @@ namespace FreeImages.Controllers;
 [ApiController]
 public class UploadController : ControllerBase
 {
-    private static string connectionString = "DefaultEndpointsProtocol=https;AccountName=imgsrepository;AccountKey=Eg7janEB1TatM4um1hQmzZJ+Dy/lF48O6FfDN6E+OfNsBcjm3Dx4S2u5ZUvo3To5TWiY4Uz2ll6N+AStXocS9Q==;EndpointSuffix=core.windows.net";
-    private static string conatinerName = "imagescontainer";
+    private static string connectionString = "DefaultEndpointsProtocol=https;AccountName=uploadfilerepository;AccountKey=AtqMADGJ1jsZ+lHvdDP2ynlW9Sr8fKcr9ojNVTdXWeTfWd8q9izdY9hhRkjUg4abKfYWFXVgHe4D+ASt2brVDA==;EndpointSuffix=core.windows.net";
+    private static string conatinerName = "uploadfilecontainer";
 
-    private BlobContainerClient _container;
+    private BlobContainerClient _container = new BlobContainerClient(connectionString, conatinerName);
     private FreeImagesDbConnect _db;
+    private IHelpFunctions _help;
 
-    public UploadController(FreeImagesDbConnect db)
+    public UploadController(FreeImagesDbConnect db, IHelpFunctions help)
     {
         _db = db;
-        _container = new BlobContainerClient(connectionString, conatinerName);
+        _help = help;
     }
 
-    #region POST
-    [HttpPost]
-    private JsonResult Post(UploadedImage model, IFormFile upploadedFile)
-    {
-        if (model == null || upploadedFile == null)
-            return new JsonResult(new { res = "warning", msg = "Bild eller bild information saknas" });
 
+    #region POST
+    [HttpPost("{name}/{keywords}/{text}")]
+    public JsonResult Post(string name, string keywords, IFormFile uploadedFile)
+    {
+        if (uploadedFile == null)
+                return new JsonResult(new { res = "warning", msg = "Bild eller bild information saknas" });
+
+        var imgName = name.Replace(" ", "") + "." + uploadedFile.Name;
         try
         {
-        using (var stream = upploadedFile.OpenReadStream())
-        {
-            _container.UploadBlob(model.Img, stream);
-        }
+            using (var stream = uploadedFile.OpenReadStream())
+            {
+                _container.UploadBlob(name + "jpg", stream);
+            }
+
         }catch (Exception ex)
         {
-            return new JsonResult(new { res = "error", msg = ex.Message }); 
+            return _help.Error(ex.Message); 
         }
+
+        var imgData = new UploadedImage
+        {
+            Name = name,
+            Keywords = keywords,
+            ImgName = imgName,
+            Author = ""
+        };
+
+        _db.UploadedImages?.Add(imgData);
+        if(!_help.Save())
+            return _help.Error();
 
         return new JsonResult(true);
     }

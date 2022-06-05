@@ -46,7 +46,7 @@ namespace FreeImages.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Images");
+                    b.ToTable("UploadedImages");
                 });
 
             modelBuilder.Entity("FreeImages.Models.User", b =>
