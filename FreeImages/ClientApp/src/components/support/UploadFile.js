@@ -9,9 +9,7 @@ export default function UploadFile() {
 
     const [form, setForm] = useState({
         name: "",
-        img: "",
-        keywords: "",
-        text: ""
+        keywords: ""
     })
 
     const [loading, setLoading] = useState(false);
@@ -43,27 +41,21 @@ export default function UploadFile() {
         <form onSubmit={submitForm}>
             <h4 className='form-title'>Upload image</h4>
 
-            {['Name', 'Keywords'].map((x, ind) => (
+            {Object.keys(form).map((x, ind) => (
                 <TextField key={ind}
                     size="small"
-                    label={x}
+                    label={x.charAt(0).toUpperCase() + x.slice(1)}
                     className='fields'
                     required
+                    disabled={loading}
                     name={x.toLowerCase()}
                     value={form[x]}
                     variant="outlined"
                     onChange={handleChange} />
             ))}
 
-            <textarea
-                aria-label="Text"
-                placeholder="Description of image"
-                name="text"
-                onChange={handleChange}
-            ></textarea>
-
             {/* File upload */}
-            <FileUpload onUploadChange={(file) => setFile(file)} />
+            <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} />
 
             <div className="buttons-wrapper">
                 <Button type="submit" variant="outlined" color="success">

@@ -54,7 +54,11 @@ export default function FileUpload(props) {
             {/* Uploaded image */}
             {image ? <div className='uploaded-image-wrapper'>
                 <img src={image} alt="" className="uploaded-image" />
-                <Button variant='outlined' size="small" onClick={() => uploadFile.current.click()}>
+                <Button 
+                    variant='outlined' 
+                    size="small" 
+                    onClick={() => uploadFile.current.click()} 
+                    disabled={props.disabled}>
                     <Refresh />
                 </Button>
             </div> :
@@ -68,7 +72,7 @@ export default function FileUpload(props) {
 
             {/* File upload input */}
             <input type="file" className="none" ref={uploadFile}
-                onChange={e => onFileChange(e)} disabled={loading} accept="image/*" />
+                onChange={e => onFileChange(e)} disabled={loading || props.loading} accept="image/*" />
         </div>
     )
 }

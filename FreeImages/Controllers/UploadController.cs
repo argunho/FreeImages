@@ -30,14 +30,13 @@ public class UploadController : ControllerBase
         if (uploadedFile == null)
                 return new JsonResult(new { res = "warning", msg = "Bild eller bild information saknas" });
 
-        var imgName = name.Replace(" ", "") + "." + uploadedFile.Name;
+        var imgName = name.Replace(" ", "") + "." + uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
         try
         {
             using (var stream = uploadedFile.OpenReadStream())
             {
-                _container.UploadBlob(name + "jpg", stream);
+                _container.UploadBlob(imgName, stream);
             }
-
         }catch (Exception ex)
         {
             return _help.Error(ex.Message); 
