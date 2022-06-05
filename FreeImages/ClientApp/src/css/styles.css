@@ -1,6 +1,14 @@
+/* body {
+  background: url('./../images/photostudio.jpg') center 100% fixed no-repeat;
+} */
 
 .container {
   border-left: 1px solid #d6d6d6;
   border-right: 1px solid #d6d6d6;
+}
 
+.none {
+  display: none !important;
+  visibility: hidden !important;
+  z-index: -1 !important;
 }
