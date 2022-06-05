@@ -84,9 +84,9 @@ export default function UploadFile() {
             <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} />
 
             <div className="buttons-wrapper">
-               (invalidForm ? <Button color="error" onClick={resetForm}>
+               {invalidForm ? <Button color="error" onClick={resetForm}>
                     <Close />
-                </Button> ;
+                </Button> : null};
                 <Button type="submit" color="inherit">
                     Save
                 </Button>
