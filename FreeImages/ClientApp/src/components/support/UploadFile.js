@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Alert, AlertTitle } from '@mui/material';
 import axios from 'axios';
 
 import FileUpload from './FileUpload';
 import './../../css/form.css';
+import { Cancel, Close } from '@mui/icons-material';
 
 export default function UploadFile() {
 
@@ -14,37 +15,62 @@ export default function UploadFile() {
 
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState(null);
+    const { response, setResponse } = useState({
+        res: "",
+        msg: ""
+    });
 
     const handleChange = e => {
         if (!e.target) return;
+        setResponse(null);
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
-
     const submitForm = async (e) => {
         e.preventDefault();
-        if (!file) return;
-        console.log(file)
+        if (!invalidForm) return;
+
         setLoading(true);
 
         let data = new FormData();
         data.append("uploadedFile", file);
 
         await axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data).then(res => {
-            console.log(res)
+            setResponse(res.data)
+            if (res.data.res === "success")
+                resetForm();
         }, error => {
             console.warn(error)
         })
+    }
+
+    const resetForm = () => {
+        setFile(null);
+        setForm({ ...form, name: "", keywords: "" })
+    }
+
+    const capitalize = (str) => {
+        return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+
+    const invalidForm = () => {
+       return (!file || (form.name || form.keyword).length === 0)
     }
 
     return (
         <form onSubmit={submitForm}>
             <h4 className='form-title'>Upload image</h4>
 
+            {/* Response */}
+            {response ? <Alert severity={response?.res} variant='filled' onClose={() => { }}>
+                    <AlertTitle>{capitalize(response?.res)}</AlertTitle>
+                    {response?.msg}
+                </Alert> : null}
+
             {Object.keys(form).map((x, ind) => (
                 <TextField key={ind}
                     size="small"
-                    label={x.charAt(0).toUpperCase() + x.slice(1)}
+                    label={capitalize(x)}
                     className='fields'
                     required
                     disabled={loading}
@@ -58,7 +84,10 @@ export default function UploadFile() {
             <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} />
 
             <div className="buttons-wrapper">
-                <Button type="submit" variant="outlined" color="success">
+               (invalidForm ? <Button color="error" onClick={resetForm}>
+                    <Close />
+                </Button> ;
+                <Button type="submit" color="inherit">
                     Save
                 </Button>
             </div>

@@ -23,3 +23,8 @@ form textarea {
   height: 200px;
   padding: 10px 15px;
 }
+
+.buttons-wrapper {
+  display: flex;
+  justify-content: right;
+}
