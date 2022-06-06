@@ -7,6 +7,7 @@ export default function Header(props) {
   console.log(props.url)
   return (
     <header>
+      {/* <div className='curtain'></div> */}
       <Container>
         <img className='logotype' src={logo} alt={props.url} />
       </Container>

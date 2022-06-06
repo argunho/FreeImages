@@ -10,6 +10,7 @@ html {
   border-left: 1px solid #d6d6d6;
   border-right: 1px solid #d6d6d6;
   max-width: 1500px;
+  height: calc(100vh - 90px);
 }
 
 /* General styles */
@@ -21,6 +22,15 @@ html {
 
 .box-shadow {
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+}
+
+.curtain {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.329);
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* Responsive for all screens */
