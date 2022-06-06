@@ -5,7 +5,9 @@ form {
   padding: 20px;
 }
 
-form, form input, form label {
+form,
+form input,
+form label {
   font-family: "Courier New", Courier, monospace !important;
 }
 
@@ -31,4 +33,22 @@ form textarea {
 
 .buttons-wrapper > button {
   margin-left: 15px;
+}
+
+.alert-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+}
+
+.alert {
+  border: 0;
+  max-width: 1500px;
+  margin: auto;
+}
+
+.error {
+  background: #D32F2F;
 }

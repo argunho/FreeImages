@@ -97,12 +97,14 @@ export default function UploadFileForm(props) {
             </form>
 
             {/* Response */}
-            {response ? <Alert className='alert' severity={response?.res} variant='filled' onClose={() => { }}>
-                <Container>
+            {response ?
+                <div className={'alert-wrapper ' + response?.res}>
+                    <Alert className='alert' severity={response?.res} variant='filled' onClose={() => { }}>   
                     <AlertTitle>{capitalize(response?.res)}</AlertTitle>
-                    {response?.msg}
-                </Container>
-            </Alert> : null}
+                        {response?.msg}
+                    </Alert>
+                </div>
+                : null}
         </div>
     )
 }
