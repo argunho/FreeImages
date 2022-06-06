@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { TextField, Button, Alert, AlertTitle } from '@mui/material';
 import axios from 'axios';
 
-import FileUpload from './FileUpload';
+
 import './../../css/form.css';
-import { Cancel, Close } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
+import FileUpload from './blocks/FileUpload';
 
 export default function UploadFile() {
 
@@ -84,10 +85,10 @@ export default function UploadFile() {
             <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} />
 
             <div className="buttons-wrapper">
-               {invalidForm ? <Button color="error" onClick={resetForm}>
+               {invalidForm ? <Button color="error" variant='outlined' onClick={resetForm}>
                     <Close />
-                </Button> : null};
-                <Button type="submit" color="inherit">
+                </Button> : null}
+                <Button type="submit" variant='outlined' color="inherit">
                     Save
                 </Button>
             </div>

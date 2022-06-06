@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Button, CircularProgress } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 
-import upload from './../../images/upload.png';
-import './../../css/fileUpload.css';
+import upload from './../../../images/upload.png';
+import './../../../css/fileUpload.css';
 
 export default function FileUpload(props) {
 
@@ -54,10 +54,10 @@ export default function FileUpload(props) {
             {/* Uploaded image */}
             {image ? <div className='uploaded-image-wrapper'>
                 <img src={image} alt="" className="uploaded-image" />
-                <Button 
-                    variant='outlined' 
-                    size="small" 
-                    onClick={() => uploadFile.current.click()} 
+                <Button
+                    variant='outlined'
+                    size="small"
+                    onClick={() => uploadFile.current.click()}
                     disabled={props.disabled}>
                     <Refresh />
                 </Button>
