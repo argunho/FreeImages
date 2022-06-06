@@ -1,17 +1,29 @@
-﻿
-/* Header content */
+﻿/* Header content */
 header {
-  height: 70px;
-  background: #000;
+  height: 90px;
+  background: url("./../images/header-bg.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 header > .container {
   height: 100%;
   border: none !important;
-  display: flex;
-  justify-content: center;
 }
 
 header img.logotype {
   height: 50px !important;
+  max-width: 50%;
+  margin: 20px 0;
+}
+
+@media(max-width: 415px) {
+  header {
+    height: 70px;
+  }
+  header img.logotype {
+    height: 45px !important;
+    margin: 12.5px 0;
+  }
 }

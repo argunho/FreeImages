@@ -6,6 +6,7 @@ import axios from 'axios';
 import './../../css/form.css';
 import { Close } from '@mui/icons-material';
 import FileUpload from './blocks/FileUpload';
+import { Container } from 'reactstrap';
 
 export default function UploadFileForm(props) {
 
@@ -16,7 +17,7 @@ export default function UploadFileForm(props) {
 
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState(null);
-    const { response, setResponse } = useState({
+    const [response, setResponse] = useState({
         res: "",
         msg: ""
     });
@@ -59,44 +60,49 @@ export default function UploadFileForm(props) {
     }
 
     return (
-        <form onSubmit={submitForm}>
-            <h4 className='form-title'>Upload image</h4>
-
-            {/* Response */}
-            {response ? <Alert severity={response?.res} variant='filled' onClose={() => { }}>
-                <AlertTitle>{capitalize(response?.res)}</AlertTitle>
-                {response?.msg}
-            </Alert> : null}
-
-            {["name", "keywords"].map((x, ind) => (
-                <TextField key={ind}
-                    size="small"
-                    label={capitalize(x)}
-                    className='fields'
-                    required
-                    disabled={loading}
-                    name={x.toLowerCase()}
-                    value={form[x]}
-                    variant="outlined"
-                    onChange={handleChange} />
-            ))}
+        <div>
+            <form onSubmit={submitForm}>
+                <h4 className='form-title'>Upload image</h4>
 
 
-            {/* File upload */}
-            <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} />
+                {["name", "keywords"].map((x, ind) => (
+                    <TextField key={ind}
+                        size="small"
+                        label={capitalize(x)}
+                        className='fields'
+                        required
+                        disabled={loading}
+                        name={x}
+                        value={form[x]}
+                        variant="outlined"
+                        onChange={handleChange} />
+                ))}
 
-            {/* <FormControlLabel className="checkbox" control={
+
+                {/* File upload */}
+                <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} />
+
+                {/* <FormControlLabel className="checkbox" control={
                 <Checkbox checked={form.visible} onChange={() => setForm({...form, visible: !form.visible })}
                     color="primary" />} label={"Visible"} /> */}
 
-            <div className="buttons-wrapper">
-                {invalidForm ? <Button color="error" variant='outlined' onClick={resetForm}>
-                    <Close />
-                </Button> : null}
-                <Button type="submit" variant='outlined' color="inherit">
-                    Save
-                </Button>
-            </div>
-        </form>
+                <div className="buttons-wrapper">
+                    {invalidForm ? <Button color="error" variant='outlined' onClick={resetForm}>
+                        <Close />
+                    </Button> : null}
+                    <Button type="submit" variant='outlined' color="inherit">
+                        Save
+                    </Button>
+                </div>
+            </form>
+
+            {/* Response */}
+            {response ? <Alert className='alert' severity={response?.res} variant='filled' onClose={() => { }}>
+                <Container>
+                    <AlertTitle>{capitalize(response?.res)}</AlertTitle>
+                    {response?.msg}
+                </Container>
+            </Alert> : null}
+        </div>
     )
 }
