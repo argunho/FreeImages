@@ -1,0 +1,17 @@
+﻿
+/* Header content */
+header {
+  height: 70px;
+  background: #000;
+}
+
+header > .container {
+  height: 100%;
+  border: none !important;
+  display: flex;
+  justify-content: center;
+}
+
+header img.logotype {
+  height: 50px !important;
+}

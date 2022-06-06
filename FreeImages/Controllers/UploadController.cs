@@ -47,7 +47,8 @@ public class UploadController : ControllerBase
             Name = name,
             Keywords = keywords,
             ImgName = imgName,
-            Author = ""
+            Author = "",
+            Visible = true
         };
 
         _db.UploadedImages?.Add(imgData);

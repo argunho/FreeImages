@@ -25,7 +25,10 @@ form textarea {
 }
 
 .buttons-wrapper {
-  border-top: 1px solid #CCC;
   display: flex;
   justify-content: right;
+}
+
+.buttons-wrapper > button {
+  margin-left: 15px;
 }

@@ -10,6 +10,7 @@ namespace FreeImages.Models
         public string? Keywords { get; set; }
         public string? ImgName { get; set; }
         public string?  Author { get; set; }
+        public bool Visible { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;
     }
 }

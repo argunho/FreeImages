@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TextField, Button, Alert, AlertTitle } from '@mui/material';
+import { TextField, Button, Alert, AlertTitle, Checkbox, FormControlLabel } from '@mui/material';
 import axios from 'axios';
 
 
@@ -7,7 +7,7 @@ import './../../css/form.css';
 import { Close } from '@mui/icons-material';
 import FileUpload from './blocks/FileUpload';
 
-export default function UploadFile() {
+export default function UploadFileForm(props) {
 
     const [form, setForm] = useState({
         name: "",
@@ -55,7 +55,7 @@ export default function UploadFile() {
     }
 
     const invalidForm = () => {
-       return (!file || (form.name || form.keyword).length === 0)
+        return (!file || (form.name || form.keyword).length === 0)
     }
 
     return (
@@ -64,11 +64,11 @@ export default function UploadFile() {
 
             {/* Response */}
             {response ? <Alert severity={response?.res} variant='filled' onClose={() => { }}>
-                    <AlertTitle>{capitalize(response?.res)}</AlertTitle>
-                    {response?.msg}
-                </Alert> : null}
+                <AlertTitle>{capitalize(response?.res)}</AlertTitle>
+                {response?.msg}
+            </Alert> : null}
 
-            {Object.keys(form).map((x, ind) => (
+            {["name", "keywords"].map((x, ind) => (
                 <TextField key={ind}
                     size="small"
                     label={capitalize(x)}
@@ -81,11 +81,16 @@ export default function UploadFile() {
                     onChange={handleChange} />
             ))}
 
+
             {/* File upload */}
             <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} />
 
+            {/* <FormControlLabel className="checkbox" control={
+                <Checkbox checked={form.visible} onChange={() => setForm({...form, visible: !form.visible })}
+                    color="primary" />} label={"Visible"} /> */}
+
             <div className="buttons-wrapper">
-               {invalidForm ? <Button color="error" variant='outlined' onClick={resetForm}>
+                {invalidForm ? <Button color="error" variant='outlined' onClick={resetForm}>
                     <Close />
                 </Button> : null}
                 <Button type="submit" variant='outlined' color="inherit">

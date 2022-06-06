@@ -16,7 +16,7 @@ public class HelpFunctions : IHelpFunctions
 
     public bool Delete(int id)
     {
-        throw new NotImplementedException();
+        return true;
     }
 
     public bool Save()
@@ -33,6 +33,6 @@ public class HelpFunctions : IHelpFunctions
     }
 
     public JsonResult Error(string? error = null) => new JsonResult(new { res = "error", msg = error ?? _error });
-    public JsonResult Success() => new JsonResult(new { res = "success" });
+    public JsonResult Success() => new JsonResult(new { res = "success", msg = "It was successfully!" });
 
 }

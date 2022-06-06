@@ -4,7 +4,7 @@ import { Layout } from './components/Layout';
 import { Home } from './components/public/Home';
 
 // Support
-import UploadFile from './components/support/UploadFile';
+import UploadFileForm from './components/support/UploadFileForm';
 
 
 import './css/styles.css';
@@ -16,7 +16,7 @@ export default class App extends Component {
     return (
       <Layout>
         <Route exact path='/' component={Home} />
-        <Route path='/support/upload-file' component={UploadFile} />
+        <Route path='/support/upload-file' component={UploadFileForm} />
       </Layout>
     );
   }

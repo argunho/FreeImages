@@ -2,13 +2,29 @@
   background: url('./../images/photostudio.jpg') center 100% fixed no-repeat;
 } */
 
+html {
+  font-size: 14px;
+}
+
 .container {
   border-left: 1px solid #d6d6d6;
   border-right: 1px solid #d6d6d6;
 }
 
+/* General styles */
 .none {
   display: none !important;
   visibility: hidden !important;
   z-index: -1 !important;
+}
+
+.box-shadow {
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive for all screens */
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
 }
