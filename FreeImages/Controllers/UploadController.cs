@@ -41,17 +41,23 @@ public class UploadController : ControllerBase
         {
             return _help.Response("error", ex.Message); 
         }
+        var claims = HttpContext.User.Claims.Where(x => x.Value == "Roles").ToList();
+        var visible = claims?.ToString()?.IndexOf("Admin") > -1 || claims?.ToString()?.IndexOf("Support") > -1;
 
-        var imgData = new UploadedImage
+        UploadedImage uploadedImage = new UploadedImage();
+        if(visible)
+            uploadedImage.ImgName = imgName;
+
+        var imgData = new ImageData
         {
             Name = name,
             Keywords = keywords,
-            ImgName = imgName,
-            Author = "",
-            Visible = true
+            UploadedImageId = uploadedImage.Id,
+            Author = HttpContext?.User?.Identity?.Name,
+            Visible = visible
         };
 
-        _db.UploadedImages?.Add(imgData);  
+        _db.ImageData?.Add(imgData);  
         return _help.Response(!_help.Save() ? "error" : "success");
     }
     #endregion
