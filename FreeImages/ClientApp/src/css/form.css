@@ -35,6 +35,13 @@ form textarea {
   margin-left: 15px;
 }
 
+.loading-circular {
+  width: 30px !important;
+  height: 30px !important;
+  color: #FFF !important;
+  margin: 2px 0 0 15px !important;
+}
+
 /* Alert */
 .alert-wrapper {
   position: fixed;
@@ -49,6 +56,10 @@ form textarea {
   border-radius: 0 !important;
   margin: auto;
   max-width: 1500px;
+}
+
+.alert p {
+  margin: 0 !important;
 }
 
 .error {

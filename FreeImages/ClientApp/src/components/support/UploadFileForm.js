@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { TextField, Button, AlertTitle, Alert } from '@mui/material';
+import { TextField, Button, AlertTitle, Alert, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
 import { Close } from '@mui/icons-material';
@@ -105,7 +105,7 @@ export default function UploadFileForm(props) {
                         <Close />
                     </Button> : null}
                     <Button type="submit" variant='outlined' color="inherit">
-                        Save
+                       {loading ? <CircularProgress className='loading-circular'/> : "Save"}
                     </Button>
                 </div>
             </form>
@@ -115,7 +115,7 @@ export default function UploadFileForm(props) {
                 <div className={'slide-in-bottom alert-wrapper ' + response?.result}>
                     <Alert className='alert' severity={response?.result} variant='filled' onClose={() => setResponse(null)}>
                         <AlertTitle>{capitalize(response?.result)}</AlertTitle>
-                        {response?.msg}
+                        <p dangerouslySetInnerHTML={{ __html: response?.msg}}></p>
                     </Alert>
                 </div> : null}
         </div>
