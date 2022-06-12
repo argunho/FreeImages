@@ -28,7 +28,7 @@ public class HelpFunctions : IHelpFunctions
         }
         catch (Exception ex)
         {
-            _message = ex.Message;
+            _message = "Failed. Something has gone wrong. \nError: " + ex.Message;
             return false;
         }
     }

@@ -28,7 +28,7 @@ public class UploadController : ControllerBase
     public JsonResult Post(string name, string keywords, IFormFile uploadedFile)
     {
         if (uploadedFile == null)
-                return new JsonResult(new { res = "warning", msg = "Bild eller bild information saknas" });
+            return new JsonResult(new { res = "warning", msg = "Bild eller bild information saknas" });
 
         var imgName = name.Replace(" ", "") + "." + uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
         try
@@ -37,16 +37,22 @@ public class UploadController : ControllerBase
             {
                 _container.UploadBlob(imgName, stream);
             }
-        }catch (Exception ex)
-        {
-            return _help.Response("error", ex.Message); 
         }
+        catch (Exception ex)
+        {
+            return _help.Response("error", ex.Message);
+        }
+
         var claims = HttpContext.User.Claims.Where(x => x.Value == "Roles").ToList();
         var visible = claims?.ToString()?.IndexOf("Admin") > -1 || claims?.ToString()?.IndexOf("Support") > -1;
 
         UploadedImage uploadedImage = new UploadedImage();
-        if(visible)
+        if (visible)
+        {
             uploadedImage.ImgName = imgName;
+            if (!_help.Save())
+                return _help.Response("error");
+        }
 
         var imgData = new ImageData
         {
@@ -57,8 +63,15 @@ public class UploadController : ControllerBase
             Visible = visible
         };
 
-        _db.ImageData?.Add(imgData);  
-        return _help.Response(!_help.Save() ? "error" : "success");
+        _db.ImageData?.Add(imgData);
+        if (!_help.Save())
+        {
+            _db.UploadedImages?.Remove(uploadedImage);
+            _help.Save();
+            return _help.Response("error");
+        }
+
+        return _help.Response("success");
     }
     #endregion
 }
