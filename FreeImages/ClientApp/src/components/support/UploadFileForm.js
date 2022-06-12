@@ -1,12 +1,11 @@
-import React, { useState } from 'react'
-import { TextField, Button, Alert, AlertTitle, Checkbox, FormControlLabel } from '@mui/material';
+import React, { useEffect, useState } from 'react'
+import { TextField, Button, AlertTitle, Alert } from '@mui/material';
 import axios from 'axios';
 
-
-import './../../css/form.css';
 import { Close } from '@mui/icons-material';
 import FileUpload from './blocks/FileUpload';
-import { Container } from 'reactstrap';
+
+import './../../css/form.css';
 
 export default function UploadFileForm(props) {
 
@@ -17,10 +16,24 @@ export default function UploadFileForm(props) {
 
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState(null);
-    const [response, setResponse] = useState({
-        res: "",
-        msg: ""
-    });
+    const [response, setResponse] = useState(null);
+    const [result, setResult] = useState(false);
+
+    useEffect(() => {
+        if (result && !response) {
+            setResponse(null);
+            setResult(false);
+        } else if (result && response) {
+            setTimeout(() => {
+                if (result) {
+                    setResponse(null);
+                    setResult(false);
+                }
+            }, 5000)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [response])
 
     const handleChange = e => {
         if (!e.target) return;
@@ -38,8 +51,9 @@ export default function UploadFileForm(props) {
         data.append("uploadedFile", file);
 
         await axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data).then(res => {
-            setResponse(res.data)
-            if (res.data.res === "success")
+            setResponse(res.data);
+            setResult(true);
+            if (res.data.result === "success")
                 resetForm();
         }, error => {
             console.warn(error)
@@ -52,6 +66,7 @@ export default function UploadFileForm(props) {
     }
 
     const capitalize = (str) => {
+        if (!str) return;
         return str.charAt(0).toUpperCase() + str.slice(1)
     }
 
@@ -63,7 +78,6 @@ export default function UploadFileForm(props) {
         <div>
             <form onSubmit={submitForm}>
                 <h4 className='form-title'>Upload image</h4>
-
 
                 {["name", "keywords"].map((x, ind) => (
                     <TextField key={ind}
@@ -98,13 +112,12 @@ export default function UploadFileForm(props) {
 
             {/* Response */}
             {response ?
-                <div className={'alert-wrapper ' + response?.res}>
-                    <Alert className='alert' severity={response?.res} variant='filled' onClose={() => { }}>   
-                    <AlertTitle>{capitalize(response?.res)}</AlertTitle>
+                <div className={'slide-in-bottom alert-wrapper ' + response?.res}>
+                    <Alert className='alert' severity={response?.res} variant='filled' onClose={() => setResponse(null)}>
+                        <AlertTitle>{capitalize(response?.res)}</AlertTitle>
                         {response?.msg}
                     </Alert>
-                </div>
-                : null}
+                </div> : null}
         </div>
     )
 }

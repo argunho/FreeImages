@@ -39,7 +39,7 @@ public class UploadController : ControllerBase
             }
         }catch (Exception ex)
         {
-            return _help.Error(ex.Message); 
+            return _help.Response("error", ex.Message); 
         }
 
         var imgData = new UploadedImage
@@ -51,11 +51,8 @@ public class UploadController : ControllerBase
             Visible = true
         };
 
-        _db.UploadedImages?.Add(imgData);
-        if(!_help.Save())
-            return _help.Error();
-
-        return new JsonResult(true);
+        _db.UploadedImages?.Add(imgData);  
+        return _help.Response(!_help.Save() ? "error" : "success");
     }
     #endregion
 }

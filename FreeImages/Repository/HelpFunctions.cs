@@ -7,7 +7,7 @@ namespace FreeImages.Repository;
 public class HelpFunctions : IHelpFunctions
 {
     private FreeImagesDbConnect _db;
-    private string? _error { get; set; }
+    private string? _message { get; set; }
 
     public HelpFunctions(FreeImagesDbConnect db)
     {
@@ -23,16 +23,15 @@ public class HelpFunctions : IHelpFunctions
     {
         try
         {
-            return _db.SaveChanges() > 1;
+            _message = "It was successfully!";
+            return _db.SaveChanges() > -1;
         }
         catch (Exception ex)
         {
-            _error = ex.Message;
+            _message = ex.Message;
             return false;
         }
     }
 
-    public JsonResult Error(string? error = null) => new JsonResult(new { res = "error", msg = error ?? _error });
-    public JsonResult Success() => new JsonResult(new { res = "success", msg = "It was successfully!" });
-
+    public JsonResult Response(string? result, string? msg = null) => new JsonResult(new { result = result, msg = msg ?? _message });
 }

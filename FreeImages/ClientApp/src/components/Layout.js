@@ -16,12 +16,12 @@ export class Layout extends Component {
   render () {
   console.log(this.props)
     return (
-      <div>
+      <>
         <Header url={"freeimages"}/>
         <Container>
           {this.props.children}
         </Container>
-      </div>
+      </>
     );
   }
 }

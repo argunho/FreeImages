@@ -4,8 +4,7 @@ namespace FreeImages.Intefaces;
 
 public interface IHelpFunctions
 {
-    JsonResult Error(string? error = "");
-    JsonResult Success();
+    JsonResult Response(string? result, string? msg = null);
     bool Save();
     bool Delete(int id);
 }
