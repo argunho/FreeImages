@@ -112,9 +112,9 @@ export default function UploadFileForm(props) {
 
             {/* Response */}
             {response ?
-                <div className={'slide-in-bottom alert-wrapper ' + response?.res}>
-                    <Alert className='alert' severity={response?.res} variant='filled' onClose={() => setResponse(null)}>
-                        <AlertTitle>{capitalize(response?.res)}</AlertTitle>
+                <div className={'slide-in-bottom alert-wrapper ' + response?.result}>
+                    <Alert className='alert' severity={response?.result} variant='filled' onClose={() => setResponse(null)}>
+                        <AlertTitle>{capitalize(response?.result)}</AlertTitle>
                         {response?.msg}
                     </Alert>
                 </div> : null}
