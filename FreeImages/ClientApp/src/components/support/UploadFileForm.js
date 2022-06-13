@@ -52,11 +52,12 @@ export default function UploadFileForm(props) {
 
         await axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data).then(res => {
             setResponse(res.data);
+            setLoading(false);    
             setResult(true);
             if (res.data.result === "success")
                 resetForm();
         }, error => {
-            console.warn(error)
+            console.error(error)
         })
     }
 

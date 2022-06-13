@@ -36,10 +36,9 @@ form textarea {
 }
 
 .loading-circular {
-  width: 30px !important;
-  height: 30px !important;
-  color: #FFF !important;
-  margin: 2px 0 0 15px !important;
+  width: 22px !important;
+  height: 21px !important;
+  color: #212529 !important;
 }
 
 /* Alert */
