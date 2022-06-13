@@ -31,6 +31,9 @@ public class UploadController : ControllerBase
             return new JsonResult(new { res = "warning", msg = "Bild eller bild information saknas" });
 
         var imgName = name.Replace(" ", "") + "." + uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
+        if (_db.UploadedImages?.FirstOrDefault(x => x.ImgName == imgName) != null)
+            return _help.Response("warning", "Image with the same name already exists");
+
         try
         {
             using (var stream = uploadedFile.OpenReadStream())
