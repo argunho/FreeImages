@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, CircularProgress } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 
@@ -12,6 +12,13 @@ export default function FileUpload(props) {
     const [error, setError] = useState();
 
     const uploadFile = useRef(null);
+
+    useEffect(() => {
+        if (image && props.reset)
+            setImage(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.reset])
+
 
     const onFileChange = ev => {
         ev.preventDefault();

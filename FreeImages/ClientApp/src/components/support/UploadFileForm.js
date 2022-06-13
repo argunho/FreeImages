@@ -95,7 +95,7 @@ export default function UploadFileForm(props) {
 
 
                 {/* File upload */}
-                <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} />
+                <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} reset={file === null} />
 
                 {/* <FormControlLabel className="checkbox" control={
                 <Checkbox checked={form.visible} onChange={() => setForm({...form, visible: !form.visible })}
@@ -105,7 +105,7 @@ export default function UploadFileForm(props) {
                     {invalidForm ? <Button color="error" variant='outlined' onClick={resetForm}>
                         <Close />
                     </Button> : null}
-                    <Button type="submit" variant='outlined' color="inherit">
+                    <Button type="submit" variant='outlined' color="inherit" style={{width: "70px"}}>
                        {loading ? <CircularProgress className='loading-circular'/> : "Save"}
                     </Button>
                 </div>
