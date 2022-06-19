@@ -1,17 +1,36 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container } from 'reactstrap';
+import { Button } from '@mui/material';
+import { useHistory } from 'react-router-dom';
+
 import logo from './../../../images/logo.png';
 import './../../../css/header.css';
+import { Menu } from '@mui/icons-material';
 
 export default function Header(props) {
-  console.log(props.url)
+
+  const [authorized, setAuthorized] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const history = useHistory();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setAuthorized(token !== null && token !== undefined);
+  }, [])
+
   return (
     <header>
-      {/* <div className='curtain'></div> */}
       <Container>
-        <img className='logotype' src={logo} alt={props.url} />
+        <img className='logotype' onClick={() => history.push("/")} src={logo} alt={props.url} />
+
+        {!authorized ?
+          <Button className='menu-button' onClick={() => setVisible(!visible)}>
+            <Menu />
+          </Button> : null}
       </Container>
     </header>
+    // {visible ? <div className='curtain'></div> : null}
   )
 }
 

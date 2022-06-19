@@ -17,7 +17,7 @@ export default class App extends Component {
     return (
       <Layout>
         <Route exact path='/' component={Home} />
-        <Route path='/support/upload-file' component={UploadFileForm} />
+        <Route path='/support/upload-image' component={UploadFileForm} />
         <Route path='/support/images' component={ImagesList} />
       </Layout>
     );

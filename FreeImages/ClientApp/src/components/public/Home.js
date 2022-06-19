@@ -6,7 +6,7 @@ export class Home extends Component {
 
   render () {
     return (
-      <Link to="/support/upload-file">Upload</Link>
+      <Link to="/support/upload-image">Upload</Link>
     );
   }
 }
