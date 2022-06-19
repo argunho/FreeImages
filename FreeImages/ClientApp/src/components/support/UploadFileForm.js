@@ -6,6 +6,8 @@ import { Close } from '@mui/icons-material';
 import FileUpload from './blocks/FileUpload';
 
 import './../../css/form.css';
+import Heading from './blocks/Heading';
+
 
 export default function UploadFileForm(props) {
 
@@ -52,7 +54,7 @@ export default function UploadFileForm(props) {
 
         await axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data).then(res => {
             setResponse(res.data);
-            setLoading(false);    
+            setLoading(false);
             setResult(true);
             if (res.data.result === "success")
                 resetForm();
@@ -76,10 +78,12 @@ export default function UploadFileForm(props) {
     }
 
     return (
-        <div>
+        <div className='wrapper'>
+
+            <Heading title="Form" />
+
             <form onSubmit={submitForm}>
                 <h4 className='form-title'>Upload image</h4>
-
                 {["name", "keywords"].map((x, ind) => (
                     <TextField key={ind}
                         size="small"
@@ -105,8 +109,8 @@ export default function UploadFileForm(props) {
                     {invalidForm ? <Button color="error" variant='outlined' onClick={resetForm}>
                         <Close />
                     </Button> : null}
-                    <Button type="submit" variant='outlined' color="inherit" style={{width: "70px"}}>
-                       {loading ? <CircularProgress className='loading-circular'/> : "Save"}
+                    <Button type="submit" variant='outlined' color="inherit" style={{ width: "70px" }}>
+                        {loading ? <CircularProgress className='loading-circular' /> : "Save"}
                     </Button>
                 </div>
             </form>
@@ -116,7 +120,7 @@ export default function UploadFileForm(props) {
                 <div className={'slide-in-bottom alert-wrapper ' + response?.result}>
                     <Alert className='alert' severity={response?.result} variant='filled' onClose={() => setResponse(null)}>
                         <AlertTitle>{capitalize(response?.result)}</AlertTitle>
-                        <p dangerouslySetInnerHTML={{ __html: response?.msg}}></p>
+                        <p dangerouslySetInnerHTML={{ __html: response?.msg }}></p>
                     </Alert>
                 </div> : null}
         </div>
