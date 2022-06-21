@@ -18,8 +18,10 @@ export default function SupportMenu(props) {
     const history = useHistory();
 
     useEffect(() => {
-        if (props.visible)
-            setTimeout(() => { setVisible(props.visible); }, 100);
+        if (props.visible){
+            document.body.classList.toggle('body-fixed');
+             setTimeout(() => { setVisible(props.visible); }, 100);
+        }        
     }, [props.visible])
 
     // if (!props.authorized) return null;
@@ -28,12 +30,14 @@ export default function SupportMenu(props) {
         setVisible(false);
         setTimeout(() => {
             props.hide(false);
+            document.body.classList.toggle('body-fixed');
             history.push(link);
         }, 1000)
     }
 
     const close = () => {
         setVisible(false);
+        document.body.classList.toggle('body-fixed');
         setTimeout(() => { props.hide(false); }, 1000);
     }
 

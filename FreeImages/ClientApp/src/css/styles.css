@@ -10,7 +10,10 @@ body {
   margin: 0;
   padding: 0;
 }
-
+.body-fixed {
+  height: 100vh;
+  overflow: hidden;
+}
 .container {
   border-left: 1px solid #d6d6d6;
   border-right: 1px solid #d6d6d6;
