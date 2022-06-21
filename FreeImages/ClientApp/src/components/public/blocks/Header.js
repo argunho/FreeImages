@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import logo from './../../../images/logo.png';
 import './../../../css/header.css';
-import { Menu } from '@mui/icons-material';
+import { Menu, MenuOpen } from '@mui/icons-material';
 import SupportMenu from '../../support/blocks/SupportMenu';
 
 export default function Header(props) {
@@ -27,12 +27,17 @@ export default function Header(props) {
           <img className='logotype' onClick={() => history.push("/")} src={logo} alt={props.url} />
 
           {!authorized ?
-            <Button className='menu-button' onClick={() => setVisible(!visible)}>
-              <Menu />
+            <Button
+              className={'menu-button' + (visible ? " menu-open" : "")}
+              onClick={() => setVisible(!visible)}
+              disabled={visible}
+            >
+              {visible ? <MenuOpen color='#ccc'/> : <Menu />}
             </Button> : null}
         </Container>
       </header>
-      {visible ? <div className='curtain'><SupportMenu /></div> : null}
+      {/* <div className='curtain'></div> */}
+      {visible ? <SupportMenu authorized={authorized} visible={visible} hide={(value) => setVisible(value)} /> : null}
     </>
 
   )

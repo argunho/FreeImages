@@ -35,7 +35,7 @@ header img.logotype {
   transition: all 06s ease-in-out;
 }
 
-.menu-button:hover svg {
+.menu-button:hover:not(.menu-open) svg {
   transform: scale(1.05);
 }
 /* #region Navigation */
