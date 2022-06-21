@@ -20,29 +20,29 @@ header img.logotype {
 }
 
 .menu-button {
- position: absolute;
- right: 10px;
- top: 25px;
- color: #FFF;
- border-radius: 50%;
- background-color: transparent !important;
+  position: absolute !important;
+  right: 10px;
+  top: 25px;
+  color: #fff !important;
+  border-radius: 50% !important;
+  background-color: transparent !important;
 }
 
 .menu-button svg {
   font-size: 50px;
   will-change: transform;
+  color: #fff !important;
   transition: all 06s ease-in-out;
 }
 
 .menu-button:hover svg {
   transform: scale(1.05);
-  
 }
 /* #region Navigation */
 
 /* #endregion */
 
-@media(max-width: 415px) {
+@media (max-width: 415px) {
   header {
     height: 70px;
   }
