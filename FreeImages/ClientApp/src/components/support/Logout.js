@@ -7,7 +7,7 @@ export default function Logout(props) {
     const history = useHistory();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {  logout(); }, [])
+    useEffect(() => { logout(); }, [])
 
     const logout = async () => {
         const response = await fetch('account/logout');
@@ -17,8 +17,12 @@ export default function Logout(props) {
         }
     }
 
-    return <div className="logout-block">
-        <p className="logout-symbol"><MeetingRoom /></p>
-        You log out ...
-    </div>
+    return (
+        <div className="logout-block">
+            <div>
+                <p className="logout-symbol"><MeetingRoom /></p>
+                Please wait, you are logging out ...
+            </div>
+        </div>
+    )
 }

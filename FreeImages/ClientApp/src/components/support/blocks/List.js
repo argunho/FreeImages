@@ -1,6 +1,6 @@
+import { Alert } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import React from 'react'
-import { Alert } from 'reactstrap';
 import Heading from './Heading';
 
 export default function List(props) {
@@ -32,7 +32,7 @@ export default function List(props) {
       pageSize={5}
       rowsPerPageOptions={[5]}
       checkboxSelection
-    /> : <Alert severity='warning'>Nothing is found.</Alert>}
+    /> : <Alert severity='info'>Nothing is found.</Alert>}
   </div>
   )
 }

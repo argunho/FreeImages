@@ -68,15 +68,6 @@ class App extends Component {
             ))))}
         </Switch>
       </Router>
-      // <Route path={['/', '/support/upload-image', '/support/images']}>
-      //   <Layout>
-      //     <Route exact path='/' component={Home} />
-      //   </Layout>
-      //   <SupportLayout>
-      //     <Route path='/support/upload-image' component={UploadFileForm} />
-      //     <Route path='/support/images' component={ImagesList} />
-      //   </SupportLayout>
-      // </Route>
     );
   }
 }
