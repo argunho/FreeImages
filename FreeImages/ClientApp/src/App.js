@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Route, Router } from 'react-router';
 import { Layout } from './components/Layout';
-import { Home } from './components/public/Home';
 import { withRouter, Switch } from "react-router-dom";
+
+// Layout
+import Home from './components/public/Home';
 
 // Support
 import SupportLayout  from './components/SupportLayout';

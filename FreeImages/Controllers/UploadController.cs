@@ -73,6 +73,7 @@ public class UploadController : ControllerBase
         };
 
         _db.ImageData?.Add(imgData);
+
         if (!_help.Save())
         {
             _db.UploadedImages?.Remove(uploadedImage);
