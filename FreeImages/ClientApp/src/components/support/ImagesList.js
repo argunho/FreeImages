@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import { Alert } from '@mui/material';
-import Heading from './blocks/Heading';
+import List from './blocks/List';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -24,39 +22,8 @@ const columns = [
   // },
 ];
 
-
-
 export default function ImagesList() {
-
-  const [rows, setRows] = React.useState([]);
-
-  React.useEffect(() => {
-    getImages();
-  }, [])
-
-  const getImages = async () => {
-    const _token = localStorage.getItem("token");
-    const _config = {
-      headers: { 'Authorization': `Bearer ${_token}` }
-    };
-
-    const response = await fetch("image", _config);
-    const data = await response.json();
-
-    setRows(data || []);
-  }
-
   return (
-
-    <div className='wrapper'>
-      <Heading title="Images" />
-      {rows.length > 0 ? <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-      /> : <Alert severity='info'>Nothing is found.</Alert>}
-    </div>
+    <List api="image" columns={columns} title="Images"/>
   );
 }

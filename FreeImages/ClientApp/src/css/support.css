@@ -1,6 +1,6 @@
 .container {
-    border-left: 1px solid #d6d6d6;
-    border-right: 1px solid #d6d6d6;
+  border-left: 1px solid #d6d6d6;
+  border-right: 1px solid #d6d6d6;
 }
 
 /* #region Menu */
@@ -90,5 +90,20 @@ button.menu-close:hover {
 
 .menu-list {
   padding: 10px;
+}
+/* #endregion */
+
+/* #region Login, Logout */
+.logout-block {
+  height: calc(100vh - 300px);
+  max-height: 500px;
+  box-shadow: 0 0 1px 1px #7d7e7d;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
+.logout-symbol svg {
+  font-size: 30px;
 }
 /* #endregion */

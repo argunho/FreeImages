@@ -10,10 +10,13 @@ import UploadFileForm from './components/support/UploadFileForm';
 import ImagesList from './components/support/ImagesList';
 
 import './css/styles.css';
+import Users from './components/support/Users';
+import Logout from './components/support/Logout';
 
 const routesLayout = [
   {
     layout: Layout,
+    url: "",
     routes: [
       {
         path: "/",
@@ -23,14 +26,23 @@ const routesLayout = [
   },
   {
     layout: SupportLayout,
+    url: "/support",
     routes: [
       {
-        path: '/support/upload-image',
+        path: '/users',
+        component: Users
+      },
+      {
+        path: '/images',
+        component: ImagesList
+      },
+      {
+        path: '/upload-image',
         component: UploadFileForm
       },
       {
-        path: '/support/images',
-        component: ImagesList
+        path: '/logout',
+        component: Logout
       }
     ]
   }
@@ -39,7 +51,6 @@ const routesLayout = [
 class App extends Component {
   static displayName = App.name;
 
-
   render() {
     return (
       <Router history={this.props.history}>
@@ -47,7 +58,7 @@ class App extends Component {
           {routesLayout.map((l, index) => (
             l.routes.map((r, ind) => (
               <Route exact
-                path={r.path}
+                path={l.url + r.path}
                 render={props => (
                   <l.layout history={props.history}>
                     <r.component {...props} />
