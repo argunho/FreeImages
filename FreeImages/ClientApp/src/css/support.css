@@ -1,8 +1,6 @@
-.s-container {
-  width: 98%;
-  margin: 10px auto;
-  padding: 10px;
-  overflow: hidden;
+.container {
+    border-left: 1px solid #d6d6d6;
+  border-right: 1px solid #d6d6d6;
 }
 
 /* #region Menu */

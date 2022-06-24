@@ -19,20 +19,29 @@ header img.logotype {
   margin: 30px 0;
 }
 
-.menu-button {
+.header-buttons {
   position: absolute !important;
   right: 10px;
   top: 25px;
+  display: flex;
+  justify-content: right;
+}
+
+.menu-button {
   color: #fff !important;
   border-radius: 50% !important;
   background-color: transparent !important;
 }
 
-.menu-button svg {
-  font-size: 50px;
+.header-buttons > button svg {
+  font-size: 40px;
   will-change: transform;
   color: #fff !important;
   transition: all 06s ease-in-out;
+}
+
+.menu-button svg {
+  font-size: 50px !important;
 }
 
 .menu-button:hover:not(.menu-open) svg {
