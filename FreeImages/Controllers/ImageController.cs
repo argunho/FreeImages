@@ -33,9 +33,9 @@ namespace FreeImages.Controllers
       //[Authorize(Roles = "Admin,Support")]
         public IEnumerable<ImageData> Get() => AllImages;
 
-        [HttpGet("images")]
-        public IEnumerable<UploadedImage> GetImages() =>
-            _db.UploadedImages?.OrderByDescending(x => x.Id).ToList() ?? Enumerable.Empty<UploadedImage>();
+        [HttpGet("images/{page}/{count}")]
+        public IEnumerable<UploadedImage> GetImages(int page, int count) =>
+            _db.UploadedImages?.OrderByDescending(x => x.Id).Skip(count * (page - 1)).Take(count).ToList() ?? Enumerable.Empty<UploadedImage>();
         #endregion
     }
 }

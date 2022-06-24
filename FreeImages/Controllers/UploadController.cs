@@ -30,12 +30,17 @@ public class UploadController : ControllerBase
         if (uploadedFile == null)
             return new JsonResult(new { res = "warning", msg = "Bild eller bild information saknas" });
 
-        var imgName = name.Replace(" ", "") + "." + uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
+        // Image name
+        var imgName = name.Replace(" ", "") + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "." 
+            + uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
+
+        // If the imag alreade exists
         if (_db.UploadedImages?.FirstOrDefault(x => x.ImgName == imgName) != null)
             return _help.Response("warning", "Image with the same name already exists");
 
         try
         {
+            // Upload to azure blob storage
             using (var stream = uploadedFile.OpenReadStream())
             {
                 _container.UploadBlob(imgName, stream);
@@ -46,6 +51,7 @@ public class UploadController : ControllerBase
             return _help.Response("error", ex.Message);
         }
 
+        // Get current user roles
         var claims = HttpContext.User.Claims.Where(x => x.Value == "Roles").ToList();
         var visible = claims?.ToString()?.IndexOf("Admin") > -1 || claims?.ToString()?.IndexOf("Support") > -1;
 
