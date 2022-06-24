@@ -3,8 +3,6 @@ import { Logout, UploadFile, FeaturedPlayList, Image, Close, Home } from '@mui/i
 import { useHistory } from 'react-router-dom';
 import { Button, List, ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
 
-import './../../../css/support.css'
-
 const menu = [
     { name: "Users", link: "users", icon: <FeaturedPlayList /> },
     { name: "Images", link: "images", icon: <Image /> },

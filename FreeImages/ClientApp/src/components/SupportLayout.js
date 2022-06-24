@@ -1,20 +1,29 @@
 import React, { Component } from 'react';
 import { Container } from 'reactstrap';
-import { NavMenu } from './public/blocks/NavMenu';
+import { withRouter } from "react-router-dom";
+import Header from './public/blocks/Header';
 
-import './../../css/support.css';
+import './../css/support.css';
 
-export class SupportLayout extends Component {
+class SupportLayout extends Component {
   static displayName = SupportLayout.name;
 
-  render () {
+  componentDidMount() {
+    const token = localStorage.getItem("token");
+    if (!(token === null || token === undefined))
+      this.props.history.push("/");
+  }
+
+  render() {
     return (
-      <div>
-        <NavMenu />
+      <>
+        <Header />
         <Container>
           {this.props.children}
         </Container>
-      </div>
+      </>
     );
   }
 }
+
+export default withRouter(SupportLayout);

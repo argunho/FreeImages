@@ -19,7 +19,7 @@ export class Home extends Component {
     this.get();
   }
 
-  git = async () => {
+  get = async () => {
     const { searchKeyword } = this.state;
     const res = (searchKeyword.length >= 3) ?
       await fetch("image/" + searchKeyword)
@@ -47,7 +47,6 @@ export class Home extends Component {
             <Search />
           </Button>
         </FormControl>
-
       </div>
     );
   }

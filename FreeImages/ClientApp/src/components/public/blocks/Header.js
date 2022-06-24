@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import logo from './../../../images/logo.png';
 import './../../../css/header.css';
-import { Home, Menu, MenuOpen, Settings } from '@mui/icons-material';
+import { Home, Menu, MenuOpen } from '@mui/icons-material';
 import SupportMenu from '../../support/blocks/SupportMenu';
 
 export default function Header(props) {
@@ -38,7 +38,6 @@ export default function Header(props) {
                 {visible ? <MenuOpen color='#ccc' /> : <Menu />}
               </Button> : null}
           </div>
-
         </Container>
       </header>
       {/* <div className='curtain'></div> */}
