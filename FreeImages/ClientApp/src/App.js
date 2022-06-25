@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import { Route, Router } from 'react-router';
-import { Layout } from './components/Layout';
 import { withRouter, Switch } from "react-router-dom";
 
 // Layout
 import Home from './components/public7/Home';
+import { Layout } from './components/Layout';
 
 // Support
 import SupportLayout  from './components/SupportLayout';
 import UploadFileForm from './components/support/UploadFileForm';
 import ImagesList from './components/support/ImagesList';
-
-import './css/styles.css';
 import Users from './components/support/Users';
 import Logout from './components/support/Logout';
+
+import './css/styles.css';
 
 const routesLayout = [
   {
@@ -60,6 +60,7 @@ class App extends Component {
           {routesLayout.map((l, index) => (
             l.routes.map((r, ind) => (
               <Route exact
+                key={ind}
                 path={l.url + r.path}
                 render={props => (
                   <l.layout history={props.history}>
