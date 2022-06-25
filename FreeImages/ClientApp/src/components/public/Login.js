@@ -17,7 +17,6 @@ export default function Login(props) {
     const [form, setForm] = useState(defaultForm);
     const [loading, setLoading] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
-    const [hash, setHash] = useState(null);
     const [loginLink, setLoginLink] = useState(false);
     const [response, setResponse] = useState(null);
     const [visible, setVisible] = useState(false);
@@ -86,6 +85,7 @@ export default function Login(props) {
                                 placeholder="At least 6 characters ..."
                                 value={form.password}
                                 onChange={changeHandler} />
+
                             <FormControlLabel className='login-checkbox' control={
                                 <Checkbox color="default"
                                     checked={form.remember} onChange={changeHandler} name="remember" />
@@ -102,7 +102,7 @@ export default function Login(props) {
                         : null
                     }
                     <div className="buttons-wrapper">
-                        <Button variant="outlined" className="submit-btn" type="submit">Send</Button>
+                        <Button variant="outlined" color="inherit" className="submit-btn" disabled={loading} type="submit">Send</Button>
                     </div>
                 </form>
                 <p className="switch-link" onClick={() => setLoginLink(!loginLink)}>
@@ -112,12 +112,14 @@ export default function Login(props) {
         )
     }
 
-    // Submit form
-    const submitHandler = e => {
+    const submitForm = (e) => {
         if (e) e.preventDefault();
-
         setLoading(true);
+        if(props.register)
+    }
 
+    // Submit form
+    const submitLogin = () => {
         const api = (param != null) ? axios.get("account/LoginWithoutPassword/" + param)
             : (loginLink) ? axios.get("account/LoginLink/" + form.email)
                 : axios.post("account/login", form);
@@ -146,6 +148,12 @@ export default function Login(props) {
             })
     }
 
+    // Submit register
+    const submitRegister = () => {
+
+    }
+
+
     // Reset response
     const reset = (res) => {
         setResponse(null);
@@ -160,7 +168,7 @@ export default function Login(props) {
 
             {/* Loading */}
             {(loading) ?
-                <div className="block-loading-login"><CircularProgress /></div>
+                <div className="curtain-center"><CircularProgress /></div>
                 : null}
         </div>
     )
