@@ -4,7 +4,7 @@ import { Layout } from './components/Layout';
 import { withRouter, Switch } from "react-router-dom";
 
 // Layout
-import Home from './components/public/Home';
+import Home from './components/public7/Home';
 
 // Support
 import SupportLayout  from './components/SupportLayout';
