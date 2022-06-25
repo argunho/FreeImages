@@ -7,4 +7,5 @@ public interface IHelpFunctions
     JsonResult Response(string? result, string? msg = null);
     bool Save();
     bool Delete(int id);
+    bool CheckEmail(string email);
 }
