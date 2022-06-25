@@ -46,7 +46,7 @@ export default function Login(props) {
                 localStorage.removeItem("token");
                 setToken(null);
             } else
-                history.push("/");
+                history.push("/support/images");
         }
 
         document.title = "HK | Login"
@@ -87,14 +87,21 @@ export default function Login(props) {
                     {(loginLink) ? "Send login link" : "Login"}
                 </h3>
                 <br />
-                <form onSubmit={this.submitHandler}>
-                    <TextField label="Email" name="email" type="text" variant="outlined" value={email} onChange={changeHandler} />
+                <form onSubmit={submitHandler}>
+                    <TextField label="Email" name="email" type="text" variant="outlined" value={form.email} onChange={changeHandler} />
                     {(!loginLink) ?
                         <>
-                            <TextField label="Password" name="password" type={(visible) ? "text" : "password"} variant="outlined" placeholder="At least 6 characters ..." onChange={this.changeHandler} value={password} />
+                            <TextField
+                                label="Password"
+                                name="password"
+                                type={(visible) ? "text" : "password"}
+                                variant="outlined"
+                                placeholder="At least 6 characters ..."
+                                value={form.password}
+                                onChange={this.changeHandler} />
                             <FormControlLabel control={
                                 <WhiteCheckbox
-                                    checked={remember} onChange={changeHandler} name="remember" />
+                                    checked={form.remember} onChange={changeHandler} name="remember" />
                             } label="Remember me" />
                             <FormControlLabel control={
                                 <WhiteCheckbox
@@ -125,8 +132,8 @@ export default function Login(props) {
         setLoading(true);
 
         const api = (param != null) ? axios.get("account/LoginWithoutPassword/" + param)
-            : (loginLink) ? axios.get("account/LoginLink/" + email)
-                : axios.post("account/login", obj);
+            : (loginLink) ? axios.get("account/LoginLink/" + form.email)
+                : axios.post("account/login", form);
 
         api.then(
             res => {
@@ -134,12 +141,13 @@ export default function Login(props) {
                 setLoading(false);
                 setResponse(res.data);
 
-                if (token){
+                if (token) {
                     localStorage.setItem("token", token);
+                    setLoggedIn(true);
                     setTimeout(() => {
                         history.push("/support/images")
                     }, 2000)
-                } else if (error) 
+                } else
                     console.error(errorMessage);
             }).catch(error => {
                 setLoading(false);
@@ -151,57 +159,22 @@ export default function Login(props) {
             })
     }
 
+    // Reset response
+    const reset = (res) => {
+        setResponse(null);
+        setForm(defaultForm);
+    }
+
     return (
+        <div className={"login-form" + ((loggedIn) ? " authentication-block" : "") + response}
+            onClick={() => this.reset()}>
 
-    )
-}
+            {(loggedIn) ? ("Welcome " + response.user) : this.loginForm()}
 
-
-
-
-
-// Response message
-response(res) {
-    if (!res) return null;
-
-    const { response, message } = this.state;
-    return (
-        <div className={"slide-in-bottom response-alert" + response}>
-            {ReactHtmlParser(message)}
+            {/* Loading */}
+            {(loading) ?
+                <div className="block-loading-login"><CircularProgress /></div>
+                : null}
         </div>
     )
-}
-
-// Reset response
-reset = (res) => {
-    if (!res) return;
-    this.setState({
-        res: false,
-        response: "",
-        message: null,
-        loginLink: false
-    })
-}
-
-render() {
-    const { auth, loggedIn, redirect, loading, res, response, user } = this.state;
-    if (auth) {
-        return <Redirect to={redirect} />
-    } else {
-        return (
-            <div className={"login-form" + ((loggedIn) ? " authentication-block" : "") + response}
-                onClick={() => this.reset(res)}>
-
-                {(loggedIn) ? ("Välkommen " + user) : this.loginForm()}
-
-                {/* Loading */}
-                {(loading) ?
-                    <div className="block-loading-login"><CircularProgress /></div>
-                    : null}
-
-                {this.response(res)}
-            </div>
-        )
-    }
-}
 }

@@ -173,24 +173,24 @@ namespace FreeImages.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "af9828b9-e9aa-48be-afa6-e1f68cf61796",
-                            ConcurrencyStamp = "5300bb71-9cb3-434f-8905-4a7c8ffaa12b",
+                            Id = "804fc523-2434-43be-9b0b-226c8bbd2160",
+                            ConcurrencyStamp = "5a867671-8d1f-4b2d-b713-102d2dac2840",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7021100c-d4d5-492a-942b-1efe58ac8ba5",
-                            ConcurrencyStamp = "91db2cf2-b211-4812-9986-788545bb5e23",
+                            Id = "70c17362-893e-4f0c-888e-a3a464a71cb5",
+                            ConcurrencyStamp = "e67a7268-d7f5-4678-80a4-4422612354d8",
                             Name = "Support",
                             NormalizedName = "SUPPORT"
                         },
                         new
                         {
-                            Id = "59e7f7ca-f7c6-4d69-b07d-0b5c0e5a5e1e",
-                            ConcurrencyStamp = "0bd3bdc4-0dfd-446c-bbbe-83d6ad869b0e",
-                            Name = "Support",
-                            NormalizedName = "SUPPORT"
+                            Id = "4d06cf7d-d0b7-47ec-9cda-33183a17e3b5",
+                            ConcurrencyStamp = "00e94e35-a6da-4594-b2cd-9dc591b702c3",
+                            Name = "User",
+                            NormalizedName = "USER"
                         });
                 });
 

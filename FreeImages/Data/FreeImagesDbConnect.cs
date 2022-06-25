@@ -20,7 +20,7 @@ public class FreeImagesDbConnect : IdentityDbContext<User>
         modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
                 new IdentityRole { Name = "Support", NormalizedName = "SUPPORT" },
-                new IdentityRole { Name = "Support", NormalizedName = "SUPPORT" }
+                new IdentityRole { Name = "User", NormalizedName = "USER" }
             );
     }
 }
