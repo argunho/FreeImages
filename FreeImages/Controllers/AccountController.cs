@@ -1,5 +1,7 @@
-﻿using FreeImages.Intefaces;
+﻿using FreeImages.Data;
+using FreeImages.Intefaces;
 using FreeImages.Models;
+using FreeImages.Repository;
 using FreeImages.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,6 +24,8 @@ public class AccountController : ControllerBase
     private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly MailRepository _mail;
+    private readonly FreeImagesDbConnect _db;
 
     public AccountController(
         IHelpFunctions help,
@@ -29,7 +33,8 @@ public class AccountController : ControllerBase
                     UserManager<User> userManager,
             SignInManager<User> signInManager,
             ILogger<AccountController> logger,
-            RoleManager<IdentityRole> roleManager
+            RoleManager<IdentityRole> roleManager,
+            FreeImagesDbConnect db
         )
     {
         _help = help;
@@ -38,9 +43,77 @@ public class AccountController : ControllerBase
         _logger = logger;
         _signInManager = signInManager;
         _roleManager = roleManager;
+        _mail = new MailRepository();
+        _db = db;
     }
 
     #region GET
+    [HttpGet("Logout")] // Logg out
+    public async Task<IActionResult> LogOut()
+    {
+        try
+        {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("Users are logged out.");
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { alert = "error", message = "Something has gone wrong.", erorrmMessage = "Error => " + e.Message });
+        }
+    }
+
+    [HttpGet("LoginLink/{email}")] // Send authantication link
+    public async Task<IActionResult> LoginLink(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return BadRequest(new { alert = "error", message = "Users with matching email address not found ... " });
+
+        if (!_help.CheckEmail(email))
+            return BadRequest(new { alert = "error", message = "Incorrect email address" });
+
+        user.LoginHash = Guid.NewGuid();
+
+        if (_help.Save())
+        {
+            var mailContent = "<h4>Hi " + user.Name + "!</h4>" +
+                       "<p>Here is the login link to log in to {domain}.</p>" +
+                       "<p>Click <a href='{domain}/login/" + user.LoginHash + "' target='_blank'>here</a> to login.</p>";
+
+            if (!_mail.SendMail(email, "Login link", mailContent))
+                return BadRequest(new { alert = "error", message = "Something went wrong trying to send an email, please try again later ..." });
+
+            return Ok(new { alert = "success", message = "It went well without any problems! <br/> Please check your email!" });
+        }
+
+        return BadRequest(new { alert = "error", message = "Something went wrong ...." });
+    }
+
+    [HttpGet("LoginWithoutPassword/{hash}")] // Login without password
+    public async Task<IActionResult> SignInWidthoutPassword(string hash)
+    {
+        var user = _db.User?.FirstOrDefault(x => x.LoginHash.ToString() == hash.ToString());
+
+        if (hash == null || user == null)
+            return BadRequest(new { alert = "error", message = "Something has gone wrong. There is no or no valid login link for users." });
+
+        try
+        {
+            var roles = _userManager.GetRolesAsync(user).Result;
+
+            user.LoginHash = Guid.Empty;
+            _help.Save();
+
+            var token = GenerateJwtToken(user, roles.ToList(), 1);
+            await _signInManager.SignInAsync(user, true, null);
+            return Ok(new { alert = "success", token = token, user = user.Name, id = user.Id });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { alert = "error", message = "Something has gone wrong.", errorMessage = "Server error => " + e.Message });
+        }
+    }
     [HttpGet("ChangePassword")] // Send new password
     [Authorize]
     public async Task<IActionResult> ForgotPassword(string email)
@@ -66,10 +139,10 @@ public class AccountController : ControllerBase
 
                 // Mails
                 //_help.SendMail(user.Email, "Nytt lösenord", mailContent);
-                return Ok("The new password has been sent, check your email");
+                return Ok(new { alert = "success", message = "The new password has been sent, check your email" });
             }
         }
-        return BadRequest("Failed to save new password, please try again later ...");
+        return BadRequest(new { alert = "error", message = "Failed to save new password, please try again later ..." });
     }
     #endregion
 
@@ -81,7 +154,7 @@ public class AccountController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest();
         if (!_help.CheckEmail(model.Email))
-            return BadRequest("Incorrect email address");
+            return BadRequest(new { alert = "warning", message = "Incorrect email address" });
 
         var admin_email = model.Email.Equals("aslan_argun@hotmail.com") || model.Email.Equals("janeta_88@hotmail.com");
         var user = new User { Name = model.Name, UserName = model.Email, Email = model.Email };
@@ -99,8 +172,8 @@ public class AccountController : ControllerBase
                     roles.Add("Admin");
                 if (roles.IndexOf("Support") == -1)
                     roles.Add("Support");
-                if (roles.IndexOf("Service") == -1)
-                    roles.Add("Service");
+                if (roles.IndexOf("User") == -1)
+                    roles.Add("User");
             }
 
             for (var i = 0; i < roles.Count(); i++)
@@ -122,26 +195,26 @@ public class AccountController : ControllerBase
             // Mails
             //_help.SendMail(user.Email, "Välkommen " + model.Name, mailContent);
 
-            return Ok("Registration was successful!");
+            return Ok(new { alert = "success", message = "Registration was successful!" });
         }
 
-        var error_msg = "";
+        var error_message = "";
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(string.Empty, error.Description);
-            error_msg += error.Description + " ";
+            error_message += error.Description + "<br/>";
         }
 
-        return BadRequest(error_msg);
+        return BadRequest(new { alert = "error", message = error_message });
     }
 
     [HttpPost("Login")] // Logga in
     public async Task<IActionResult> SignIn(LoginViewModel model)
     {
         if (!ModelState.IsValid)
-            return BadRequest("Formulärdata är felaktigt ifyllda");
+            return BadRequest(new { alert = "warning", message = "Form data is incorrectly filled in" });
         else if (!_help.CheckEmail(model.Email))
-            return BadRequest("Felaktig e-postadress");
+            return BadRequest(new { alert = "warning", message = "Incorrect email address" });
 
         // This doesn't count login failures towards account lockout
         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
@@ -153,10 +226,14 @@ public class AccountController : ControllerBase
 
             var days = (model.Remember) ? 30 : 1;
             var token = GenerateJwtToken(user, currentRoles.ToList(), days);
-            return Ok(new { success = true, token = token, user = user.Name });
+            return Ok(new { alert = "success", token = token, user = user.Name });
         }
-        return BadRequest((result.IsLockedOut) ? "User account locked out. Please try again later ..."
-                : "Incorrect email address or password");
+        return BadRequest(new
+        {
+            alert = "error",
+            message = (result.IsLockedOut) ? "User account locked out. Please try again later ..."
+                : "Incorrect email address or password"
+        });
     }
     #endregion
 

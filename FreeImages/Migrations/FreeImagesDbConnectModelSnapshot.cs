@@ -82,8 +82,10 @@ namespace FreeImages.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -95,6 +97,9 @@ namespace FreeImages.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("LoginHash")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -168,15 +173,22 @@ namespace FreeImages.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "73db0ad1-4293-4735-a3f3-beb6ad1abb2f",
-                            ConcurrencyStamp = "ddb31f52-8a43-4fd9-b74d-ca2fc6625f05",
+                            Id = "af9828b9-e9aa-48be-afa6-e1f68cf61796",
+                            ConcurrencyStamp = "5300bb71-9cb3-434f-8905-4a7c8ffaa12b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "236ee805-5825-4ecb-bffe-c6402100069b",
-                            ConcurrencyStamp = "2990223e-25f7-47b2-99ac-2d70fad4364b",
+                            Id = "7021100c-d4d5-492a-942b-1efe58ac8ba5",
+                            ConcurrencyStamp = "91db2cf2-b211-4812-9986-788545bb5e23",
+                            Name = "Support",
+                            NormalizedName = "SUPPORT"
+                        },
+                        new
+                        {
+                            Id = "59e7f7ca-f7c6-4d69-b07d-0b5c0e5a5e1e",
+                            ConcurrencyStamp = "0bd3bdc4-0dfd-446c-bbbe-83d6ad869b0e",
                             Name = "Support",
                             NormalizedName = "SUPPORT"
                         });

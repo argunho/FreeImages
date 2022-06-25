@@ -19,6 +19,7 @@ public class FreeImagesDbConnect : IdentityDbContext<User>
         //seed roles
         modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Name = "Support", NormalizedName = "SUPPORT" },
                 new IdentityRole { Name = "Support", NormalizedName = "SUPPORT" }
             );
     }

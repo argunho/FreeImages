@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 
-namespace FreeImages.Repositories;
+namespace FreeImages.Repository;
 
 public class MailRepository
 {
@@ -123,16 +124,16 @@ public class MailRepository
     public string ImageToBase64(string imgUrl = "")
     {
         string imgBase64 = "";
-        using (Image img = Image.FromFile(imgUrl))
-        {
-            using (MemoryStream m = new MemoryStream())
-            {
-                Image imageToConvert = img;
-                imageToConvert.Save(m, img.RawFormat);
-                byte[] imageBytes = m.ToArray();
-                imgBase64 = Convert.ToBase64String(imageBytes);
-            }
-        }
+        //using (System.Drawing.Image img = Image.FromFile(imgUrl))
+        //{
+        //    using (MemoryStream m = new MemoryStream())
+        //    {
+        //        Image imageToConvert = img;
+        //        imageToConvert.Save(m, img.RawFormat);
+        //        byte[] imageBytes = m.ToArray();
+        //        imgBase64 = Convert.ToBase64String(imageBytes);
+        //    }
+        //}
         return imgBase64;
     }
     #endregion

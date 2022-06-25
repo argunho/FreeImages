@@ -6,6 +6,10 @@ namespace FreeImages.Models;
 public class User : IdentityUser
 {
     public string? Name { get; set; }
-    public string Email { get; set; }   
-
+    public Guid LoginHash { get; set; }
+    public DateTime Date { get; set; }
+    public User()
+    {
+        Date = DateTime.Now;
+    }
 }
