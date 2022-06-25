@@ -41,6 +41,7 @@ export default function Login(props) {
             if (param !== null)
                 submitHandler(null);
         }, 100)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
@@ -112,14 +113,12 @@ export default function Login(props) {
         )
     }
 
-    const submitForm = (e) => {
-        if (e) e.preventDefault();
-        setLoading(true);
-        if(props.register)
-    }
-
     // Submit form
-    const submitLogin = () => {
+    const submitHandler = e => {
+        if (e) e.preventDefault();
+
+        setLoading(true);
+
         const api = (param != null) ? axios.get("account/LoginWithoutPassword/" + param)
             : (loginLink) ? axios.get("account/LoginLink/" + form.email)
                 : axios.post("account/login", form);
@@ -147,12 +146,6 @@ export default function Login(props) {
                 console.error("Error => " + error)
             })
     }
-
-    // Submit register
-    const submitRegister = () => {
-
-    }
-
 
     // Reset response
     const reset = (res) => {

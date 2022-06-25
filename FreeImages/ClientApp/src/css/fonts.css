@@ -1,0 +1,98 @@
+@font-face {
+    font-family: aniversario;
+    src: url(./../fonts/aniversario/aniversario_demo-font-FFP.ttf);
+}
+
+@font-face {
+    font-family: buseta;
+    src: url(./../fonts/buseta/BUSSETA_.TTF);
+}
+
+@font-face {
+    font-family: castor;
+    src: url(./../fonts/castogate/CASTOR__.ttf);
+}
+
+@font-face {
+    font-family: dancing;
+    src: url(./../fonts/dancing/DancingintheMinefields.ttf);
+}
+
+@font-face {
+    font-family: league;
+    src: url(./../fonts/league/LeagueGothic-Regular.otf);
+}
+
+@font-face {
+    font-family: galvanize;
+    src: url(./../fonts/galvanize/galvaniz.ttf);
+}
+
+@font-face {
+    font-family: whippe;
+    src: url(./../fonts/whippersnapper-brk/whipsnap.ttf);
+}
+
+@font-face {
+    font-family: typewrit;
+    src: url(./../fonts/typewrit/ELEGANT\TYPEWRITER.ttf);
+}
+
+@font-face {
+    font-family: topic;
+    src: url(./../fonts/topic-alternates/TopicAlternates.ttf);
+}
+
+@font-face {
+    font-family: sunday;
+    src: url(./../fonts/sunday-holiday/Sunday\Holiday.ttf);
+}
+
+@font-face {
+    font-family: summer;
+    src: url(./../fonts/summers/Summers\Victory\Over\Spring\-\TTF.ttf);
+}
+
+@font-face {
+    font-family: nvd;
+    src: url(./../fonts/nvdaasdawadidohi/NVDAASDAWADIDOHI.ttf);
+}
+
+@font-face {
+    font-family: noodle;
+    src: url(./../fonts/noodletee/Noodletee.ttf);
+}
+
+@font-face {
+    font-family: littlemiss;
+    src: url(./../fonts/littlemissspriss/LittleMissPriss.ttf);
+}
+
+@font-face {
+    font-family: lakershore;
+    src: url(./../fonts/lakershore/lakeshor.ttf);
+}
+
+.aniversario {
+    font-family: aniversario;
+}
+
+.buseta {
+    font-family: buseta;
+}
+
+.castor {
+    font-family: castor;
+}
+
+.dancing {
+    font-family: dancing;
+}
+
+.league {
+    font-family: league;
+}
+
+.galvanize {
+    font-family: galvanize;
+}

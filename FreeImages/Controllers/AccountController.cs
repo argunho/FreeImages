@@ -148,7 +148,7 @@ public class AccountController : ControllerBase
 
     #region Post
     [HttpPost("Register")] // Register
-    [Authorize(Roles = "Admin, Support")]
+    //[Authorize(Roles = "Admin, Support")]
     public async Task<IActionResult> Register(AccountViewModel model)
     {
         if (!ModelState.IsValid)

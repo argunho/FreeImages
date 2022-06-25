@@ -3,8 +3,9 @@ import { Route, Router } from 'react-router';
 import { withRouter, Switch } from "react-router-dom";
 
 // Layout
-import Home from './components/public7/Home';
 import { Layout } from './components/Layout';
+import Home from './components/public/Home';
+import Login from './components/public/Login';
 
 // Support
 import SupportLayout  from './components/SupportLayout';
@@ -14,6 +15,8 @@ import Users from './components/support/Users';
 import Logout from './components/support/Logout';
 
 import './css/styles.css';
+import './css/fonts.css';
+import Register from './components/support/Register';
 
 const routesLayout = [
   {
@@ -23,6 +26,10 @@ const routesLayout = [
       {
         path: "/",
         component: Home
+      },
+      {
+        path: "/login",
+        component: Login
       }
     ]
   },
@@ -41,6 +48,10 @@ const routesLayout = [
       {
         path: '/upload-image',
         component: UploadFileForm
+      },
+      {
+        path: '/register',
+        component: Register
       },
       {
         path: '/logout',
