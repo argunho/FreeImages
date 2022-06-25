@@ -40,6 +40,38 @@ public class AccountController : ControllerBase
         _roleManager = roleManager;
     }
 
+    #region GET
+    [HttpGet("ChangePassword")] // Send new password
+    [Authorize]
+    public async Task<IActionResult> ForgotPassword(string email)
+    {
+        if (!_help.CheckEmail(email))
+            return BadRequest("Incorrect email address");
+
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+            return BadRequest("Users with matching emails have not been found ...");
+
+        var newPassword = _help.Hash(10);
+        var remove = await _userManager.RemovePasswordAsync(user);
+        if (remove.Succeeded)
+        {
+            // If old pass removed, insert new pass
+            var password = await _userManager.AddPasswordAsync(user, newPassword);
+            if (password.Succeeded)
+            {
+                var mailContent = "<h4>Hi " + user.Name + "</h4><br/>" +
+                              "<p>Your password has been changed.</p>" +
+                              "<p>Your new password is: <span style='font-weight:bold;margin-lleft:15px'>" + newPassword + "</span></p><br/>";
+
+                // Mails
+                //_help.SendMail(user.Email, "Nytt lösenord", mailContent);
+                return Ok("The new password has been sent, check your email");
+            }
+        }
+        return BadRequest("Failed to save new password, please try again later ...");
+    }
+    #endregion
 
     #region Post
     [HttpPost("Register")] // Register
@@ -49,7 +81,7 @@ public class AccountController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest();
         if (!_help.CheckEmail(model.Email))
-            return BadRequest("Felaktig e-postadress");
+            return BadRequest("Incorrect email address");
 
         var admin_email = model.Email.Equals("aslan_argun@hotmail.com") || model.Email.Equals("janeta_88@hotmail.com");
         var user = new User { Name = model.Name, UserName = model.Email, Email = model.Email };
@@ -81,17 +113,18 @@ public class AccountController : ControllerBase
 
             var token = GenerateJwtToken(user, roles);
 
-            var mailContent = "<h4>Hej " + model.Name + "!</h4><br/>" +
-                              "<p>Välkommen som en ny användare på {domain}.</p>" +
-                              "<p>Här nedan är dina inloggnings uppgifter, spara de för framtida bruk.</p><br/>" +
-                              "<p>Änvändarnamn: " + model.Email + "</p>" +
-                              "<p>Lösenord: " + model.Password + "</p><br/>";
+            var mailContent = "<h4>Hi " + model.Name + "!</h4><br/>" +
+                              "<p>Welcome as a new user on {domain}.</p>" +
+                              "<p>Below are your login details, save them for future reference.</p><br/>" +
+                              "<p>Username: " + model.Email + "</p>" +
+                              "<p>Password: " + model.Password + "</p><br/>";
 
             // Mails
-            _help.SendMail(user.Email, "Välkommen " + model.Name, mailContent);
+            //_help.SendMail(user.Email, "Välkommen " + model.Name, mailContent);
 
-            return Ok("Registrering var framgångsrik!");
+            return Ok("Registration was successful!");
         }
+
         var error_msg = "";
         foreach (var error in result.Errors)
         {
@@ -122,39 +155,8 @@ public class AccountController : ControllerBase
             var token = GenerateJwtToken(user, currentRoles.ToList(), days);
             return Ok(new { success = true, token = token, user = user.Name });
         }
-        return BadRequest((result.IsLockedOut) ? "Användarkonto låst ut. Var vänlig försök senare ..."
-                : "Felaktig e-post eller lösenord");
-    }
-
-    [HttpGet("ChangePassword")] // Send new password
-    [Authorize]
-    public async Task<IActionResult> PassForgot(string email)
-    {
-        if (!_help.CheckEmail(email))
-            return BadRequest("Felaktig e-postadress");
-
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
-            return BadRequest("Användare med matchande Mails har inte hittats ...");
-
-        var newPassword = _help.Hash(10);
-        var remove = await _userManager.RemovePasswordAsync(user);
-        if (remove.Succeeded)
-        {
-            // If old pass removed, insert new pass
-            var password = await _userManager.AddPasswordAsync(user, newPassword);
-            if (password.Succeeded)
-            {
-                var mailContent = "<h4>Hej " + user.Name + "</h4><br/>" +
-                              "<p>Ditt lösenord har ändrats.</p>" +
-                              "<p>Ditt nytt lösenord är: <span style='font-weight:bold;margin-lleft:15px'>" + newPassword + "</span></p><br/>";
-
-                // Mails
-                //_help.SendMail(user.Email, "Nytt lösenord", mailContent);
-                return Ok("Nytt lösenord är skickad, kontrollera din e-post");
-            }
-        }
-        return BadRequest("Det gick inte spara nytt lösenord, var vänlig försök igen senare ...");
+        return BadRequest((result.IsLockedOut) ? "User account locked out. Please try again later ..."
+                : "Incorrect email address or password");
     }
     #endregion
 
