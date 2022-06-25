@@ -1,20 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import axios from "axios";
-import { TextField, Button, Checkbox, FormControlLabel, CircularProgress } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
-import { Redirect, useHistory } from 'react-router-dom';
-import ReactHtmlParser from 'react-html-parser';
+import { TextField, Button, Checkbox, FormControlLabel, CircularProgress } from '@mui/material';
+import { useHistory } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
-
-const WhiteCheckbox = withStyles({
-    root: {
-        color: "#FFF",
-        '&$checked': {
-            color: "#FFF",
-        },
-    },
-    checked: {}
-})((props) => <Checkbox color="default" {...props} />);
 
 const defaultHeight = window.innerHeight;
 
@@ -34,7 +22,6 @@ export default function Login(props) {
     const [response, setResponse] = useState(null);
     const [visible, setVisible] = useState(false);
     const [reliable, setReliable] = useState(false);
-    const [auth, setAuth] = useState(false);
     const [token, setToken] = useState(localStorage.getItem("token"));
 
     const history = useHistory();
@@ -53,7 +40,7 @@ export default function Login(props) {
         setTimeout(() => {
             setReliable(localStorage.getItem("reliable") === "true");
             if (param !== null)
-                this.submitHandler(null);
+                submitHandler(null);
         }, 100)
     }, [])
 
@@ -98,17 +85,17 @@ export default function Login(props) {
                                 variant="outlined"
                                 placeholder="At least 6 characters ..."
                                 value={form.password}
-                                onChange={this.changeHandler} />
-                            <FormControlLabel control={
-                                <WhiteCheckbox
+                                onChange={changeHandler} />
+                            <FormControlLabel className='login-checkbox' control={
+                                <Checkbox color="default"
                                     checked={form.remember} onChange={changeHandler} name="remember" />
                             } label="Remember me" />
-                            <FormControlLabel control={
-                                <WhiteCheckbox
+                            <FormControlLabel className='login-checkbox' control={
+                                <Checkbox color="default"
                                     checked={visible} onChange={() => setVisible(!visible)} />
                             } label="Show password" />
-                            <FormControlLabel control={
-                                <WhiteCheckbox
+                            <FormControlLabel className='login-checkbox' control={
+                                <Checkbox color="default" 
                                     checked={reliable} onChange={() => setReliable(!reliable)} />
                             } label="Show login button" />
                         </>
@@ -166,10 +153,10 @@ export default function Login(props) {
     }
 
     return (
-        <div className={"login-form" + ((loggedIn) ? " authentication-block" : "") + response}
-            onClick={() => this.reset()}>
+        <div className={"login-form" + ((loggedIn) ? " " + response?.alert : "")}
+            onClick={() => reset()}>
 
-            {(loggedIn) ? ("Welcome " + response.user) : this.loginForm()}
+            {(loggedIn) ? ("Welcome " + response.user) : loginForm()}
 
             {/* Loading */}
             {(loading) ?

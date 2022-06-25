@@ -30,6 +30,59 @@ body {
   margin: auto;
 }
 
+/* #region Login */
+.login-form {
+  margin: 15px auto;
+  padding: 35px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  border-radius: 5px;
+  width: 100%;
+  border: 1px solid #7d7e7d;
+  color: #7d7e7d;
+  margin-top: 70px;
+  font-family: league;
+  transition: all 0.9s ease-in-out;
+  height: 500px;
+  position: relative;
+  overflow: hidden;
+  max-width: 500px;
+}
+
+.login-form > form {
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.login-form > form .MuiFormControl-root {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.login-heading {
+  font-family: castor;
+}
+
+className='login-checkbox' 
+
+.switch-link {
+  width: 100%;
+  text-align: center;
+  font-family: castor;
+  color: #7d7e7d;
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  cursor: pointer;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.switch-link:hover {
+  color: #000;
+}
+/* #endregion */
+
 /* #region Search */
 .search-wrapper {
   width: 100%;
@@ -104,5 +157,32 @@ body {
 @media (min-width: 768px) {
   html {
     font-size: 16px;
+  }
+}
+@media (max-width: 485px) {
+  .login-form {
+    height: calc(100vh - 190px);
+    max-height: 540px;
+    margin-top: 20px;
+    padding: 25px 25px 15px 25px;
+    width: 98%;
+  }
+  .login-form > form {
+    width: 100%;
+    padding: 0;
+  }
+}
+@media (max-height: 640px) {
+  .login-form {
+    height: calc(100vh - 160px);
+    max-height: 540px;
+    margin-top: 10px;
+    padding: 20px 20px 15px 20px;
+  }
+}
+
+@media (max-height: 600px) {
+  .login-form {
+    height: 520px;
   }
 }
