@@ -29,7 +29,13 @@ const routesLayout = [
       },
       {
         path: "/login",
-        component: Login
+        component: Login,
+        props: {
+          displayWidth: window.innerWidth,
+          displayHeight: window.innerHeight,
+          menu: JSON.parse(sessionStorage.getItem("menu")) || [],
+          handleClick: (link) => this.props.history.push(link)
+      }
       }
     ]
   },
@@ -75,7 +81,7 @@ class App extends Component {
                 path={l.url + r.path}
                 render={props => (
                   <l.layout history={props.history}>
-                    <r.component {...props} />
+                    <r.component {...r.props} />
                   </l.layout>
                 )}
               />

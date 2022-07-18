@@ -19,7 +19,7 @@
 
 .menu {
   position: fixed;
-  width: 100%;
+  width: 98%;
   max-width: 415px;
   top: 130px;
   right: -415px;
@@ -125,3 +125,20 @@ button.menu-close:hover {
   color: #7d7e7d;
 }
 /* #endregion */
+
+
+@media(max-width: 485px) {
+  .menu {
+    top: 120px;  
+    height: calc(100vh - 140px);
+  }
+  .menu-visible {
+    right: calc((100% - 415px) / 2);
+  }
+}
+
+@media(max-width: 415px) {
+  .menu-visible {
+    right: 1%;
+  }
+}

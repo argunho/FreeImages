@@ -24,7 +24,7 @@ export default function Login(props) {
     const [token, setToken] = useState(localStorage.getItem("token"));
 
     const history = useHistory();
-
+console.log(props.displayWidth)
     useEffect(() => {
         if (token !== null && token !== undefined) {
             const decoded = jwt_decode(token);
