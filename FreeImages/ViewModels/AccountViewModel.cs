@@ -31,7 +31,7 @@ public class AccountViewModel
     [Compare("Password", ErrorMessage = "Lösenordet och bekräftelseslösenordet matchar inte.")]
     public string? ConfirmPassword { get; set; }
 
-    public string[]? Roles { get; set; }
+    public List<string> Roles { get; set; } = new();
 
     public bool Newsletter { get; set; }
 }

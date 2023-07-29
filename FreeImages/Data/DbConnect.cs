@@ -22,6 +22,8 @@ public class DbConnect : DbContext
         //        new IdentityRole { Name = "User", NormalizedName = "USER" }
         //    );
 
+        // Make keyless
+        //modelBuilder.Entity<User>(u => { u.HasNoKey(); });
     }
 }
 

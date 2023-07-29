@@ -72,16 +72,16 @@ function Login(props) {
     }
 
     // Submit form
-    const submitHandler = e => {
-        if (e) e.preventDefault();
+    const submitHandler = async e => {
+        e.preventDefault();
         console.log(submitHandler)
         setLoading(true);
-
+console.log(form)
         const api = (param != null) ? axios.get("account/LoginWithoutPassword/" + param)
             : (loginLink) ? axios.get("account/LoginLink/" + form.email)
                 : axios.post("account/login", form);
 
-        api.then(
+      await api.then(
             res => {
                 let { token, errorMessage } = res.data;
                 setLoading(false);

@@ -10,14 +10,13 @@ public class LoginViewModel
 {
     [Required]
     [EmailAddress]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     [Required]
     [DataType(DataType.Password)]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 
-    [Display(Name = "Kom ihåg mig")]
     public bool Remember { get; set; }
 
-    public string Hash { get; set; }
+    public string? Hash { get; set; }
 }

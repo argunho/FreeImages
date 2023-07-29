@@ -69,7 +69,6 @@ public class AccountController : ControllerBase
     [HttpGet("LoginLink/{email}")] // Send authantication link
     public async Task<IActionResult> LoginLink(string email)
     {
-        //var user = await _userManager.FindByEmailAsync(email);
         User user = null;
         if (user == null)
             return BadRequest(new { alert = "error", message = "Users with matching email address not found ... " });
@@ -173,41 +172,40 @@ public class AccountController : ControllerBase
             var hashedPassword = HashPassword(model.Password, model.Email.Length * 2, out var salt);
 
             // Create roles
-            List<string> roles = model?.Roles.ToList();
+            var roles = model?.Roles;
 
-            if (roles.IndexOf("User") == -1)
+            if (roles?.IndexOf("User") == -1)
                 roles.Add("User");
             if (admin_email)
             {
-                if (roles.IndexOf("Admin") == -1)
+                if (roles?.IndexOf("Admin") == -1)
                     roles.Add("Admin");
-                if (roles.IndexOf("Support") == -1)
+                if (roles?.IndexOf("Support") == -1)
                     roles.Add("Support");
-                if (roles.IndexOf("User") == -1)
+                if (roles?.IndexOf("User") == -1)
                     roles.Add("User");
             }
 
             // Create and save a user into the database
             var user = new User
             {
-                Name = model.Name,
-                UserName = model.Email,
-                Email = model.Email,
+                Name = model?.Name,
+                Email = model?.Email,
                 Password = hashedPassword,
                 Roles = string.Join(",", roles)
             };
 
-            _db.User.Add(user);
+            _db.User?.Add(user);
 
             if (_db.SaveChanges() > 0)
             {
                 var token = GenerateJwtToken(user);
 
-                var mailContent = "<h4>Hi " + model.Name + "!</h4><br/>" +
+                var mailContent = "<h4>Hi " + model?.Name + "!</h4><br/>" +
                                   "<p>Welcome as a new user on {domain}.</p>" +
                                   "<p>Below are your login details, save them for future reference.</p><br/>" +
-                                  "<p>Username: " + model.Email + "</p>" +
-                                  "<p>Password: " + model.Password + "</p><br/>";
+                                  "<p>Username: " + model?.Email + "</p>" +
+                                  "<p>Password: " + model?.Password + "</p><br/>";
 
                 // Send a mail to new user
                 //_help.SendMail(user.Email, "Välkommen " + model.Name, mailContent);
@@ -225,7 +223,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("Login")] // Logga in
-    public async Task<IActionResult> SignIn(LoginViewModel model)
+    public async Task<IActionResult> PostLogin(LoginViewModel model)
     {
         if (!ModelState.IsValid)
             return BadRequest(new { alert = "warning", message = "Form data is incorrectly filled in" });
@@ -237,7 +235,7 @@ public class AccountController : ControllerBase
         {
             var user = _users.FirstOrDefault(x => x.Email == model.Email);
             byte[] salt = RandomNumberGenerator.GetBytes(model.Email.Length * 2);
-            if (user == null || !VerifyPassword(model.Password, user.Password, model.Email.Length * 2, salt))
+            if (user == null || !VerifyPassword(model?.Password, user?.Password, model.Email.Length * 2, salt))
                 return BadRequest(new { alert = "warning", message = "Incorrect email address or password" });
             else
             {
