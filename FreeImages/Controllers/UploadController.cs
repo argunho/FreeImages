@@ -13,10 +13,10 @@ public class UploadController : ControllerBase
     private static string conatinerName = "uploadfilecontainer";
 
     private BlobContainerClient _container = new BlobContainerClient(connectionString, conatinerName);
-    private FreeImagesDbConnect _db;
+    private DbConnect _db;
     private IHelpFunctions _help;
 
-    public UploadController(FreeImagesDbConnect db, IHelpFunctions help)
+    public UploadController(DbConnect db, IHelpFunctions help)
     {
         _db = db;
         _help = help;
@@ -35,7 +35,7 @@ public class UploadController : ControllerBase
             + uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
 
         // If the imag alreade exists
-        if (_db.UploadedImages?.FirstOrDefault(x => x.ImgName == imgName) != null)
+        if (_db.PreviewImages?.FirstOrDefault(x => x.Name == imgName) != null)
             return _help.Response("warning", "Image with the same name already exists");
 
         try
@@ -55,28 +55,27 @@ public class UploadController : ControllerBase
         var claims = HttpContext.User.Claims.Where(x => x.Value == "Roles").ToList();
         var visible = claims?.ToString()?.IndexOf("Admin") > -1 || claims?.ToString()?.IndexOf("Support") > -1;
 
-        UploadedImage uploadedImage = new UploadedImage();
+        PreviewImage uploadedImage = new PreviewImage();
         if (visible)
         {
-            uploadedImage.ImgName = imgName;
+            uploadedImage.Name = imgName;
             if (!_help.Save())
                 return _help.Response("error");
         }
 
-        var imgData = new ImageData
+        var imgData = new Image
         {
             Name = name,
             Keywords = keywords,
-            UploadedImageId = uploadedImage.Id,
             Author = HttpContext?.User?.Identity?.Name,
             Visible = visible
         };
 
-        _db.ImageData?.Add(imgData);
+        _db.Image?.Add(imgData);
 
         if (!_help.Save())
         {
-            _db.UploadedImages?.Remove(uploadedImage);
+            _db.PreviewImages?.Remove(uploadedImage);
             _help.Save();
             return _help.Response("error");
         }

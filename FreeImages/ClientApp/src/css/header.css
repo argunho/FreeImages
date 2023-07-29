@@ -1,52 +1,77 @@
 ﻿/* Header content */
 header {
-  height: 110px;
-  background: url("./../images/header-bg.jpg");
+  height: 180px;
+  background: url("./../assets/images/header-bg.jpg");
   background-position: top;
-  background-size: 100% 230px;
+  background-size: 100% 400px;
   background-repeat: no-repeat;
-}
-
-header > .container {
-  height: 100%;
   position: relative;
-  border: none !important;
+  padding: 0 50px;
 }
 
-header img.logotype {
-  height: 50px !important;
-  max-width: 50%;
-  margin: 30px 0;
+.logotype {
+  font-size: 80px;
+  /* transform: scaleX(2); */
+  letter-spacing: 6px;
+  width: max-content;
+  color: #FFFFFF;
+  text-transform: capitalize;
+  font-family: coventry;
+  /* font-family: enough; */
+  /* font-family: faishal; */
+  /* font-family: idilica; */
+  /* font-family: pneumati; */
+  /* font-family: pneutall; */
+  /* font-family: pneuwide; */
+}
+
+.logotype>span {
+  display: block;
+  margin-top: 0;
+  padding: 5px 8px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  border-bottom: 2px solid #FFFFFF;
+  font-size: 16px;
+  font-family: pneutall;
+  width: max-content;
+  align-self: flex-end;
 }
 
 .header-buttons {
-  position: absolute !important;
-  right: 10px;
-  top: 25px;
-  display: flex;
-  justify-content: right;
+  width: max-content;
 }
 
-.menu-button {
-  color: #fff !important;
-  border-radius: 50% !important;
-  background-color: transparent !important;
+.header-buttons>button {
+  height: 70px;
+  width: 70px;
+  padding: 0;
+  border: 3px dotted #FFFFFF;
+  border-radius: 50%;
+  transition: all 0.5s ease-in-out;
+  box-shadow: 0 0.25rem 0.75rem rgba(255, 255, 255, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0.85;
 }
 
-.header-buttons > button svg {
-  font-size: 40px;
-  will-change: transform;
-  color: #fff !important;
-  transition: all 06s ease-in-out;
+.header-buttons>button:not(button:first-child){
+  margin-left: 15px;
 }
 
-.menu-button svg {
-  font-size: 50px !important;
+.header-buttons>button:hover {
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.8);
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.65);
+  border-style: solid;
+  box-shadow: 0 0.25rem 0.75rem rgba(255, 255, 255, 0.9);
 }
 
-.menu-button:hover:not(.menu-open) svg {
-  transform: scale(1.05);
+.header-buttons>button svg {
+  font-size: 35px;
+  color: #FFFFFF !important;
 }
+
 /* #region Navigation */
 
 /* #endregion */
@@ -55,6 +80,7 @@ header img.logotype {
   header {
     height: 70px;
   }
+
   header img.logotype {
     height: 45px !important;
     margin: 12.5px 0;

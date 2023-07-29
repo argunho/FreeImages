@@ -1,0 +1,63 @@
+/* #region Login */
+.login-container {
+    letter-spacing: 1px !important;
+    margin: 15px auto;
+    padding: 35px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    border-radius: 5px;
+    width: 100%;
+    border: 1px solid #7d7e7d;
+    color: #7d7e7d;
+    margin-top: 70px;
+    font-family: league;
+    transition: all 0.9s ease-in-out;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+    max-width: 500px;
+}
+
+.login-container>form {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.login-container>form .MuiFormControl-root {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.login-heading {
+    font-family: castor;
+}
+
+.login-checkbox {
+    display: block !important;
+}
+
+.login-checkbox>span {
+    font-size: 15px !important;
+    vertical-align: middle;
+    font-family: castor !important;
+    letter-spacing: 0.5px;
+}
+
+.switch-link {
+    width: 100%;
+    text-align: center;
+    font-family: castor;
+    color: #7d7e7d;
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    cursor: pointer;
+    font-size: 20px;
+    letter-spacing: 1px;
+}
+
+.switch-link:hover {
+    color: #000;
+}
+
+/* #endregion */

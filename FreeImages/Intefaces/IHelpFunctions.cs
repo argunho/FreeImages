@@ -10,4 +10,5 @@ public interface IHelpFunctions
     bool CheckEmail(string email);
     string Hash(int count = 0);
     DateTime DateFromString(string data);
+    Response BadResponse(string? message);
 }

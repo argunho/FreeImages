@@ -1,95 +1,45 @@
-import React, { Component } from 'react';
-import { Route, Router } from 'react-router';
-import { withRouter, Switch } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import AppRoutes from './AppRoutes';
 
-// Layout
-import { Layout } from './components/Layout';
-import Home from './components/public/Home';
-import Login from './components/public/Login';
+// Components
+import Loading from './components/Loading';
 
-// Support
-import SupportLayout  from './components/SupportLayout';
-import UploadFileForm from './components/support/UploadFileForm';
-import ImagesList from './components/support/ImagesList';
-import Users from './components/support/Users';
-import Logout from './components/support/Logout';
-
+// Css
 import './css/styles.css';
 import './css/fonts.css';
-import Register from './components/support/Register';
 
-const routesLayout = [
-  {
-    layout: Layout,
-    url: "",
-    routes: [
-      {
-        path: "/",
-        component: Home
-      },
-      {
-        path: "/login",
-        component: Login,
-        props: {
-          displayWidth: window.innerWidth,
-          displayHeight: window.innerHeight,
-          menu: JSON.parse(sessionStorage.getItem("menu")) || [],
-          handleClick: (link) => this.props.history.push(link)
-      }
-      }
-    ]
-  },
-  {
-    layout: SupportLayout,
-    url: "/support",
-    routes: [
-      {
-        path: '/users',
-        component: Users
-      },
-      {
-        path: '/images',
-        component: ImagesList
-      },
-      {
-        path: '/upload-image',
-        component: UploadFileForm
-      },
-      {
-        path: '/register',
-        component: Register
-      },
-      {
-        path: '/logout',
-        component: Logout
-      }
-    ]
-  }
-]
+function App() {
+  App.displayName = "App";
 
-class App extends Component {
-  static displayName = App.name;
+  const [currentLayout, setLayout] = useState(null);
 
-  render() {
-    return (
-      <Router history={this.props.history}>
-        <Switch>
-          {routesLayout.map((l, index) => (
-            l.routes.map((r, ind) => (
-              <Route exact
-                key={ind}
-                path={l.url + r.path}
-                render={props => (
-                  <l.layout history={props.history}>
-                    <r.component {...r.props} />
-                  </l.layout>
-                )}
-              />
-            ))))}
-        </Switch>
-      </Router>
-    );
-  }
+  const loc = useLocation();
+
+  useEffect(() => {
+    setLayout(AppRoutes[loc.pathname.indexOf("sp/") === -1 ? 0 : 1]);
+  }, [loc])
+
+  if(!currentLayout)
+    return <Loading />;
+
+  return (
+    // <Layout>
+    //   <Routes>
+    //     {AppRoutes.map((route, index) => {
+    //       const { element, ...rest } = route;
+    //       return <Route key={index} {...rest} element={element} />;
+    //     })}
+    //   </Routes>
+    // </Layout>
+    <currentLayout.layout>
+      <Routes>
+        {currentLayout.routes.map((r, ind) => (
+          <Route key={ind} path={r.path} element={<r.component />} />
+        ))}
+      </Routes>
+    </currentLayout.layout>
+  );
 }
 
-export default withRouter((props) => <App {...props} />);
+export default App;

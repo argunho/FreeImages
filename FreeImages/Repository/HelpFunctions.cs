@@ -8,10 +8,10 @@ namespace FreeImages.Repository;
 
 public class HelpFunctions : IHelpFunctions
 {
-    private FreeImagesDbConnect _db;
+    private DbConnect _db;
     private string? _message { get; set; }
 
-    public HelpFunctions(FreeImagesDbConnect db)
+    public HelpFunctions(DbConnect db)
     {
         _db = db;
     }
@@ -63,4 +63,8 @@ public class HelpFunctions : IHelpFunctions
         var culture = new CultureInfo("sv-SE");
         return DateTime.Parse(date, culture);
     }
+
+    // Return bad request
+    public Response BadResponse(string? message)  => 
+        new Models.Response { Alert = "error", Message = $"Something went wrong while trying to register a new user.!\n {message}" };
 }

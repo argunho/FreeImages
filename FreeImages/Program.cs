@@ -1,17 +1,18 @@
-using FreeImages.Data;
-using FreeImages.Intefaces;
-using FreeImages.Repository;
+global using FreeImages.Data;
+global using FreeImages.Intefaces;
+global using System.Text;
+global using FreeImages.Repository;
+global using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region Customized change
 // Add services to the container.
 ConfigurationManager configuration = builder.Configuration;
 
-builder.Services.AddDbContext<FreeImagesDbConnect>(options => options.UseSqlServer(
+builder.Services.AddDbContext<DbConnect>(options => options.UseSqlServer(
              configuration.GetConnectionString("DbConnection")));
 
 // Add interfaces and repositories --- 
@@ -38,13 +39,12 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 });
+#endregion
 
-
-// Add services to the container ---
-builder.Services.AddControllers();
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -57,18 +57,19 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+#region Customized change
 app.UseAuthentication(); // ---
 app.UseAuthorization(); // ---
 
 // Authorization with Jwt ---
 app.UseCors(builder => builder.WithOrigins(configuration["FreeImagesJwt:Url"])
                                 .AllowAnyHeader().AllowAnyMethod());
-
+#endregion
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
-app.MapFallbackToFile("index.html"); ;
+app.MapFallbackToFile("index.html");
 
 app.Run();

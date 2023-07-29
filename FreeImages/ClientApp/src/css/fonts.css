@@ -1,98 +1,170 @@
 @font-face {
     font-family: aniversario;
-    src: url(./../fonts/aniversario/aniversario_demo-font-FFP.ttf);
+    src: url(../assets/fonts/aniversario.ttf);
 }
 
 @font-face {
     font-family: buseta;
-    src: url(./../fonts/buseta/BUSSETA_.TTF);
+    src: url(../assets/fonts/busseta.ttf);
 }
 
 @font-face {
     font-family: castor;
-    src: url(./../fonts/castogate/CASTOR__.ttf);
+    src: url(../assets/fonts/castor.ttf);
 }
 
 @font-face {
     font-family: dancing;
-    src: url(./../fonts/dancing/DancingintheMinefields.ttf);
+    src: url(../assets/fonts/dancing.ttf);
 }
 
 @font-face {
     font-family: league;
-    src: url(./../fonts/league/LeagueGothic-Regular.otf);
+    src: url(../assets/fonts/LeagueGothic-Regular.otf);
 }
 
 @font-face {
     font-family: galvanize;
-    src: url(./../fonts/galvanize/galvaniz.ttf);
+    src: url(../assets/fonts/galvaniz.ttf);
 }
 
 @font-face {
-    font-family: whippe;
-    src: url(./../fonts/whippersnapper-brk/whipsnap.ttf);
+    font-family: whipsnap;
+    src: url(../assets/fonts/whipsnap.ttf);
 }
 
 @font-face {
-    font-family: typewrit;
-    src: url(./../fonts/typewrit/ELEGANT\TYPEWRITER.ttf);
+    font-family: typewrite;
+    src: url(../assets/fonts/typewrite.ttf);
 }
 
 @font-face {
     font-family: topic;
-    src: url(./../fonts/topic-alternates/TopicAlternates.ttf);
+    src: url(../assets/fonts/TopicAlternates.ttf);
 }
 
 @font-face {
     font-family: sunday;
-    src: url(./../fonts/sunday-holiday/Sunday\Holiday.ttf);
+    src: url(../assets/fonts/SundayHoliday.ttf);
 }
 
 @font-face {
     font-family: summer;
-    src: url(./../fonts/summers/Summers\Victory\Over\Spring\-\TTF.ttf);
+    src: url(../assets/fonts/SummersVictoryOverSpring.ttf);
 }
 
 @font-face {
     font-family: nvd;
-    src: url(./../fonts/nvdaasdawadidohi/NVDAASDAWADIDOHI.ttf);
+    src: url(../assets/fonts/nvdaasdawadidohi.ttf);
 }
 
 @font-face {
     font-family: noodle;
-    src: url(./../fonts/noodletee/Noodletee.ttf);
+    src: url(../assets/fonts/Noodletee.ttf);
 }
 
 @font-face {
     font-family: littlemiss;
-    src: url(./../fonts/littlemissspriss/LittleMissPriss.ttf);
+    src: url(../assets/fonts/LittleMissPriss.ttf);
 }
 
 @font-face {
-    font-family: lakershore;
-    src: url(./../fonts/lakershore/lakeshor.ttf);
+    font-family: lakershor;
+    src: url(../assets/fonts/lakeshor.ttf);
 }
-
-.aniversario {
-    font-family: aniversario;
+@font-face {
+    font-family: adalgisa;
+    src: url(../assets/fonts/adalgisa.ttf);
 }
-
-.buseta {
-    font-family: buseta;
+@font-face {
+    font-family: aenositalic;
+    src: url(../assets/fonts/aenos-italic.ttf);
 }
-
-.castor {
-    font-family: castor;
+@font-face {
+    font-family: aenoseregular;
+    src: url(../assets/fonts/lakeshor.ttf);
 }
-
-.dancing {
-    font-family: dancing;
+@font-face {
+    font-family: articulate;
+    src: url(../assets/fonts/Articulate.ttf);
 }
-
-.league {
-    font-family: league;
+@font-face {
+    font-family: bazelikin-heavy;
+    src: url(../assets/fonts/bazelikin/Bazelikin-Heavy.ttf);
 }
-
-.galvanize {
-    font-family: galvanize;
+@font-face {
+    font-family: coventry;
+    src: url(../assets/fonts/CoventryGarden.ttf);
+}
+@font-face {
+    font-family: enough;
+    src: url(../assets/fonts/enough.ttf);
+}
+@font-face {
+    font-family: faishal;
+    src: url(../assets/fonts/faishal.ttf);
+}
+@font-face {
+    font-family: gadaquali;
+    src: url(../assets/fonts/gadaquali.ttf);
+}
+@font-face {
+    font-family: idilica;
+    src: url(../assets/fonts/idilica.ttf);
+}
+@font-face {
+    font-family: janedone;
+    src: url(../assets/fonts/JaneDoe-PersonalUse.otf);
+}
+@font-face {
+    font-family: menueo;
+    src: url(../assets/fonts/Menuetto.ttf);
+}
+@font-face {
+    font-family: oaxaquena;
+    src: url(../assets/fonts/Oaxaquena\ Tall.ttf);
+}
+@font-face {
+    font-family: pompiere;
+    src: url(../assets/fonts/Pompiere-Regular.ttf);
+}
+@font-face {
+    font-family: smite;
+    src: url(../assets/fonts/smiTe.ttf);
+}
+@font-face {
+    font-family: suellen;
+    src: url(../assets/fonts/SueEllenFrancisco.ttf);
+}
+@font-face {
+    font-family: talltiny;
+    src: url(../assets/fonts/TallTiny-Bold.otf);
+}
+@font-face {
+    font-family: encappln;
+    src: url(../assets/fonts/encapsulate/encappln.ttf);
+}
+@font-face {
+    font-family: encapsul;
+    src: url(../assets/fonts/encapsulate/encapsul.ttf);
+}
+@font-face {
+    font-family: kgl;
+    src: url(../assets/fonts/kgl/KGLoveYouThroughIt.ttf);
+}
+@font-face {
+    font-family: pneumati;
+    src: url(../assets/fonts/pneum/pneumati.ttf);
+}
+@font-face {
+    font-family: pneutall;
+    src: url(../assets/fonts/pneum/pneutall.ttf);
+}
+@font-face {
+    font-family: pneuwide;
+    src: url(../assets/fonts/pneum/pneuwide.ttf);
+}
+@font-face {
+    font-family: vtcs;
+    src: url(../assets/fonts/vtcs/VTCSuperMarketSaleDisplay.ttf);
 }

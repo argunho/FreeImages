@@ -13,6 +13,7 @@ form label {
 
 .form-title {
   margin-bottom: 20px;
+  font-size: 20px;
 }
 
 form .fields {
@@ -26,13 +27,11 @@ form textarea {
   padding: 10px 15px;
 }
 
-.buttons-wrapper {
-  display: flex;
-  justify-content: right;
-}
-
 .buttons-wrapper > button {
-  margin-left: 15px;
+  margin-left: 8px;
+  letter-spacing: 1px;;
+  min-width: 80px !important;
+  height: 36px;
 }
 
 .loading-circular {
