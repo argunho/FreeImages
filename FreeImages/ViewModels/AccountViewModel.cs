@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 
 namespace FreeImages.ViewModels;
 
@@ -13,7 +14,7 @@ public class AccountViewModel
     [Required]
     [EmailAddress]
     [Display(Name = "Email")]
-    public string? Email { get; set; }
+    public string Email { get; set; } = String.Empty;
 
     [StringLength(30, MinimumLength = 6)]
     [DataType(DataType.Password)]
@@ -31,7 +32,20 @@ public class AccountViewModel
     [Compare("Password", ErrorMessage = "Lösenordet och bekräftelseslösenordet matchar inte.")]
     public string? ConfirmPassword { get; set; }
 
+    public byte[]? PasswordSalt
+    {
+        get
+        {
+            return RandomNumberGenerator.GetBytes(Email.Length * 2);
+        }
+        set
+        {
+            _ = RandomNumberGenerator.GetBytes(Email.Length * 2);
+        }
+    }
+
     public List<string> Roles { get; set; } = new();
 
     public bool Newsletter { get; set; }
+
 }

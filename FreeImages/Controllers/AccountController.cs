@@ -169,7 +169,7 @@ public class AccountController : ControllerBase
             var admin_email = model.Email.Equals("aslan_argun@hotmail.com") || model.Email.Equals("janeta_88@hotmail.com");
 
             // Hash password
-            var hashedPassword = HashPassword(model.Password, model.Email.Length * 2, out var salt);
+            var hashedPassword = HashPassword(model, out var salt);
 
             // Create roles
             var roles = model?.Roles;
@@ -192,7 +192,8 @@ public class AccountController : ControllerBase
                 Name = model?.Name,
                 Email = model?.Email,
                 Password = hashedPassword,
-                Roles = string.Join(",", roles)
+                PasswordVerefiritionCode = model.PasswordSalt,
+                Roles = roles?.Count > 0 ? string.Join(",", roles) : null
             };
 
             _db.User?.Add(user);
@@ -234,8 +235,8 @@ public class AccountController : ControllerBase
         try
         {
             var user = _users.FirstOrDefault(x => x.Email == model.Email);
-            byte[] salt = RandomNumberGenerator.GetBytes(model.Email.Length * 2);
-            if (user == null || !VerifyPassword(model?.Password, user?.Password, model.Email.Length * 2, salt))
+            //byte[] salt = RandomNumberGenerator.GetBytes(model.Email.Length * 2);
+            if (user == null || !VerifyPassword(model?.Password, user?.Password, model.Email.Length * 2, user.PasswordVerefiritionCode))
                 return BadRequest(new { alert = "warning", message = "Incorrect email address or password" });
             else
             {
@@ -255,12 +256,13 @@ public class AccountController : ControllerBase
 
     #region Helpers
     // Hash password
-    private string HashPassword(string password, int keySize, out byte[] salt)
+    private string HashPassword(AccountViewModel model, out byte[] salt)
     {
-        salt = RandomNumberGenerator.GetBytes(keySize);
-
+        //salt = RandomNumberGenerator.GetBytes(keySize);
+        salt = model.PasswordSalt;
+        var keySize = model.Email.Length * 2;
         var hash = Rfc2898DeriveBytes.Pbkdf2(
-            Encoding.UTF8.GetBytes(password),
+            Encoding.UTF8.GetBytes(model?.Password),
             salt,
             _iterations,
             _hashAlgorithm,
