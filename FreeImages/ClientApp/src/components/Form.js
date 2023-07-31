@@ -1,7 +1,12 @@
 import { Close } from '@mui/icons-material'
 import { Button, CircularProgress, TextField } from '@mui/material'
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import Response from './Response';
+import { useNavigate } from 'react-router-dom';
+
+// Functions
+import HeaderConfig from '../functions/HeaderConfig';
 
 // Components
 // import FileUpload from './FileUpload';
@@ -13,24 +18,9 @@ function Form({ children, ...props }) {
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState(null);
     const [response, setResponse] = useState(null);
-    const [result, setResult] = useState(false);
     const [errors, setErrors] = useState([]);
 
-    useEffect(() => {
-        if (result && !response) {
-            setResponse(null);
-            setResult(false);
-        } else if (result && response) {
-            setTimeout(() => {
-                if (result) {
-                    setResponse(null);
-                    setResult(false);
-                }
-            }, 5000)
-        }
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [response])
+    const navigate = useNavigate();
 
     const handleChange = e => {
         if (!e.target) return;
@@ -44,12 +34,14 @@ function Form({ children, ...props }) {
         e.preventDefault();
 
         const confirm = props?.confirmInputs;
+
         // If exists inputs to validate
         if (!!props?.confirmInputs && form[confirm[0]] !== form[confirm[1]]) {
             setErrors(confirm);
             return;
         }
 
+        // Form validation
         let invalidForm = false;
         inputs.forEach(input => {
             if (form[input].length < 2) {
@@ -59,14 +51,14 @@ function Form({ children, ...props }) {
         })
 
         if (invalidForm) return;
-        console.log(form)
+
         setLoading(true);
 
         let formData = form;
         if (!!props.roles)
             formData.roles = props.roles;
 
-        let request = axios.post(props.api, formData);
+        let request = axios.post(props.api, formData, HeaderConfig);
 
         // If it is upload image form
         if (props.upload) {
@@ -79,26 +71,28 @@ function Form({ children, ...props }) {
                 api += "/" + form[k]
             });
 
-            request = axios.post(api, data);
+            request = axios.post(api, data, HeaderConfig);
         }
-console.log(formData)
+        console.log(formData)
 
         //  axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data)
         await request.then(res => {
             setResponse(res.data);
-            setLoading(false);
-            setResult(true);
-            if (res.data.result === "success")
-                resetForm();
+            resetForm();
+            if (!!res.data?.token) {
+                localStorage.setItem("token", res.data.token);
+                navigate("/sp/images");
+            }
         }, error => {
-            console.error(error);
+            console.warn(error);
             setLoading(false);
         })
     }
 
     const resetForm = () => {
         setFile(null);
-        setForm(props.inputs)
+        setForm(props.inputs);
+        setLoading(false);
     }
 
     const capitalize = (str) => {
@@ -109,6 +103,10 @@ console.log(formData)
     const ongoingForm = () => {
         return (props.upload ? !file : false) || form !== props.inputs;
     }
+
+    // Response alert
+    if (!!response)
+        return <Response res={response} close={() => setResponse()} />
 
     return (
         <form onSubmit={submitForm}>

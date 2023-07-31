@@ -189,8 +189,6 @@ public class AccountController : ControllerBase
                     roles.Add("User");
             }
 
-
-
             // Create and save a user into the database
             var user = new User
             {
@@ -216,14 +214,13 @@ public class AccountController : ControllerBase
                 // Send a mail to new user
                 //_help.SendMail(user.Email, "Välkommen " + model.Name, mailContent);
 
-                return Ok(new { alert = "success", message = "Registration was successful!" });
+                return Ok(new { alert = "success", token });
             }
         }
         catch (Exception ex)
         {
             errorMessage = ex.Message;
         }
-
 
         return BadRequest(_help.BadResponse(errorMessage));
     }
@@ -233,14 +230,13 @@ public class AccountController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(new { alert = "warning", message = "Form data is incorrectly filled in" });
-        else if (!_help.CheckEmail(model.Email))
+        else if (!_help.CheckEmail(model?.Email))
             return BadRequest(new { alert = "warning", message = "Incorrect email address" });
 
         var errorMessage = String.Empty;
         try
         {
             var user = _users.FirstOrDefault(x => x.Email == model.Email);
-            //byte[] salt = RandomNumberGenerator.GetBytes(model.Email.Length * 2);
             if (user == null || !VerifyPassword(model?.Password, user))
                 return BadRequest(new { alert = "warning", message = "Incorrect email address or password" });
             else
@@ -285,7 +281,7 @@ public class AccountController : ControllerBase
         RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
         byte[] salt = new byte[keySize];
         provider.GetBytes(salt);
-        var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, salt, _iterations, _hashAlgorithm, keySize);
+        var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, model.PasswordVerefiritionCode, _iterations, _hashAlgorithm, keySize);
         return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(model.Password));
     }
 

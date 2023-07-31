@@ -24,7 +24,11 @@ function Register() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) {
+        // localStorage.removeItem("token")
+
+        if (!!token)
+            setLoading(false);
+        else {
             (async () => {
                 await axios.get("user/count").then(res => {
                     if (res.data === 0) {
@@ -34,10 +38,8 @@ function Register() {
                     } else
                         navigate(-1);
                 });
-
             })();
-        } else
-            setLoading(false);
+        } 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -64,7 +66,7 @@ function Register() {
     }
 
     if (loading)
-        return <Loading />
+        return <Loading />;
 
     return (
         <div className='wrapper'>

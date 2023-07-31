@@ -19,10 +19,6 @@ const AppRoutes = [
       {
         path: "/",
         component: Home
-      },
-      {
-        path: "/login",
-        component: Login
       }
     ]
   },
@@ -44,6 +40,10 @@ const AppRoutes = [
       {
         path: '/sp/register',
         component: Register
+      },
+      {
+        path: "/sp/login",
+        component: Login
       },
       {
         path: '/sp/logout',
