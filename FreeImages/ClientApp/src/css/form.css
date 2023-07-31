@@ -27,9 +27,10 @@ form textarea {
   padding: 10px 15px;
 }
 
-.buttons-wrapper > button {
+.buttons-wrapper>button {
   margin-left: 8px;
-  letter-spacing: 1px;;
+  letter-spacing: 1px;
+  ;
   min-width: 80px !important;
   height: 36px;
 }
@@ -39,6 +40,42 @@ form textarea {
   height: 20px !important;
   color: #212529 !important;
 }
+
+/* #region Modal */
+.modal-container {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: rgba(177, 177, 177, 0.329);
+  z-index: 3000;
+}
+
+.modal {
+  width: calc(95% - 40px);
+  max-width: 400px;
+  height: 150px;
+  border: 2px solid #9e9e9e;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #FFFFFF;
+  position: relative;
+}
+
+.modal > div {
+  width: 100% !important;
+}
+
+.modal > .buttons-wrapper {
+  margin-top: 30px;
+  margin-bottom: -20px !important;
+}
+
+.modal > .buttons-wrapper > button {
+  min-width: 50px !important;
+}
+/* #endregion */
 
 /* Alert */
 .alert-wrapper {

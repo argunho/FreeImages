@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
+// Installed
+import axios from 'axios';
+import { Check, Close } from '@mui/icons-material';
 
 // Components
 import Form from '../components/Form';
 import Heading from '../components/Heading';
-import { Button, Checkbox, FormControlLabel, Modal, TextField } from '@mui/material';
-import { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Check } from '@mui/icons-material';
+import Loading from '../components/Loading';
 
 
 function Register() {
@@ -16,6 +18,7 @@ function Register() {
     const [modal, setModal] = useState(false);
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -23,14 +26,17 @@ function Register() {
         const token = localStorage.getItem("token");
         if (!token) {
             (async () => {
-                const usersCount = await axios.get("user/count");
-                console.log(usersCount)
-                if (usersCount === 0)
-                    setModal(true);
-                else
-                    navigate(-1);
+                await axios.get("user/count").then(res => {
+                    if (res.data === 0) {
+                        setModal(true);
+                        setLoading(false);
+                    } else
+                        navigate(-1);
+                });
+
             })();
-        }
+        } else
+            setLoading(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -54,24 +60,13 @@ function Register() {
             setError(true);
     }
 
-    if (modal)
-        return (<Modal>
-            <TextField
-                label="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                error={error}
-                helperText={!!error ? "Incorrect password" : ""}
-            />
-            <Button onClick={verifyPassword} disabled={password.length === 0}>
-                <Check />
-            </Button>
-        </Modal>)
+    if (loading)
+        return <Loading />
 
     return (
         <div className='wrapper'>
             <Heading title="Form" />
-            <Form
+            {!modal && <Form
                 heading="Register"
                 api="account/register"
                 inputs={{
@@ -89,8 +84,28 @@ function Register() {
                         } label={r} />
                     })}
                 </div>
-            </Form>
-        </div>
+            </Form>}
+
+            {!!modal && <div className='modal-container d-column'>
+                <div className='modal d-column'>
+                    <TextField
+                        label="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        error={error}
+                        helperText={!!error ? "Incorrect password" : ""}
+                    />
+                    <div className='buttons-wrapper d-row jc-end'>
+                        <Button onClick={() => navigate(-1)}>
+                            <Close color="error" />
+                        </Button>
+                        <Button onClick={verifyPassword} disabled={password.length === 0}>
+                            <Check />
+                        </Button>
+                    </div>
+                </div>
+            </div>}
+        </div >
     )
 }
 

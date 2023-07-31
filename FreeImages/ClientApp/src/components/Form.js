@@ -119,7 +119,6 @@ console.log(formData)
                     className='fields'
                     size="medium"
                     required
-                    autoComplete={false}
                     disabled={loading}
                     name={x}
                     type={x.toLowerCase().indexOf("password") > -1 ? "password" : (x === "email" ? x : "text")}
