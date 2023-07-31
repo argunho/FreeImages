@@ -277,10 +277,7 @@ public class AccountController : ControllerBase
     // Verify password
     private bool VerifyPassword(string password, User model)
     {
-        var keySize = model.Email.Length * 2;
-        RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
-        byte[] salt = new byte[keySize];
-        provider.GetBytes(salt);
+        int keySize = (model.Email.Length * 2);
         var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, model.PasswordVerefiritionCode, _iterations, _hashAlgorithm, keySize);
         return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(model.Password));
     }

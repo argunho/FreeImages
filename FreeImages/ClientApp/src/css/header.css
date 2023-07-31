@@ -10,22 +10,22 @@ header {
 }
 
 .logotype {
-  font-size: 80px;
+  font-size: 100px;
   /* transform: scaleX(2); */
   letter-spacing: 6px;
   width: max-content;
   color: #FFFFFF;
   text-transform: capitalize;
-  font-family: coventry;
+  font-family: faishal;
+  /* font-family: coventry; */
   /* font-family: enough; */
-  /* font-family: faishal; */
   /* font-family: idilica; */
   /* font-family: pneumati; */
   /* font-family: pneutall; */
   /* font-family: pneuwide; */
 }
 
-.logotype>span {
+/* .logotype>span {
   display: block;
   margin-top: 0;
   padding: 5px 8px;
@@ -36,7 +36,7 @@ header {
   font-family: pneutall;
   width: max-content;
   align-self: flex-end;
-}
+} */
 
 .header-buttons {
   width: max-content;

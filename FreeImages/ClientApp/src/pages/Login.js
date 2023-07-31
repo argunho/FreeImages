@@ -9,7 +9,7 @@ import './../css/login.css';
 
 const defaultHeight = window.innerHeight;
 
-function Login(props) {
+function Login() {
 
     const defaultForm = {
         email: "",
@@ -26,17 +26,16 @@ function Login(props) {
     const [response, setResponse] = useState(null);
     const [isVisiblePassword, setVisiblePassword] = useState(false);
     const [isReliable, setReliable] = useState(!!(localStorage.getItem("reliable")));
-    const [token, setToken] = useState(localStorage.getItem("token"));
 
     const navigate = useNavigate();
 
     useEffect(() => {
-
-        if (token !== null && token !== undefined) {
+const token = localStorage.getItem("token");
+console.log(34, token)
+        if (!!token) {
             const decoded = jwt_decode(token);
             if ((decoded.exp * 1000) < Date.now()) {
                 localStorage.removeItem("token");
-                setToken(null);
             } else
                 navigate("/sp/images");
         }
@@ -105,12 +104,6 @@ function Login(props) {
             })
     }
 
-    // Reset response
-    const reset = (res) => {
-        setResponse(null);
-        setForm(defaultForm);
-    }
-
     // Login form
     const loginForm = <>
         <h3 className="login-heading">
@@ -153,7 +146,7 @@ function Login(props) {
                         } label="Show login button" />
                     </div>
                 </>}
-            <div className="buttons-wrapper">
+            <div className="buttons-wrapper d-row jc-end">
                 <Button variant="outlined" color="inherit" className="submit-btn" disabled={loading} type="submit">Send</Button>
             </div>
         </form>

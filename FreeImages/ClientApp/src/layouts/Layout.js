@@ -1,36 +1,29 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// Installed 
+import { Button, Container } from '@mui/material';
+import {  Login } from '@mui/icons-material';
 
 // Components
 import Header from '../components/Header';
-import { Button, Container } from '@mui/material';
-import { useEffect } from 'react';
-import { useState } from 'react';
-import { Home, Login } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 
 function Layout({ children }) {
   Layout.displayName = "Layout";
 
-  const defButtons = [{ icon: <Home />, url: "/" }];
-  const [buttons, setButtons] = useState(defButtons);
+  const [isReliable, setReliable] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!!(localStorage.getItem("reliable")))
-      setButtons(oldButtons => [...oldButtons, { icon: <Login />, url: "/sp/login" }])
-    else if (buttons.length > defButtons.length)
-      setButtons(defButtons);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setReliable(!!(localStorage.getItem("reliable")));
   }, [])
 
   return (
     <>
       <Header>
-        {buttons?.map((b, index) => (
-          <Button key={index} className='d-row' onClick={() => navigate(b.url)}>
-            {b.icon}
-          </Button>
-        ))}
+        {isReliable && <Button className='d-row' onClick={() => navigate("/sp/login")}>
+            <Login />
+          </Button>}
       </Header>
       <Container className='d-column container'>
         {children}

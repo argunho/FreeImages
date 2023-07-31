@@ -2,8 +2,10 @@ import { useNavigate } from 'react-router-dom';
 
 // Css
 import './../css/header.css';
+import { Button } from '@mui/material';
+import { Home } from '@mui/icons-material';
 
-function Header({ children, url }) {
+function Header({ children, authorized, url }) {
 
   const navigate = useNavigate();
 
@@ -11,13 +13,14 @@ function Header({ children, url }) {
     <header className='d-row jc-between'>
       <p className='logotype d-column' onClick={() => navigate("/")}>
         Free images
-        <span>Hobby photo online</span>
       </p>
 
       <div className='header-buttons d-row'>
+       {!authorized && <Button className='d-row' onClick={() => navigate("/")}>
+          <Home />
+        </Button>}
 
         {!!children && children}
-     
       </div>
     </header>
   )

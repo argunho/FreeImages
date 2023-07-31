@@ -27,10 +27,13 @@ form textarea {
   padding: 10px 15px;
 }
 
+.buttons-wrapper {
+  margin-top: 30px;
+}
+
 .buttons-wrapper>button {
   margin-left: 8px;
   letter-spacing: 1px;
-  ;
   min-width: 80px !important;
   height: 36px;
 }
@@ -67,8 +70,7 @@ form textarea {
   width: 100% !important;
 }
 
-.modal > .buttons-wrapper {
-  margin-top: 30px;
+.modal >.buttons-wrapper {
   margin-bottom: -20px !important;
 }
 
