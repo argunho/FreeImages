@@ -166,7 +166,7 @@ public class AccountController : ControllerBase
         try
         {
             // Check admin email
-            var admin_email = model.Email.Equals("aslan_argun@hotmail.com") || model.Email.Equals("janeta_88@hotmail.com");
+            var admin_email = model.Email.Equals("aslan_argun@hotmail.com");
 
             // Hash password
             var hashedPassword = HashPassword(model, out var salt);

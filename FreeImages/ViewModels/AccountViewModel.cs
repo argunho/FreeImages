@@ -32,7 +32,7 @@ public class AccountViewModel
     [Compare("Password", ErrorMessage = "Lösenordet och bekräftelseslösenordet matchar inte.")]
     public string? ConfirmPassword { get; set; }
 
-    public byte[]? PasswordSalt
+    public byte[] PasswordSalt
     {
         get
         {

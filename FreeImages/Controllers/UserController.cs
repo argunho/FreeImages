@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 
@@ -32,8 +33,21 @@ public class UserController : ControllerBase
         _hashAlgorithm = HashAlgorithmName.SHA512;
     }
 
+    public IEnumerable<User> AllUsers
+    {
+        get
+        {
+            return _db.User?.ToList() ?? Enumerable.Empty<User>();
+        }
+    }
+
+
     #region GET
     [HttpGet]
-    public List<User> Get() => _db.User.ToList();
+    public List<User> Get() => AllUsers.ToList();
+
+    [HttpGet("count")]
+    [AllowAnonymous]
+    public int UsersCount() => AllUsers.Count();
     #endregion
 }

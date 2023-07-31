@@ -60,7 +60,7 @@ function Login(props) {
     const changeHandler = (e) => {
         console.log(e.target.name)
         console.log(e.target.value)
-        setForm({...form, [e.target.name]: (e.target.type === "checkbox") ? e.target.checked : e.target.value})
+        setForm({ ...form, [e.target.name]: (e.target.type === "checkbox") ? e.target.checked : e.target.value })
     }
 
     const handleReliable = () => {
@@ -76,12 +76,12 @@ function Login(props) {
         e.preventDefault();
         console.log(submitHandler)
         setLoading(true);
-console.log(form)
+        console.log(form)
         const api = (param != null) ? axios.get("account/LoginWithoutPassword/" + param)
             : (loginLink) ? axios.get("account/LoginLink/" + form.email)
                 : axios.post("account/login", form);
 
-      await api.then(
+        await api.then(
             res => {
                 let { token, errorMessage } = res.data;
                 setLoading(false);
@@ -123,7 +123,7 @@ console.log(form)
                 name="email"
                 variant="outlined"
                 value={form.email}
-                onChange={(e) => setForm({...form, email: e.target.value})} />
+                onChange={(e) => setForm({ ...form, email: e.target.value })} />
 
             {(!loginLink) &&
                 <>
@@ -136,20 +136,22 @@ console.log(form)
                         value={form.password}
                         onChange={changeHandler} />
 
-                    <FormControlLabel className='login-checkbox' control={
-                        <Checkbox color="default"
-                            checked={form.remember} onChange={changeHandler} name="remember" />
-                    } label="Remember me" />
+                    <div className='d-column ai-start'>
+                        <FormControlLabel className='input-checkbox'control={
+                            <Checkbox color="default"
+                                checked={form.remember} onChange={changeHandler} name="remember" />
+                        } label="Remember me" />
 
-                    <FormControlLabel className='login-checkbox' control={
-                        <Checkbox color="default"
-                            checked={isVisiblePassword} onClick={() => setVisiblePassword(!isVisiblePassword)} />
-                    } label="Show password" />
+                        <FormControlLabel className='input-checkbox'control={
+                            <Checkbox color="default"
+                                checked={isVisiblePassword} onClick={() => setVisiblePassword(!isVisiblePassword)} />
+                        } label="Show password" />
 
-                    <FormControlLabel className='login-checkbox' control={
-                        <Checkbox color="default"
-                            checked={isReliable} onClick={handleReliable} />
-                    } label="Show login button" />
+                        <FormControlLabel className='input-checkbox'control={
+                            <Checkbox color="default"
+                                checked={isReliable} onClick={handleReliable} />
+                        } label="Show login button" />
+                    </div>
                 </>}
             <div className="buttons-wrapper">
                 <Button variant="outlined" color="inherit" className="submit-btn" disabled={loading} type="submit">Send</Button>

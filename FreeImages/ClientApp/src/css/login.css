@@ -32,15 +32,13 @@
     font-family: castor;
 }
 
-.login-checkbox {
-    display: block !important;
-}
 
-.login-checkbox>span {
-    font-size: 15px !important;
+.input-checkbox>span {
+    font-size: 16px !important;
     vertical-align: middle;
     font-family: castor !important;
     letter-spacing: 0.5px;
+    letter-spacing: 1px !important;
 }
 
 .switch-link {
