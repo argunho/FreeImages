@@ -14,22 +14,23 @@ import Loading from '../components/Loading';
 
 function Register() {
 
-    const [roles, setRoles] = useState(["Support"])
+    const [roles, setRoles] = useState([])
     const [modal, setModal] = useState(false);
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
+    const token = localStorage.getItem("token");
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
         if (!token) {
             (async () => {
                 await axios.get("user/count").then(res => {
                     if (res.data === 0) {
                         setModal(true);
                         setLoading(false);
+                        setRoles(["Admin, Support"]);
                     } else
                         navigate(-1);
                 });
@@ -53,7 +54,9 @@ function Register() {
     }
 
     const verifyPassword = () => {
-        if (password === "BismiLLAHI!") {
+        var date = new Date();
+        var currentDate = (date.toISOString()).slice(0, 10);
+        if (password === `${currentDate} BismiLLAHI!`) {
             setModal(false);
             setError(false);
         } else
@@ -80,7 +83,7 @@ function Register() {
                 <div className='d-column ai-start'>
                     {["Admin", "Support"].map((r, i) => {
                         return <FormControlLabel key={i} className='input-checkbox' control={
-                            <Checkbox color="default" onClick={handleRoles} name={r} />
+                            <Checkbox color="default" onClick={handleRoles} name={r} checked={!token} disabled={!token}/>
                         } label={r} />
                     })}
                 </div>

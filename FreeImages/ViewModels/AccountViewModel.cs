@@ -32,17 +32,17 @@ public class AccountViewModel
     [Compare("Password", ErrorMessage = "Lösenordet och bekräftelseslösenordet matchar inte.")]
     public string? ConfirmPassword { get; set; }
 
-    public byte[] PasswordSalt
-    {
-        get
-        {
-            return RandomNumberGenerator.GetBytes(Email.Length * 2);
-        }
-        set
-        {
-            _ = RandomNumberGenerator.GetBytes(Email.Length * 2);
-        }
-    }
+    //public byte[] PasswordSalt
+    //{
+    //    get
+    //    {
+    //        return RandomNumberGenerator.GetBytes(Email.Length * 2);
+    //    }
+    //    set
+    //    {
+    //        _ = RandomNumberGenerator.GetBytes(Email.Length * 2);
+    //    }
+    //}
 
     public List<string> Roles { get; set; } = new();
 

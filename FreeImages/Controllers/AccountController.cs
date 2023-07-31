@@ -169,7 +169,10 @@ public class AccountController : ControllerBase
             var admin_email = model.Email.Equals("aslan_argun@hotmail.com");
 
             // Hash password
-            var hashedPassword = HashPassword(model, out var salt);
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            byte[] salt = new byte[model.Email.Length * 2];
+            provider.GetBytes(salt);
+            var hashedPassword = HashPassword(model, salt);
 
             // Create roles
             var roles = model?.Roles;
@@ -186,13 +189,15 @@ public class AccountController : ControllerBase
                     roles.Add("User");
             }
 
+
+
             // Create and save a user into the database
             var user = new User
             {
                 Name = model?.Name,
                 Email = model?.Email,
                 Password = hashedPassword,
-                PasswordVerefiritionCode = model.PasswordSalt,
+                PasswordVerefiritionCode = salt,
                 Roles = roles?.Count > 0 ? string.Join(",", roles) : null
             };
 
@@ -236,7 +241,7 @@ public class AccountController : ControllerBase
         {
             var user = _users.FirstOrDefault(x => x.Email == model.Email);
             //byte[] salt = RandomNumberGenerator.GetBytes(model.Email.Length * 2);
-            if (user == null || !VerifyPassword(model?.Password, user?.Password, model.Email.Length * 2, user.PasswordVerefiritionCode))
+            if (user == null || !VerifyPassword(model?.Password, user))
                 return BadRequest(new { alert = "warning", message = "Incorrect email address or password" });
             else
             {
@@ -256,11 +261,12 @@ public class AccountController : ControllerBase
 
     #region Helpers
     // Hash password
-    private string HashPassword(AccountViewModel model, out byte[] salt)
+    private string HashPassword(AccountViewModel model, byte[] salt)
     {
         //salt = RandomNumberGenerator.GetBytes(keySize);
-        salt = model.PasswordSalt;
+        //salt = model.PasswordSalt;
         var keySize = model.Email.Length * 2;
+
         var hash = Rfc2898DeriveBytes.Pbkdf2(
             Encoding.UTF8.GetBytes(model?.Password),
             salt,
@@ -273,10 +279,14 @@ public class AccountController : ControllerBase
     }
 
     // Verify password
-    private bool VerifyPassword(string password, string hash, int keySize, byte[] salt)
+    private bool VerifyPassword(string password, User model)
     {
+        var keySize = model.Email.Length * 2;
+        RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+        byte[] salt = new byte[keySize];
+        provider.GetBytes(salt);
         var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, salt, _iterations, _hashAlgorithm, keySize);
-        return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(hash));
+        return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(model.Password));
     }
 
     // Create Jwt Token for authenticating
