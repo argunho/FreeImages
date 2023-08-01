@@ -56,7 +56,6 @@ function Form({ children, ...props }) {
         let formData = form;
         if (!!props.roles)
             formData.roles = props.roles;
-
         let request = axios.post(props.api, formData, HeaderConfig);
 
         // If it is upload image form
@@ -75,6 +74,9 @@ function Form({ children, ...props }) {
 
         //  axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data)
         await request.then(res => {
+            console.log(77,res)
+            console.log(78,res.data)
+            console.log(79,res.status)
             setResponse(res.data);
             resetForm();
             if (!!res.data?.token) {

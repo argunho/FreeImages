@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 // Installed
 import axios from 'axios';
+import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
 import { Check, Close } from '@mui/icons-material';
 
 // Components
@@ -39,7 +39,6 @@ function Register() {
         } 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
 
     const handleRoles = (e) => {
         const role = e.target.name;

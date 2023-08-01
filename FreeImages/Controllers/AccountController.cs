@@ -152,7 +152,6 @@ public class AccountController : ControllerBase
 
     #region Post
     [HttpPost("Register")] // Register
-    //[Authorize(Roles = "Admin, Support")]
     public async Task<IActionResult> PostRegister(AccountViewModel model)
     {
         if (!ModelState.IsValid)
@@ -162,12 +161,16 @@ public class AccountController : ControllerBase
         else if (_users.FirstOrDefault(x => x.Email == model.Email) != null)
             return BadRequest("User with the same email already exists!");
 
+        // Check admin email
+        var developer = model.Email.Equals("aslan_argun@hotmail.com");
+        //if(_users?.Count() > 0 && model.Email != "aslan_argun@hotmail.com" && model.Roles.IndexOf("Developer") == -1 && !Permission("Admin"))
+        //    return BadRequest("Permission is missing!");
+
+        var permission = Permission("Admin");
+
         string errorMessage = String.Empty;
         try
         {
-            // Check admin email
-            var developer = model.Email.Equals("aslan_argun@hotmail.com");
-
             // Hash password
             RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
             byte[] salt = new byte[model.Email.Length * 2];
@@ -176,9 +179,10 @@ public class AccountController : ControllerBase
 
             // Create roles
             var roles = model?.Roles;
-            roles.Add("User");
 
-            if(developer || (roles?.Count == 0 && _users.Count() == 0))
+            roles?.Add("User");
+
+            if(developer || (roles?.Count == 0 && _users?.Count() == 0))
             {
                 if (roles?.IndexOf("Admin") == -1)
                     roles.Add("Admin");
@@ -253,6 +257,15 @@ public class AccountController : ControllerBase
     #endregion
 
     #region Helpers
+
+    // Get claims 
+    private bool Permission(string role)
+    {
+        var claims = User.Claims.ToList();
+        var claimsRoles = User.Claims.FirstOrDefault(x => x.Type == "Roles");
+        return true;
+    }
+
     // Hash password
     private string HashPassword(AccountViewModel model, byte[] salt)
     {
