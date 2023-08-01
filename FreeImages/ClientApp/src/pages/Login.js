@@ -30,8 +30,8 @@ function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-const token = localStorage.getItem("token");
-console.log(34, token)
+        const token = localStorage.getItem("token");
+
         if (!!token) {
             const decoded = jwt_decode(token);
             if ((decoded.exp * 1000) < Date.now()) {
@@ -57,8 +57,6 @@ console.log(34, token)
 
     // Form field change handler
     const changeHandler = (e) => {
-        console.log(e.target.name)
-        console.log(e.target.value)
         setForm({ ...form, [e.target.name]: (e.target.type === "checkbox") ? e.target.checked : e.target.value })
     }
 
@@ -73,9 +71,8 @@ console.log(34, token)
     // Submit form
     const submitHandler = async e => {
         e.preventDefault();
-        console.log(submitHandler)
+
         setLoading(true);
-        console.log(form)
         const api = (param != null) ? axios.get("account/LoginWithoutPassword/" + param)
             : (loginLink) ? axios.get("account/LoginLink/" + form.email)
                 : axios.post("account/login", form);
@@ -130,17 +127,17 @@ console.log(34, token)
                         onChange={changeHandler} />
 
                     <div className='d-column ai-start'>
-                        <FormControlLabel className='input-checkbox'control={
+                        <FormControlLabel className='input-checkbox' control={
                             <Checkbox color="default"
                                 checked={form.remember} onChange={changeHandler} name="remember" />
                         } label="Remember me" />
 
-                        <FormControlLabel className='input-checkbox'control={
+                        <FormControlLabel className='input-checkbox' control={
                             <Checkbox color="default"
                                 checked={isVisiblePassword} onClick={() => setVisiblePassword(!isVisiblePassword)} />
                         } label="Show password" />
 
-                        <FormControlLabel className='input-checkbox'control={
+                        <FormControlLabel className='input-checkbox' control={
                             <Checkbox color="default"
                                 checked={isReliable} onClick={handleReliable} />
                         } label="Show login button" />

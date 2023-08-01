@@ -27,7 +27,6 @@ function Form({ children, ...props }) {
         setErrors([]);
         setResponse(null);
         setForm({ ...form, [e.target.name]: e.target.value });
-        console.log(Object.values(form))
     }
 
     const submitForm = async (e) => {
@@ -73,7 +72,6 @@ function Form({ children, ...props }) {
 
             request = axios.post(api, data, HeaderConfig);
         }
-        console.log(formData)
 
         //  axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data)
         await request.then(res => {

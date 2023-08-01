@@ -166,7 +166,7 @@ public class AccountController : ControllerBase
         try
         {
             // Check admin email
-            var admin_email = model.Email.Equals("aslan_argun@hotmail.com");
+            var developer = model.Email.Equals("aslan_argun@hotmail.com");
 
             // Hash password
             RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
@@ -176,17 +176,14 @@ public class AccountController : ControllerBase
 
             // Create roles
             var roles = model?.Roles;
+            roles.Add("User");
 
-            if (roles?.IndexOf("User") == -1)
-                roles.Add("User");
-            if (admin_email)
+            if(developer || (roles?.Count == 0 && _users.Count() == 0))
             {
                 if (roles?.IndexOf("Admin") == -1)
                     roles.Add("Admin");
                 if (roles?.IndexOf("Support") == -1)
                     roles.Add("Support");
-                if (roles?.IndexOf("User") == -1)
-                    roles.Add("User");
             }
 
             // Create and save a user into the database

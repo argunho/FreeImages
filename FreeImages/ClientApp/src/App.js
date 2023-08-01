@@ -20,7 +20,7 @@ function App() {
     setLayout(AppRoutes[loc.pathname.indexOf("sp/") === -1 ? 0 : 1]);
   }, [loc])
 
-  if(!currentLayout)
+  if (!currentLayout)
     return <Loading />;
 
   return (
@@ -34,9 +34,10 @@ function App() {
     // </Layout>
     <currentLayout.layout>
       <Routes>
-        {currentLayout.routes.map((r, ind) => (
-          <Route key={ind} path={r.path} element={<r.component />} />
-        ))}
+        {currentLayout.routes.map((route, ind) => {
+          const { element, path } = route;
+          return <Route key={ind} path={path} element={element} />
+        })}
       </Routes>
     </currentLayout.layout>
   );

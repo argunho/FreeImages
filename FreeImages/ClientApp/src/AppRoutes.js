@@ -18,7 +18,7 @@ const AppRoutes = [
     routes: [
       {
         path: "/",
-        component: Home
+        element: <Home />
       }
     ]
   },
@@ -27,27 +27,27 @@ const AppRoutes = [
     routes: [
       {
         path: '/sp/users',
-        component: Users
+        element: <Users/>
       },
       {
         path: '/sp/images',
-        component: ImagesList
+        element: <ImagesList/>
       },
       {
         path: '/sp/upload-image',
-        component: UploadFileForm
+        element: <UploadFileForm/>
       },
       {
         path: '/sp/register',
-        component: Register
+        element: <Register/>
       },
       {
         path: "/sp/login",
-        component: Login
+        element: <Login/>
       },
       {
         path: '/sp/logout',
-        component: Logout
+        element: <Logout/>
       }
     ]
   }

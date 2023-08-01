@@ -24,8 +24,6 @@ function Register() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // localStorage.removeItem("token")
-
         if (!!token)
             setLoading(false);
         else {
@@ -34,7 +32,6 @@ function Register() {
                     if (res.data === 0) {
                         setModal(true);
                         setLoading(false);
-                        setRoles(["Admin, Support"]);
                     } else
                         navigate(-1);
                 });
@@ -46,9 +43,10 @@ function Register() {
 
     const handleRoles = (e) => {
         const role = e.target.name;
-        let rolesList = [...roles];
-        if (roles.indexOf(role) > -1)
-            rolesList.splice(rolesList.indexOf(role), -1);
+        const rolesList = [...roles];
+        const index = rolesList.indexOf(role);
+        if (index > -1)
+            rolesList.splice(index, 1);
         else
             rolesList.push(role);
 
@@ -82,13 +80,13 @@ function Register() {
                 }}
                 confirmInputs={["password", "confirmPassword"]}
                 roles={roles}>
-                <div className='d-column ai-start'>
-                    {["Admin", "Support"].map((r, i) => {
+                {!!token && <div className='d-column ai-start'>
+                    {["Admin", "Support"].map((role, i) => {
                         return <FormControlLabel key={i} className='input-checkbox' control={
-                            <Checkbox color="default" onClick={handleRoles} name={r} checked={!token} disabled={!token}/>
-                        } label={r} />
+                            <Checkbox color="default" onClick={handleRoles} name={role} />
+                        } label={role} />
                     })}
-                </div>
+                </div>}
             </Form>}
 
             {!!modal && <div className='modal-container d-column'>
