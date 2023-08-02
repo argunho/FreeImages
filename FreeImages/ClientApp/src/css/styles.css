@@ -64,41 +64,41 @@ body {
 
 .d-row, 
 .d-column {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
 .d-row {
-  flex-direction: row;
+  flex-direction: row !important;
 }
 
 .d-column {
-  flex-direction: column;
+  flex-direction: column !important;
 }
 
 .jc-end {
-  justify-content: flex-end;
-}
-
-.jc-between {
-  justify-content: space-between;
-}
-
-.js-around {
-  justify-content: space-around;
+  justify-content: flex-end !important;
 }
 
 .jc-start {
-  justify-content: flex-start;
+  justify-content: flex-start !important;
+}
+
+.jc-between {
+  justify-content: space-between !important;
+}
+
+.js-around {
+  justify-content: space-around !important;
 }
 
 .ai-start {
-  align-items: flex-start;
+  align-items: flex-start !important;
 }
 
 .ai-end {
-  align-items: flex-end;
+  align-items: flex-end !important;
 }
 /* #endregion */
 
@@ -151,10 +151,9 @@ div.search-wrapper {
   position: absolute !important;
   margin-right: 20px !important;
   margin-top: 3px !important;
-  /* right: 10px;
-  top: 50%;
-  transform: translate(-50%, -50%); */
-  /* height: calc(100% - 30px); */
+  right: 0;
+  /* top: 50%;
+  transform: translate(-50%, -50%); */ 
   border-radius: 50% !important;
   min-width: 48px !important;
 }

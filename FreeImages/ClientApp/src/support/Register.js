@@ -24,6 +24,7 @@ function Register() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // localStorage.removeItem("token");
         if (!!token)
             setLoading(false);
         else {

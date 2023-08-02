@@ -1,40 +1,55 @@
+// Components
+import { useEffect, useState } from 'react';
+
+// Installed 
 import { Alert } from '@mui/material';
-import React from 'react'
+import { DataGrid } from '@mui/x-data-grid';
 
 // Components
 import Heading from './Heading';
 
+// Functions
+import HeaderConfig from '../functions/HeaderConfig';
+import Loading from './Loading';
+
+
 function List(props) {
 
-    const [rows, setRows] = React.useState([]);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [columns, setColumns] = useState([
+    { field: 'actions', headerName: 'Actions', sortable: false, width: "auto" }
+  ])
 
-    React.useEffect(() => {
-      getImages();
-    }, [])
-  
-    const getImages = async () => {
-      const _token = localStorage.getItem("token");
-      const _config = {
-        headers: { 'Authorization': `Bearer ${_token}` }
-      };
-  
-      const response = await fetch(props.api, _config);
-      const data = await response.json();
-  
-      setRows(data || []);
-    }
+  useEffect(() => {
+    setLoading(true);
+    const arr = props.columns.concat(columns);
+    setColumns(arr);
+    getList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const getList = async () => {
+    const response = await fetch(props.api, HeaderConfig);
+    const data = await response.json();
+    setLoading(false);
+    setRows(data);
+  }
+
+
 
   return (
     <div className='wrapper'>
-    <Heading title={props.title} />
-    {/* {rows.length > 0 ? <DataGrid
-      rows={rows}
-      columns={props.columns}
-      pageSize={5}
-      rowsPerPageOptions={[5]}
-      checkboxSelection
-    /> : <Alert severity='info'>Nothing is found.</Alert>} */}
-  </div>
+      <Heading title={props.title} button={props.button} />
+      {!!loading && <Loading />}
+      {rows.length > 0 ? <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={10}
+        rowsPerPageOptions={[10]}
+        checkboxSelection
+      /> : <Alert severity='info'>Nothing is found.</Alert>}
+    </div>
   )
 }
 

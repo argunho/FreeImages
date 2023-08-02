@@ -2,6 +2,7 @@ import * as React from 'react';
 
 // Components
 import List from '../components/List';
+import { AddAPhoto} from '@mui/icons-material';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 70 },
@@ -26,7 +27,11 @@ const columns = [
 
 function ImagesList() {
   return (
-    <List api="image" columns={columns} title="Images"/>
+    <List api="image" columns={columns} title="Images" button={{
+      title: "Upload an image",
+      url: "/sp/upload-image",
+      icon: <AddAPhoto />
+    }}/>
   );
 }
 

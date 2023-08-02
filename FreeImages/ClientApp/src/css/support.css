@@ -37,12 +37,9 @@
 
 .menu-heading {
   width: auto;
-  height: 60px;
+  height: 100px;
   /* background-color: #000314; */
   color: #fff;
-  display: flex;
-  align-items: left;
-  padding: 0 10px;
   /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#0e0e0e+0,7d7e7d+100 */
   background: #0e0e0e; /* Old browsers */
   background: -moz-linear-gradient(
@@ -65,12 +62,20 @@
 
 .menu-heading > button {
   color: #fff !important;
+  font-family: nvd !important;
+}
+
+.menu-heading > button:not(.menu-close) {
+  font-family: nvd !important;
+  font-size: 30px !important;
+  letter-spacing: 1px !important;
+}
+
+.menu-heading > button:not(.menu-close) > svg {
+  margin-right: 15px !important;
 }
 
 button.menu-close {
-  position: absolute;
-  right: 0;
-  top: 7.5px;
   will-change: transform;
   transition: all 0.6s ease-in-out;
 }
@@ -80,8 +85,11 @@ button.menu-close:hover {
 }
 
 .menu-heading > button svg {
-  font-size: 35px;
-  margin-right: 15px;
+  font-size: 50px;
+}
+
+.menu-close svg {
+  font-size: 30px !important;
 }
 
 .menu-heading > button > span {
@@ -91,6 +99,41 @@ button.menu-close:hover {
 .menu-list {
   padding: 10px;
 }
+
+.menu-list li {
+  margin: 0 auto !important;
+  width: 95% !important
+}
+
+.menu-list li:hover .css-2s90m6-MuiAvatar-root {
+  background-color: #000000 !important;
+  cursor: pointer !important;
+}
+
+.menu-list li span {
+  font-family: nvd !important;
+  font-size: 25px !important;
+  letter-spacing: 1px !important;
+}
+
+/* .submenu {
+  margin: -10px 0 0 50px !important;
+  width: auto !important;
+  padding: 5px !important;
+}
+
+.submenu div {
+  background: transparent !important;
+}
+
+.submenu span {
+  margin-left: -25px !important;
+  font-size: 14px !important;
+}
+
+.submenu svg {
+  color: #BDBDBD !important;
+} */
 /* #endregion */
 
 /* #region Login, Logout */

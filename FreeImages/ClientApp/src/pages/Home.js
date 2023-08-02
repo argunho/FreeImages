@@ -31,7 +31,7 @@ function Home() {
 
   return (
     <>
-      <FormControl className="search-wrapper d-row ai-end">
+      <FormControl className="search-wrapper d-row">
         <TextField
           placeholder="Find image ..."
           className="search-input"

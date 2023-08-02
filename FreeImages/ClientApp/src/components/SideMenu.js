@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Logout, UploadFile, FeaturedPlayList, Image, Close, Home } from '@mui/icons-material';
+import { Logout, FeaturedPlayList, Image, Close, Home } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { Button, List, ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
 
 const menu = [
     { name: "Users", link: "users", icon: <FeaturedPlayList /> },
+    // { name: "Register user", link: "register", icon: <FeaturedPlayList />, submenu: true },
     { name: "Images", link: "images", icon: <Image /> },
-    { name: "Upload image", link: "upload-image", icon: <UploadFile /> },
+    // { name: "Upload image", link: "upload-image", icon: <UploadFile />, submenu: true },
     { name: "Logout", link: "logout", icon: <Logout /> }
 ]
 
@@ -42,8 +43,8 @@ function SideMenu(props) {
     return (
         <div className='menu-wrapper'>
             <div className={`menu${visible ? ' menu-visible' : ''}`}>
-                <div className='menu-heading'>
-                    <Button onClick={() => goTo("/")}><Home /> <span>Home</span></Button>
+                <div className='menu-heading d-row jc-between'>
+                    <Button onClick={() => goTo("/")} className='d-row'><Home /> <span>Home</span></Button>
                     <Button className="menu-close" onClick={() => close(false)}><Close /></Button>
                 </div>
                 <List className='menu-list'>

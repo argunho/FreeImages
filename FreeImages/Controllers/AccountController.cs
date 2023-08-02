@@ -154,6 +154,7 @@ public class AccountController : ControllerBase
     [HttpPost("Register")] // Register
     public async Task<IActionResult> PostRegister(AccountViewModel model)
     {
+        var permission = Permission("Admin");
         if (!ModelState.IsValid)
             return BadRequest();
         else if (!_help.CheckEmail(model.Email))
@@ -166,7 +167,6 @@ public class AccountController : ControllerBase
         //if(_users?.Count() > 0 && model.Email != "aslan_argun@hotmail.com" && model.Roles.IndexOf("Developer") == -1 && !Permission("Admin"))
         //    return BadRequest("Permission is missing!");
 
-        var permission = Permission("Admin");
 
         string errorMessage = String.Empty;
         try
@@ -180,7 +180,6 @@ public class AccountController : ControllerBase
             // Create roles
             var roles = model?.Roles;
 
-            roles?.Add("User");
 
             if(developer || (roles?.Count == 0 && _users?.Count() == 0))
             {
@@ -190,6 +189,7 @@ public class AccountController : ControllerBase
                     roles.Add("Support");
             }
 
+            roles?.Add("User");
             // Create and save a user into the database
             var user = new User
             {
@@ -208,7 +208,7 @@ public class AccountController : ControllerBase
 
                 var mailContent = "<h4>Hi " + model?.Name + "!</h4><br/>" +
                                   "<p>Welcome as a new user on {domain}.</p>" +
-                                  "<p>Below are your login details, save them for future reference.</p><br/>" +
+                                  "<p>Below are your login details. Please, save them for future reference.</p><br/>" +
                                   "<p>Username: " + model?.Email + "</p>" +
                                   "<p>Password: " + model?.Password + "</p><br/>";
 
@@ -261,9 +261,9 @@ public class AccountController : ControllerBase
     // Get claims 
     private bool Permission(string role)
     {
-        var claims = User.Claims.ToList();
-        var claimsRoles = User.Claims.FirstOrDefault(x => x.Type == "Roles");
-        return true;
+        //var claims = User.Claims.ToList();
+        var claimRoles = User.Claims?.FirstOrDefault(x => x.Type == "Roles")?.ToString();
+        return claimRoles?.IndexOf(role) > -1;
     }
 
     // Hash password
@@ -300,8 +300,10 @@ public class AccountController : ControllerBase
         IdentityOptions opt = new IdentityOptions();
 
         var claims = new List<Claim>();
-        claims.Add(new Claim(ClaimTypes.Name, user.Name));
+        claims.Add(new Claim("Id", user.Id));
+        claims.Add(new Claim("Name", user.Name));
         claims.Add(new Claim("Email", user.Email));
+        claims.Add(new Claim("Roles", user.Roles.ToString()));
 
         foreach (var r in user.ListRoles)
             claims.Add(new Claim(opt.ClaimsIdentity.RoleClaimType, r));
