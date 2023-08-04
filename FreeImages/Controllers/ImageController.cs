@@ -32,8 +32,8 @@ namespace FreeImages.Controllers
         public IEnumerable<Image> Get() => AllImages;
 
         [HttpGet("images/{page}/{count}")]
-        public IEnumerable<PreviewImage> GetImages(int page, int count) =>
-            _db.PreviewImages?.OrderByDescending(x => x.Id).Skip(count * (page - 1)).Take(count).ToList();
+        public IEnumerable<Image> GetImages(int page, int count) =>
+            _db.Image?.OrderByDescending(x => x.Id).Skip(count * (page - 1)).Take(count).ToList();
         #endregion
     }
 }

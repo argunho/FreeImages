@@ -11,23 +11,14 @@ const columns = [
   {
     field: 'date',
     headerName: 'Date',
-    type: 'string',
-    width: 90
+    width: 200,
+    valueGetter: (params) => new Date(params.row.date.toString()).toLocaleDateString([],{year: "numeric", month: "long", day: "numeric"})
   }
-  // {
-  //   field: 'fullName',
-  //   headerName: 'Full name',
-  //   description: 'This column has a value getter and is not sortable.',
-  //   sortable: false,
-  //   width: 160,
-  //   valueGetter: (params) =>
-  //     `${params.row.name || ''} ${params.row.lastName || ''}`,
-  // },
 ];
 
 function ImagesList() {
   return (
-    <List api="image" columns={columns} title="Images" actionsWidth={530} view={true} button={{
+    <List api="image" columns={columns} title="Images" columnWidth={430} view={true} button={{
       title: "Upload an image",
       url: "/sp/upload-image",
       icon: <AddAPhoto />

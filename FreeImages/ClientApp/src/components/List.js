@@ -32,7 +32,7 @@ function List(props) {
       sortable: false,
       filterable: false,
       headerClassName: 'actions-field',
-      width: props.width,
+      width: props.columnWidth,
       disableColumnMenu: true,
       disableColumnSelector: true,
       disableColumnFilter: true,
