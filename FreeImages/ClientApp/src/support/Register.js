@@ -12,7 +12,7 @@ import Heading from '../components/Heading';
 import Loading from '../components/Loading';
 
 
-function Register() {
+function Register({empty}) {
 
     const [roles, setRoles] = useState([])
     const [modal, setModal] = useState(false);

@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Container } from 'reactstrap';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
+
+// Installed
+import { Button, Container } from '@mui/material';
 import { MenuOpen, Menu } from '@mui/icons-material';
+import jwt_decode from "jwt-decode";
 
 // Components
 import Header from '../components/Header';
@@ -22,11 +24,16 @@ function SupportLayout({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
-    if (!token && loc.pathname.indexOf("login") === -1 && loc.pathname.indexOf("register") === -1)
+    if (!!token) {
+      const decoded = jwt_decode(token);
+      console.log(29, (decoded.exp * 1000) < Date.now())
+      if ((decoded.exp * 1000) < Date.now()) {
+        localStorage.removeItem("token");
+        navigate("/");
+      } else
+        setAuthorized(true);
+    } else if (!token && loc.pathname.indexOf("login") === -1 && loc.pathname.indexOf("register") === -1)
       navigate(-1);
-    else if (!!token)
-      setAuthorized(true);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loc])
