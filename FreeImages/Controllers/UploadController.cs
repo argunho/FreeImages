@@ -14,9 +14,9 @@ public class UploadController : ControllerBase
     private static string connectionString = "DefaultEndpointsProtocol=https;AccountName=uploadfilerepository;AccountKey=AtqMADGJ1jsZ+lHvdDP2ynlW9Sr8fKcr9ojNVTdXWeTfWd8q9izdY9hhRkjUg4abKfYWFXVgHe4D+ASt2brVDA==;EndpointSuffix=core.windows.net";
     private static string conatinerName = "uploadfilecontainer";
 
-    private BlobContainerClient _container = new BlobContainerClient(connectionString, conatinerName);
-    private DbConnect _db;
-    private IHelpFunctions _help;
+    private readonly BlobContainerClient _container = new(connectionString, conatinerName);
+    private readonly DbConnect _db;
+    private readonly IHelpFunctions _help;
 
     public UploadController(DbConnect db, IHelpFunctions help)
     {
@@ -33,13 +33,9 @@ public class UploadController : ControllerBase
             return _help.Response("warning", "An image file or image information missing!");
 
         // Image name
-        var imgName = name.Replace(" ", "") + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + "." 
-            + uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
-
-        // If the imag alreade exists
-        if (_db.ListImages?.FirstOrDefault(x => x.Name == imgName) != null)
-            return _help.Response("warning", "Image with the same name already exists");
-
+        var imgName = $"{name.ToLower().Replace(" ", "")}_{DateTime.Now.ToString("yyyyMMddHHmmss")}." +
+                            $"{uploadedFile.ContentType[(uploadedFile.ContentType.IndexOf("/") + 1)..]}";
+        //+uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
         try
         {
             // Upload to azure blob storage
@@ -88,6 +84,6 @@ public class UploadController : ControllerBase
 
     #region Help Functions
     private string? GetClaimType(string? value) => User.Claims?.FirstOrDefault(x => x?.Type == value)?.ToString();
- 
+
     #endregion
 }

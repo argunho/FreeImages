@@ -33,7 +33,7 @@ namespace FreeImages.Controllers
 
         [HttpGet("{page}/{count}")]
         public IEnumerable<ListImage> GetImages(int page, int count) =>
-            _db.ListImages?.OrderByDescending(x => x.Id).Skip(count * (page - 1)).Take(count).ToList();
+            _db.ListImages?.OrderByDescending(x => x.Id).Skip(count * (page - 1))?.Take(count).ToList() ?? Enumerable.Empty<ListImage>();
         #endregion
     }
 }

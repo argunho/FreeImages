@@ -23,7 +23,7 @@ public class AccountController : ControllerBase
     private readonly ILogger<AccountController> _logger;
     private readonly MailRepository _mail;
     private readonly DbConnect _db;
-    private HashAlgorithmName _hashAlgorithm;
+    private readonly HashAlgorithmName _hashAlgorithm;
 
     const int _iterations = 3500000;
 
@@ -173,7 +173,7 @@ public class AccountController : ControllerBase
         try
         {
             // Hash password
-            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            RNGCryptoServiceProvider provider = new();
             byte[] salt = new byte[model.Email.Length * 2];
             provider.GetBytes(salt);
             var hashedPassword = HashPassword(model, salt);

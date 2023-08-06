@@ -22,7 +22,7 @@ function Home() {
   }, [])
 
   const get = async () => {
-    const res = await fetch(`image/images/${page}/${perPage}`);
+    const res = await fetch(`image/${page}/${perPage}`);
     setImgs(await res.json());
   }
 
@@ -56,7 +56,7 @@ function Home() {
 
       <div className='gallery'>
         {imgs.map((i, index) => (
-          <img src={storage + i.imgName}
+          <img src={i.path}
             className="gallery-img"
             key={index}
             onClick={() => navigate(i.imgName.slice(i.imgName.lastIndexOf(".") + 1))}
