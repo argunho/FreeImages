@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Close } from '@mui/icons-material';
 
 // Components
-import FileUpload from '../components/FileUpload';
+import FileUpload from './UploadFile';
 import Heading from '../components/Heading';
 
 
@@ -120,13 +120,13 @@ function UploadFileForm(props) {
             </form>
 
             {/* Response */}
-            {response ?
+            {/* {response ?
                 <div className={'slide-in-bottom alert-wrapper ' + response?.result}>
                     <Alert className='alert' severity={response?.result} variant='filled' onClose={() => setResponse(null)}>
                         <AlertTitle>{capitalize(response?.result)}</AlertTitle>
                         <p dangerouslySetInnerHTML={{ __html: response?.msg }}></p>
                     </Alert>
-                </div> : null}
+                </div> : null} */}
         </div>
     )
 }

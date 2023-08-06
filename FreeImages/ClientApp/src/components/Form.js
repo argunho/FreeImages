@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
+import { useEffect } from 'react';
 
 // Components
 // import FileUpload from './FileUpload';
@@ -21,6 +22,20 @@ function Form({ children, ...props }) {
     const [errors, setErrors] = useState([]);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        let res = props.response;
+        if(!!res){
+            setLoading(false);
+            if(res?.status === 200) {
+                resetForm();
+                setResponse(res)
+            } else
+                console.warn(res);
+        }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.response])
 
     const handleChange = e => {
         if (!e.target) return;
@@ -52,41 +67,39 @@ function Form({ children, ...props }) {
         if (invalidForm) return;
 
         setLoading(true);
+        props.onSubmit(form);
 
-        let formData = form;
-        if (!!props.roles)
-            formData.roles = props.roles;
-        let request = axios.post(props.api, formData, HeaderConfig);
+        // let formData = form;
+        // if (!!props.roles)
+        //     formData.roles = props.roles;
+        // let request = axios.post(props.api, formData, HeaderConfig);
 
-        // If it is upload image form
-        if (props.upload) {
-            if (!file) return;
+        // // If it is upload image form
+        // if (props.upload) {
+        //     if (!file) return;
 
-            let data = new FormData();
-            data.append("uploadedFile", file);
-            let api = props.api;
-            inputs.forEach(k => {
-                api += "/" + form[k]
-            });
+        //     let data = new FormData();
+        //     data.append("uploadedFile", file);
+        //     let api = props.api;
+        //     inputs.forEach(k => {
+        //         api += "/" + form[k]
+        //     });
 
-            request = axios.post(api, data, HeaderConfig);
-        }
+        //     request = axios.post(api, data, HeaderConfig);
+        // }
 
         //  axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data)
-        await request.then(res => {
-            console.log(77,res)
-            console.log(78,res.data)
-            console.log(79,res.status)
-            setResponse(res.data);
-            resetForm();
-            if (!!res.data?.token) {
-                localStorage.setItem("token", res.data.token);
-                navigate("/sp/images");
-            }
-        }, error => {
-            console.warn(error);
-            setLoading(false);
-        })
+        // await request.then(res => {
+        //     setResponse(res.data);
+        //     resetForm();
+        //     if (!!res.data?.token) {
+        //         localStorage.setItem("token", res.data.token);
+        //         navigate("/sp/images");
+        //     }
+        // }, error => {
+        //     console.warn(error);
+        //     setLoading(false);
+        // })
     }
 
     const resetForm = () => {

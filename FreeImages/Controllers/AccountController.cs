@@ -152,20 +152,21 @@ public class AccountController : ControllerBase
 
     #region Post
     [HttpPost("Register")] // Register
-    public async Task<IActionResult> PostRegister(AccountViewModel model)
+    public async Task<JsonResult> PostRegister(AccountViewModel model)
     {
-        var permission = Permission("Admin");
-        if (!ModelState.IsValid)
-            return BadRequest();
-        else if (!_help.CheckEmail(model.Email))
-            return BadRequest(new { alert = "warning", message = "Incorrect email address" });
-        else if (_users.FirstOrDefault(x => x.Email == model.Email) != null)
-            return BadRequest("User with the same email already exists!");
 
+        if (!ModelState.IsValid)
+            return _help.Response("warning", "Incorrect form data!");
+        else if (!_help.CheckEmail(model.Email))
+            return _help.Response("warning", "Incorrect email address");
+        else if (_users.FirstOrDefault(x => x.Email == model.Email) != null)
+            return _help.Response("warning", "User with the same email already exists!");
+
+        var firstRegister = _users?.Count() == 0;
         // Check admin email
         var developer = model.Email.Equals("aslan_argun@hotmail.com");
-        //if(_users?.Count() > 0 && model.Email != "aslan_argun@hotmail.com" && model.Roles.IndexOf("Developer") == -1 && !Permission("Admin"))
-        //    return BadRequest("Permission is missing!");
+        if (!firstRegister && model.Email != "aslan_argun@hotmail.com" && model.Roles.IndexOf("Developer") == -1 && !Permission("Admin"))
+            return _help.Response("warning", "Permission is missing!");
 
 
         string errorMessage = String.Empty;
@@ -181,7 +182,7 @@ public class AccountController : ControllerBase
             var roles = model?.Roles;
 
 
-            if(developer || (roles?.Count == 0 && _users?.Count() == 0))
+            if (developer || (roles?.Count == 0 && _users?.Count() == 0))
             {
                 if (roles?.IndexOf("Admin") == -1)
                     roles.Add("Admin");
@@ -202,20 +203,24 @@ public class AccountController : ControllerBase
 
             _db.User?.Add(user);
 
-            if (_db.SaveChanges() > 0)
+            if (_help.Save())
             {
-                var token = GenerateJwtToken(user);
+                if (firstRegister)
+                {
+                    var token = GenerateJwtToken(user);
 
-                var mailContent = "<h4>Hi " + model?.Name + "!</h4><br/>" +
-                                  "<p>Welcome as a new user on {domain}.</p>" +
-                                  "<p>Below are your login details. Please, save them for future reference.</p><br/>" +
-                                  "<p>Username: " + model?.Email + "</p>" +
-                                  "<p>Password: " + model?.Password + "</p><br/>";
+                    var mailContent = "<h4>Hi " + model?.Name + "!</h4><br/>" +
+                                      "<p>Welcome as a new user on {domain}.</p>" +
+                                      "<p>Below are your login details. Please, save them for future reference.</p><br/>" +
+                                      "<p>Username: " + model?.Email + "</p>" +
+                                      "<p>Password: " + model?.Password + "</p><br/>";
+                    // Send a mail to new user
+                    //_help.SendMail(user.Email, "Välkommen " + model.Name, mailContent);
 
-                // Send a mail to new user
-                //_help.SendMail(user.Email, "Välkommen " + model.Name, mailContent);
-
-                return Ok(new { alert = "success", token });
+                    return new JsonResult(new { alert = "success", token });
+                }
+                else
+                    return _help.Response("success");
             }
         }
         catch (Exception ex)
@@ -223,28 +228,28 @@ public class AccountController : ControllerBase
             errorMessage = ex.Message;
         }
 
-        return BadRequest(_help.BadResponse(errorMessage));
+        return _help.Response("error", errorMessage);
     }
 
     [HttpPost("Login")] // Logga in
-    public async Task<IActionResult> PostLogin(LoginViewModel model)
+    public async Task<JsonResult> PostLogin(LoginViewModel model)
     {
         if (!ModelState.IsValid)
-            return BadRequest(new { alert = "warning", message = "Form data is incorrectly filled in" });
+            return _help.Response("warning", "Form data is incorrectly filled in");
         else if (!_help.CheckEmail(model?.Email))
-            return BadRequest(new { alert = "warning", message = "Incorrect email address" });
+            return _help.Response("warning", "Incorrect email address");
 
         var errorMessage = String.Empty;
         try
         {
             var user = _users.FirstOrDefault(x => x.Email == model.Email);
             if (user == null || !VerifyPassword(model?.Password, user))
-                return BadRequest(new { alert = "warning", message = "Incorrect email address or password" });
+                return _help.Response("warning", "Incorrect email address or password");
             else
             {
                 var days = (model.Remember) ? 30 : 1;
                 var token = GenerateJwtToken(user, days);
-                return Ok(new { alert = "success", token, user = user.Name });
+                return new JsonResult(new { alert = "success", token, user = user.Name });
             }
         }
         catch (Exception ex)
@@ -252,7 +257,7 @@ public class AccountController : ControllerBase
             errorMessage = ex.Message;
         }
 
-        return BadRequest(_help.BadResponse(errorMessage));
+        return _help.Response("error", errorMessage);
     }
     #endregion
 

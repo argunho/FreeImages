@@ -10,15 +10,17 @@ import { Check, Close } from '@mui/icons-material';
 import Form from '../components/Form';
 import Heading from '../components/Heading';
 import Loading from '../components/Loading';
+import HeaderConfig from '../functions/HeaderConfig';
 
 
-function Register({empty}) {
+function Register() {
 
     const [roles, setRoles] = useState([])
     const [modal, setModal] = useState(false);
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [response, setResponse] = useState(null);
     const token = localStorage.getItem("token");
 
     const navigate = useNavigate();
@@ -37,7 +39,7 @@ function Register({empty}) {
                         navigate(-1);
                 });
             })();
-        } 
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -56,11 +58,26 @@ function Register({empty}) {
     const verifyPassword = () => {
         var date = new Date();
         var currentDate = (date.toISOString()).slice(0, 10);
-        if (password === `${currentDate} BismiLLAHI!`) {
+        if (password === `BismiLLAHI! ${currentDate}`) {
             setModal(false);
             setError(false);
         } else
             setError(true);
+    }
+
+    const submitForm = async (data) => {
+        let formData = data;
+        formData.roles = roles;
+        await axios.post("account/register", formData, HeaderConfig)
+            .then(res => {
+                if (!!res.data?.token) {
+                    localStorage.setItem("token", res.data.token);
+                    navigate("/sp/images");
+                } else
+                setResponse(res.data)
+            }, error => {
+                setResponse(error);
+            });
     }
 
     if (loading)
@@ -71,7 +88,6 @@ function Register({empty}) {
             <Heading title="Form" />
             {!modal && <Form
                 heading="Register"
-                api="account/register"
                 inputs={{
                     name: "",
                     email: "",
@@ -79,7 +95,8 @@ function Register({empty}) {
                     confirmPassword: ""
                 }}
                 confirmInputs={["password", "confirmPassword"]}
-                roles={roles}>
+                response={response}
+                onSUbmit={submitForm}>
                 {!!token && <div className='d-column ai-start'>
                     {["Admin", "Support"].map((role, i) => {
                         return <FormControlLabel key={i} className='input-checkbox' control={

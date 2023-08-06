@@ -11,6 +11,7 @@ import Users from "./support/Users";
 // Pages
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import UploadFile from "./support/UploadFile";
 
 const AppRoutes = [
   {
@@ -35,7 +36,7 @@ const AppRoutes = [
       },
       {
         path: '/sp/upload-image',
-        element: <UploadFileForm/>
+        element: <UploadFile/>
       },
       {
         path: '/sp/register',
@@ -47,6 +48,14 @@ const AppRoutes = [
       },
       {
         path: '/sp/logout',
+        element: <Logout/>
+      },
+      {
+        path: "/sp/users/edit/:id",
+        element: <Login/>
+      },
+      {
+        path: '/sp/images/edit/:id',
         element: <Logout/>
       }
     ]

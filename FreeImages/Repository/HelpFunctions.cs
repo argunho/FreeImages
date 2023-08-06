@@ -38,15 +38,15 @@ public class HelpFunctions : IHelpFunctions
     }
 
     // Return response
-    public JsonResult Response(string? result, string? msg = null) => new JsonResult(new { result = result, msg = msg ?? _message });
+    public JsonResult Response(string alert, string? msg = null) => new (new { alert, message = msg ?? _message });
 
     // Check email
     public bool CheckEmail(string email)
     {
-        Regex regex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+        Regex regex = new(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
         Match match = regex.Match(email);
 
-        return (match.Success) ? true : false;
+        return match.Success;
     }
 
     // Return hash
@@ -64,7 +64,4 @@ public class HelpFunctions : IHelpFunctions
         return DateTime.Parse(date, culture);
     }
 
-    // Return bad request
-    public Response BadResponse(string? message)  => 
-        new Models.Response { Alert = "error", Message = $"Something went wrong while trying to register a new user.!\n {message}" };
 }
