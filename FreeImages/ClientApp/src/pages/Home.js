@@ -17,17 +17,21 @@ function Home() {
   const storage = "https://uploadfilerepository.blob.core.windows.net/uploadfilecontainer/";
 
   useEffect(() => {
-    // get();
+    get();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const get = async () => {
-    const res = (searchKeyword.length >= 3) ?
-      await fetch(`image/search/${page}/${perPage}/${searchKeyword}`)
-      : await fetch(`image/images/${page}/${perPage}`);
-    const data = await res.json();
-    setImgs(data);
+    const res = await fetch(`image/images/${page}/${perPage}`);
+    setImgs(await res.json());
   }
+
+  const search = async () => {
+    if (searchKeyword.length < 3) return;
+    const res = await fetch(`image/search/${page}/${perPage}/${searchKeyword}`)
+    setImgs(await res.json());
+  }
+
 
   return (
     <>
@@ -44,7 +48,7 @@ function Home() {
           onChange={(e) => setSearchKeyword(e.target.value)} />
         <Button variant='text'
           className='search-button'
-          onClick={() => get()}
+          onClick={() => search()}
           disabled={loading || searchKeyword.length < 3}>
           <Search />
         </Button>

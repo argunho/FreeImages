@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FreeImages.Migrations
 {
     [DbContext(typeof(DbConnect))]
-    [Migration("20230729091829_upddb")]
-    partial class upddb
+    [Migration("20230806075516_listimage")]
+    partial class listimage
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,10 +78,6 @@ namespace FreeImages.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("ListImages");
@@ -89,14 +85,14 @@ namespace FreeImages.Migrations
 
             modelBuilder.Entity("FreeImages.Models.User", b =>
                 {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("LoginHash")
                         .HasColumnType("uniqueidentifier");
@@ -107,11 +103,13 @@ namespace FreeImages.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("PasswordVerefiritionCode")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("Roles")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id");
 
                     b.ToTable("User");
                 });

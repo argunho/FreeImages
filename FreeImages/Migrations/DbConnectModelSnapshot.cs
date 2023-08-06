@@ -53,7 +53,7 @@ namespace FreeImages.Migrations
                     b.ToTable("Image");
                 });
 
-            modelBuilder.Entity("FreeImages.Models.PreviewImage", b =>
+            modelBuilder.Entity("FreeImages.Models.ListImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -75,13 +75,9 @@ namespace FreeImages.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Path")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("PreviewImages");
+                    b.ToTable("ListImages");
                 });
 
             modelBuilder.Entity("FreeImages.Models.User", b =>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, CircularProgress } from '@mui/material';
+import { Alert, Button, CircularProgress } from '@mui/material';
 import { Refresh } from '@mui/icons-material';
 
 // Images
@@ -10,6 +10,7 @@ import './../css/fileUpload.css';
 import Heading from '../components/Heading';
 import Form from '../components/Form';
 import axios from 'axios';
+import HeaderConfig from '../functions/HeaderConfig';
 
 function UploadFile(props) {
 
@@ -32,6 +33,7 @@ function UploadFile(props) {
         ev.preventDefault();
         if (loading) return;
 
+        setError();
         setLoading(true);
 
         if (ev.target.files && ev.target.files.length > 0) {
@@ -69,15 +71,16 @@ function UploadFile(props) {
         let data = new FormData();
         data.append("uploadedFile", file);
 
-        await axios.post(`upload/${formData.name}/${formData.keywords}/${formData.text}`, data).then(res => {
-            setResponse(res.data);
-            setLoading(false);
-            // setResult(true);
-            // if (res.data.result === "success")
-            //     resetForm();
-        }, error => {
-            setResponse(error)
-        })
+        await axios.post(`upload/${formData.name}/${formData.keywords}`, data, HeaderConfig)
+            .then(res => {
+                setResponse(res.data);
+                setLoading(false);
+                // setResult(true);
+                // if (res.data.result === "success")
+                //     resetForm();
+            }, error => {
+                setResponse(error)
+            })
     }
 
     return (
@@ -92,6 +95,8 @@ function UploadFile(props) {
                 response={response}
                 onSUbmit={submitForm}>
                 <div className='upload-file-container'>
+                    {/* File error message */}
+                    {error && <Alert severity='error' color="error">{error}</Alert>}
                     {/* Uploaded image */}
                     {image ? <div className='uploaded-image-wrapper'>
                         <img src={image} alt="" className="uploaded-image" />
@@ -109,7 +114,6 @@ function UploadFile(props) {
                             <br />
                             <p className='upload-file-label'>Ladda upp en bild</p>
                         </div>}
-
 
                     {/* File upload input */}
                     <input type="file" className="none" ref={uploadFile}

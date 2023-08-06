@@ -31,7 +31,7 @@ namespace FreeImages.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PreviewImages",
+                name: "ListImages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -97,7 +97,7 @@ namespace FreeImages.Migrations
                 name: "Image");
 
             migrationBuilder.DropTable(
-                name: "PreviewImages");
+                name: "ListImages");
 
             migrationBuilder.DropTable(
                 name: "User");
