@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 // Installed 
-import { Alert, AlertTitle, IconButton } from '@mui/material';
+import { Alert, AlertTitle, Button, IconButton } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 // Components
@@ -11,10 +11,12 @@ import Heading from './Heading';
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
 import Loading from './Loading';
-import { Check, Close, Delete, Edit, Search } from '@mui/icons-material';
+import { Check, Close, Delete, DeleteForever, Edit, Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// Css
+import '../css/form.css';
 
 function List(props) {
 
@@ -24,6 +26,7 @@ function List(props) {
   const [loading, setLoading] = useState(false);
   const [confirmId, setConfirmId] = useState(null);
   const [columns, setColumns] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const defaultColumn = [
     {
@@ -46,13 +49,13 @@ function List(props) {
           setConfirmId(id);
         }
 
-       let buttons = [
+        let buttons = [
           { icon: <Search color="secondary" />, function: () => navigate(`view/${id}`) },
           { icon: <Edit color="primary" />, function: () => navigate(`edit/${id}`) },
           { icon: <Delete color="error" />, function: (e) => deleteItem(e) }
         ];
 
-        if(!props?.view)
+        if (!props?.view)
           buttons = buttons.slice(1);
 
         return <div className='row-buttons d-row'>
@@ -92,12 +95,26 @@ function List(props) {
     })
   }
 
+  const deleteSelected = async () => {
+    console.log(selectedRows.toString())
+    await axios.delete(`${props.api}/${selectedRows.toString()}`, HeaderConfig).then(res => {
+      console.log(res);
+    })
+  }
+
   return (
     <div className='wrapper'>
       <Heading title={props.title} button={props.button} />
 
       {/* Loading */}
       {!!loading && <Loading />}
+
+      {/* Delete selected */}
+      {!loading && <div className='buttons-wrapper d-row jc-end'>
+        <Button onClick={deleteSelected} color='error' variant='contained' disabled={selectedRows.length === 0} size='medium'>
+          <DeleteForever style={{ marginRight: "10px" }} /> Delete selected
+        </Button>
+      </div>}
 
       {/* Confirm aler */}
       {!!confirmId && <Alert severity='error' color='error' variant='standard' className="confirm-alert d-row jc-between">
@@ -119,7 +136,7 @@ function List(props) {
         rows={rows}
         columns={columns}
         pageSize={10}
-        rowsPerPageOptions={[10]}
+        rowsPerPageOptions={[15]}
         checkboxSelection
         density='comfortable'
         sx={{
@@ -134,15 +151,23 @@ function List(props) {
             backgroundColor: "#010A4F",
             textAlign: "center"
           },
-          '& .MuiDataGrid-row': {  
-            backgroundColor: !!confirmId ?"#cccccc2c" : "#FFFFFF",
+          '& .MuiDataGrid-row': {
+            backgroundColor: !!confirmId ? "#cccccc2c" : "#FFFFFF",
             pointerEvents: !!confirmId ? "none" : "auto"
-          },
-          // '& .MuiDataGrid-row > div:last-child': {
-          //   display: "none",
-          //   visibility: "hidden"
-          // }
+          }
         }}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10
+            }
+          }
+        }}
+        pageSizeOptions={[10, 25, 50, 100]}
+        onRowSelectionModelChange={(ids) => {
+          setSelectedRows(ids);
+        }}
+        // checkboxSelection={true}
       />}
 
       {/* Empty list */}

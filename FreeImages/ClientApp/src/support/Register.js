@@ -96,7 +96,7 @@ function Register() {
                 }}
                 confirmInputs={["password", "confirmPassword"]}
                 response={response}
-                onSUbmit={submitForm}>
+                onSubmit={submitForm}>
                 {!!token && <div className='d-column ai-start'>
                     {["Admin", "Support"].map((role, i) => {
                         return <FormControlLabel key={i} className='input-checkbox' control={

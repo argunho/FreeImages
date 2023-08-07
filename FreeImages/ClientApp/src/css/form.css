@@ -28,7 +28,8 @@ form textarea {
 }
 
 .buttons-wrapper {
-  margin-top: 30px;
+  margin-top: 20px;
+  padding: 10px 0;
 }
 
 .buttons-wrapper>button {

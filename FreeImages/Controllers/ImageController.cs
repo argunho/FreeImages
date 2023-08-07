@@ -18,22 +18,29 @@ namespace FreeImages.Controllers
             _help = help;
         }
 
-        public IEnumerable<ListImage> AllImages
+        public IEnumerable<ListImage> AllListImages
         {
             get
             {
                 return _db.ListImages?.ToList() ?? Enumerable.Empty<ListImage>();
             }
         }
+        public IEnumerable<Image> AllImages
+        {
+            get
+            {
+                return _db.Images?.ToList() ?? Enumerable.Empty<Image>();
+            }
+        }
 
         #region GET
         [HttpGet]
       //[Authorize(Roles = "Admin,Support")]
-        public IEnumerable<ListImage> Get() => AllImages;
+        public IEnumerable<Image> Get() => AllImages;
 
         [HttpGet("{page}/{count}")]
         public IEnumerable<ListImage> GetImages(int page, int count) =>
-            _db.ListImages?.OrderByDescending(x => x.Id).Skip(count * (page - 1))?.Take(count).ToList() ?? Enumerable.Empty<ListImage>();
+            AllListImages?.OrderByDescending(x => x.Id).Skip(count * (page - 1))?.Take(count).ToList() ?? Enumerable.Empty<ListImage>();
         #endregion
     }
 }

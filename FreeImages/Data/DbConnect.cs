@@ -5,7 +5,7 @@ public class DbConnect : DbContext
 {
     public DbConnect(DbContextOptions<DbConnect> options) : base(options) { }
 
-    public DbSet<Image>? Image => Set<Image>();
+    public DbSet<Image>? Images => Set<Image>();
     public DbSet<ListImage>? ListImages => Set<ListImage>();
     public DbSet<Values> Values => Set<Values>();
     public DbSet<Visits> Visits => Set<Visits>();

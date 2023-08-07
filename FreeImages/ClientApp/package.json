@@ -9,6 +9,7 @@
     "@mui/material": "^5.10.9",
     "@mui/x-data-grid": "^6.10.2",
     "axios": "^1.1.2",
+    "flatlist-react": "^1.5.14",
     "http-proxy-middleware": "^2.0.6",
     "jwt-decode": "^3.1.2",
     "merge": "^2.1.1",

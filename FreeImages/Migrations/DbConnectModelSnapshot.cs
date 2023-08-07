@@ -50,7 +50,7 @@ namespace FreeImages.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Image");
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("FreeImages.Models.ListImage", b =>
@@ -64,6 +64,9 @@ namespace FreeImages.Migrations
                     b.Property<string>("Base64")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Height")
+                        .HasColumnType("int");
+
                     b.Property<int>("ImageId")
                         .HasColumnType("int");
 
@@ -74,6 +77,9 @@ namespace FreeImages.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Width")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

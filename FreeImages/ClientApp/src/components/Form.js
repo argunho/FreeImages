@@ -1,16 +1,15 @@
+
+import React, { useState } from 'react'
+
+// Installed
 import { Close } from '@mui/icons-material'
 import { Button, CircularProgress, TextField } from '@mui/material'
-import axios from 'axios';
-import React, { useState } from 'react'
-import Response from './Response';
-import { useNavigate } from 'react-router-dom';
-
-// Functions
-import HeaderConfig from '../functions/HeaderConfig';
-import { useEffect } from 'react';
 
 // Components
-// import FileUpload from './FileUpload';
+import Response from './Response';
+
+// Functions
+import { useEffect } from 'react';
 
 function Form({ children, ...props }) {
 
@@ -21,20 +20,20 @@ function Form({ children, ...props }) {
     const [response, setResponse] = useState(null);
     const [errors, setErrors] = useState([]);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         let res = props.response;
-        if(!!res){
+        if (!!res) {
             setLoading(false);
-            if(res?.status === 200) {
-                resetForm();
-                setResponse(res)
+            console.log(res)
+            if (!!res?.alert) {
+                setResponse(res);
+                if (res.alert === "success")
+                    resetForm();
             } else
                 console.warn(res);
         }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.response])
 
     const handleChange = e => {
@@ -68,42 +67,11 @@ function Form({ children, ...props }) {
 
         setLoading(true);
         props.onSubmit(form);
-
-        // let formData = form;
-        // if (!!props.roles)
-        //     formData.roles = props.roles;
-        // let request = axios.post(props.api, formData, HeaderConfig);
-
-        // // If it is upload image form
-        // if (props.upload) {
-        //     if (!file) return;
-
-        //     let data = new FormData();
-        //     data.append("uploadedFile", file);
-        //     let api = props.api;
-        //     inputs.forEach(k => {
-        //         api += "/" + form[k]
-        //     });
-
-        //     request = axios.post(api, data, HeaderConfig);
-        // }
-
-        //  axios.post(`upload/${form.name}/${form.keywords}/${form.text}`, data)
-        // await request.then(res => {
-        //     setResponse(res.data);
-        //     resetForm();
-        //     if (!!res.data?.token) {
-        //         localStorage.setItem("token", res.data.token);
-        //         navigate("/sp/images");
-        //     }
-        // }, error => {
-        //     console.warn(error);
-        //     setLoading(false);
-        // })
     }
 
     const resetForm = () => {
-        setFile(null);
+        if (!!props.fileReset)
+            props.fileReset();
         setForm(props.inputs);
         setLoading(false);
     }
@@ -119,42 +87,46 @@ function Form({ children, ...props }) {
 
     // Response alert
     if (!!response)
-        return <Response res={response} close={() => setResponse()} />
+        return
 
     return (
-        <form onSubmit={submitForm}>
-            <h4 className='form-title'>{props.heading}</h4>
-            {inputs.map((x, ind) => (
-                <TextField key={ind}
-                    label={capitalize(x)}
-                    className='fields'
-                    size="medium"
-                    required
-                    disabled={loading}
-                    name={x}
-                    type={x.toLowerCase().indexOf("password") > -1 ? "password" : (x === "email" ? x : "text")}
-                    value={form[x]}
-                    variant="outlined"
-                    inputProps={{
-                        minLength: x.toLowerCase().indexOf("password") > -1 ? 6 : 2
-                    }}
-                    error={errors.indexOf(x) > -1}
-                    onChange={handleChange} />
-            ))}
+        <>
+            <form onSubmit={submitForm}>
+                <h4 className='form-title'>{props.heading}</h4>
+                {inputs.map((x, ind) => (
+                    <TextField key={ind}
+                        label={capitalize(x)}
+                        className='fields'
+                        size="medium"
+                        required
+                        disabled={loading}
+                        name={x}
+                        type={x.toLowerCase().indexOf("password") > -1 ? "password" : (x === "email" ? x : "text")}
+                        value={form[x]}
+                        variant="outlined"
+                        inputProps={{
+                            minLength: x.toLowerCase().indexOf("password") > -1 ? 6 : 2
+                        }}
+                        error={errors.indexOf(x) > -1}
+                        onChange={handleChange} />
+                ))}
 
-            {/* File upload */}
-            {children && children}
-            {/* {props.uploadFile && <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} reset={file === null} />} */}
+                {/* File upload */}
+                {children && children}
+                {/* {props.uploadFile && <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} reset={file === null} />} */}
 
-            <div className="buttons-wrapper d-row jc-end">
-                {ongoingForm ? <Button color="error" variant='outlined' onClick={resetForm}>
-                    <Close />
-                </Button> : null}
-                <Button type="submit" variant='outlined' color="inherit">
-                    {loading ? <CircularProgress className='loading-circular' /> : "Save"}
-                </Button>
-            </div>
-        </form>
+                <div className="buttons-wrapper d-row jc-end">
+                    {ongoingForm ? <Button color="error" variant='outlined' onClick={resetForm}>
+                        <Close />
+                    </Button> : null}
+                    <Button type="submit" variant='outlined' color="inherit">
+                        {loading ? <CircularProgress className='loading-circular' /> : "Save"}
+                    </Button>
+                </div>
+            </form>
+
+            {!!response && <Response res={response} close={() => setResponse()} />}
+        </>
     )
 }
 export default Form;

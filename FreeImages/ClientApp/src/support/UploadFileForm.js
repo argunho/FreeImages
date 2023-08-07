@@ -5,8 +5,8 @@ import axios from 'axios';
 import { Close } from '@mui/icons-material';
 
 // Components
-import FileUpload from '../components/FileUpload';
 import Heading from '../components/Heading';
+import UploadFile from './UploadFile';
 
 
 // Css
@@ -103,7 +103,7 @@ function UploadFileForm(props) {
 
 
                 {/* File upload */}
-                <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} reset={file === null} />
+                <UploadFile onUploadChange={(file) => setFile(file)} loading={loading} reset={file === null} />
 
                 {/* <FormControlLabel className="checkbox" control={
                 <Checkbox checked={form.visible} onChange={() => setForm({...form, visible: !form.visible })}

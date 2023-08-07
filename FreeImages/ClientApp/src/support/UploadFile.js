@@ -93,7 +93,8 @@ function UploadFile(props) {
                     keywords: ""
                 }}
                 response={response}
-                onSUbmit={submitForm}>
+                onSubmit={submitForm}
+                fileReset={() => setFile()}>
                 <div className='upload-file-container'>
                     {/* File error message */}
                     {error && <Alert severity='error' color="error">{error}</Alert>}
