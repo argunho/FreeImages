@@ -15,9 +15,8 @@ namespace FreeImages.Controllers;
 public class UploadController : ControllerBase
 {
     private static readonly string connectionString = "DefaultEndpointsProtocol=https;AccountName=uploadfilerepository;AccountKey=AtqMADGJ1jsZ+lHvdDP2ynlW9Sr8fKcr9ojNVTdXWeTfWd8q9izdY9hhRkjUg4abKfYWFXVgHe4D+ASt2brVDA==;EndpointSuffix=core.windows.net";
-    private static readonly string conatinerName = "uploadfilecontainer";
 
-    private readonly BlobContainerClient _container = new(connectionString, conatinerName);
+    private readonly BlobContainerClient _container = new(connectionString, "uploadfilecontainer");
     private readonly DbConnect _db;
     private readonly IHelpFunctions _help;
 
