@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 // Installed 
-import { Alert, AlertTitle, Button, IconButton } from '@mui/material';
+import { Alert, AlertTitle, Button, CircularProgress, IconButton } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 
 // Components
@@ -24,7 +24,7 @@ function List(props) {
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [confirmId, setConfirmId] = useState(null);
+  const [confirm, setConfirm] = useState(false);
   const [columns, setColumns] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -43,16 +43,16 @@ function List(props) {
       renderCell: (params) => {
         const id = params.id;
 
-        const deleteItem = async (e) => {
-          e.stopPropagation();
-          console.log(id)
-          setConfirmId(id);
-        }
+        // const deleteItem = async (e) => {
+        //   e.stopPropagation();
+        //   console.log(id)
+        //   setConfirmId(id);
+        // }
 
         let buttons = [
           { icon: <Search color="secondary" />, function: () => navigate(`view/${id}`) },
           { icon: <Edit color="primary" />, function: () => navigate(`edit/${id}`) },
-          { icon: <Delete color="error" />, function: (e) => deleteItem(e) }
+          // { icon: <Delete color="error" />, function: (e) => deleteItem(e) }
         ];
 
         if (!props?.view)
@@ -86,14 +86,14 @@ function List(props) {
     setRows(data);
   }
 
-  const clickHandle = async (e) => {
-    e.stopPropagation();
-    setConfirmId(null);
-    console.log(confirmId)
-    await axios.delete(`${props.api}/${confirmId}`, HeaderConfig).then(res => {
-      console.log(res);
-    })
-  }
+  // const clickHandle = async (e) => {
+  //   e.stopPropagation();
+  //   setConfirmId(null);
+  //   console.log(confirmId)
+  //   await axios.delete(`${props.api}/${confirmId}`, HeaderConfig).then(res => {
+  //     console.log(res);
+  //   })
+  // }
 
   const deleteSelected = async () => {
     console.log(selectedRows.toString())
@@ -111,18 +111,19 @@ function List(props) {
 
       {/* Delete selected */}
       {!loading && <div className='buttons-wrapper d-row jc-end'>
-        <Button onClick={deleteSelected} color='error' variant='contained' disabled={selectedRows.length === 0} size='medium'>
-          <DeleteForever style={{ marginRight: "10px" }} /> Delete selected
+        <Button onClick={() => setConfirm(true)} color='error' variant='contained' disabled={selectedRows.length === 0 || confirm} size='medium'>
+          {confirm ? <CircularProgress style={{ marginRight: "14px" }} size={20} color='inherit'/> 
+            : <DeleteForever style={{ marginRight: "10px" }} />} Delete selected
         </Button>
       </div>}
 
       {/* Confirm aler */}
-      {!!confirmId && <Alert severity='error' color='error' variant='standard' className="confirm-alert d-row jc-between">
+      {confirm && <Alert severity='error' color='error' variant='standard' className="confirm-alert d-row jc-between">
         <AlertTitle>Are you sure to do it?</AlertTitle>
         <div className='confirm-buttons'>
           {[
-            { icon: <Check color="error" />, function: (e) => clickHandle(e) },
-            { icon: <Close color="inherit" />, function: () => setConfirmId(null) }
+            { icon: <Check color="error" />, function: deleteSelected },
+            { icon: <Close color="inherit" />, function: () => setConfirm(false) }
           ].map((b, i) => {
             return <IconButton key={i} onClick={b.function}>
               {b.icon}
@@ -152,8 +153,8 @@ function List(props) {
             textAlign: "center"
           },
           '& .MuiDataGrid-row': {
-            backgroundColor: !!confirmId ? "#cccccc2c" : "#FFFFFF",
-            pointerEvents: !!confirmId ? "none" : "auto"
+            backgroundColor: confirm ? "#cccccc2c" : "#FFFFFF",
+            pointerEvents: confirm ? "none" : "auto"
           }
         }}
         initialState={{

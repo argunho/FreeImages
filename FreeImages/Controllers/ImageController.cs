@@ -1,12 +1,13 @@
 ﻿using FreeImages.Data;
 using FreeImages.Intefaces;
 using FreeImages.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreeImages.Controllers
 {
     [Route("[controller]")]
-    [ApiController]
+    [Authorize(Roles = "Admin,Support")]
     public class ImageController : ControllerBase
     {
         private DbConnect _db;
@@ -35,7 +36,6 @@ namespace FreeImages.Controllers
 
         #region GET
         [HttpGet]
-      //[Authorize(Roles = "Admin,Support")]
         public IEnumerable<Image> Get() => AllImages;
 
         [HttpGet("{page}/{count}")]
