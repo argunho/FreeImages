@@ -12,7 +12,7 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "UserName",
-                table: "User");
+                table: "Users");
         }
 
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.AddColumn<string>(
                 name: "UserName",
-                table: "User",
+                table: "Users",
                 type: "nvarchar(max)",
                 nullable: true);
         }

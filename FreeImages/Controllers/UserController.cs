@@ -29,7 +29,7 @@ public class UserController : ControllerBase
     {
         get
         {
-            return _db.User?.ToList() ?? Enumerable.Empty<User>();
+            return _db.Users?.ToList() ?? Enumerable.Empty<User>();
         }
     }
 
@@ -41,5 +41,9 @@ public class UserController : ControllerBase
     [HttpGet("count")]
     [AllowAnonymous]
     public int UsersCount() => AllUsers.Count();
+
+    [HttpGet("{id}")]
+    public async Task<User>? GetById(string? id) => 
+        await _db.Users?.FirstOrDefaultAsync(x => x.Id == id);
     #endregion
 }

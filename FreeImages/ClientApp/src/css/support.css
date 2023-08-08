@@ -137,7 +137,13 @@ button.menu-close:hover {
 
 /* #region Table */
 .confirm-alert {
-  margin-bottom: 10px;
+  width: 100%;
+  padding: 0 16px !important;
+}
+
+.confirm-alert,
+.delete-btn {
+  height: 50px !important;
 }
 
 .confirm-alert>.MuiAlert-message {

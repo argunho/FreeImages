@@ -13,7 +13,7 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Id",
-                table: "User",
+                table: "Users",
                 type: "nvarchar(450)",
                 nullable: false,
                 oldClrType: typeof(Guid),
@@ -21,7 +21,7 @@ namespace FreeImages.Migrations
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_User",
-                table: "User",
+                table: "Users",
                 column: "Id");
         }
 
@@ -30,11 +30,11 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.DropPrimaryKey(
                 name: "PK_User",
-                table: "User");
+                table: "Users");
 
             migrationBuilder.AlterColumn<Guid>(
                 name: "Id",
-                table: "User",
+                table: "Users",
                 type: "uniqueidentifier",
                 nullable: false,
                 oldClrType: typeof(string),

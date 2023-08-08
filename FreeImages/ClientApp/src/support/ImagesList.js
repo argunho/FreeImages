@@ -1,12 +1,13 @@
 import * as React from 'react';
 
-// Components
-import List from '../components/List';
+// Installed
 import { AddAPhoto} from '@mui/icons-material';
 
+// Components
+import List from '../components/List';
+
 const columns = [
-  { field: 'id', headerName: 'ID', width: 120 },
-  { field: 'name', headerName: 'Name', width: 150 },
+  { field: 'name', headerName: 'Name', width: 200 },
   { field: 'author', headerName: 'Author', width: 200 },
   {
     field: 'date',
@@ -18,7 +19,7 @@ const columns = [
 
 function ImagesList() {
   return (
-    <List api="image" columns={columns} title="Images" columnWidth={430} view={true} button={{
+    <List api="image" columns={columns} title="Images" columnWidth={500} view={true} button={{
       title: "Upload an image",
       url: "/sp/upload-image",
       icon: <AddAPhoto />

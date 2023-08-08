@@ -1,8 +1,8 @@
-﻿using FreeImages.Data;
-using FreeImages.Intefaces;
-using FreeImages.Models;
+﻿using Azure.Storage.Blobs;
+using FreeImages.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FreeImages.Controllers
 {
@@ -10,13 +10,18 @@ namespace FreeImages.Controllers
     [Authorize(Roles = "Admin,Support")]
     public class ImageController : ControllerBase
     {
-        private DbConnect _db;
-        private IHelpFunctions _help;
+        private readonly DbConnect _db;
+        private readonly IHelpFunctions _help;
+        private readonly ConfigurationService _config;
+        private readonly BlobContainerClient _uploadContainer;
+        private readonly BlobContainerClient _imageContainer;
 
         public ImageController(DbConnect db, IHelpFunctions help)
         {
             _db = db;
             _help = help;
+            _config = ConfigurationService.Load("BlobStorage");
+            _uploadContainer = new(_config.ConnectionString, "uploadfilecontainer");
         }
 
         public IEnumerable<ListImage> AllListImages
@@ -46,19 +51,30 @@ namespace FreeImages.Controllers
         #endregion
 
         #region DELETE
-        [HttpDelete("{ids}")]
-        public async Task<JsonResult> Delete(List<int> ids)
+        [HttpDelete("{idsString}")]
+        public async Task<JsonResult> Delete(string idsString)
         {
+            if (string.IsNullOrEmpty(idsString))
+                return _help.Response("error", "Id missing!");
+
+            List<int> ids = idsString.Split(",").Select(i => Convert.ToInt32(i)).ToList();
+
             try
             {
-                foreach (var image in AllImages.Where(x => ids.Any(i => i == x.Id))
+                var images = AllImages.Where(x => ids.Any(i => i == x.Id)).ToList();
+                var listImages = _db.ListImages.Where(x => ids.Any(i => i == x.ImageId)).ToList();
+                _db.ListImages?.RemoveRange(listImages);
+                _db.Images?.RemoveRange(images);
+                if (_help.Save())
                 {
-                    _db.Images.Remove(image);
-                    _db.ListImages?.Remove(_db.ListImages.FirstOrDefault(x => x.ImageId == image.Id));
-                    _c
+                    foreach (var image in images)
+                    {
+                        await _uploadContainer.DeleteBlobAsync(image.Name);
+                        //await _imageContainer.DeleteBlobAsync(image.Name);
+                    }
                 }
-
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return _help.Response("error", ex.Message);
             }
@@ -69,4 +85,4 @@ namespace FreeImages.Controllers
         #endregion
     }
 }
- //?? Enumerable.Empty<ListImage>()
+//?? Enumerable.Empty<ListImage>()

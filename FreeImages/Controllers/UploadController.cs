@@ -1,8 +1,5 @@
 ﻿using Azure.Storage.Blobs;
-using FreeImages.Data;
-using FreeImages.Intefaces;
-using FreeImages.Models;
-using GroupDocs.Metadata.Cloud.Sdk.Model;
+using FreeImages.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -14,16 +11,21 @@ namespace FreeImages.Controllers;
 [Authorize]
 public class UploadController : ControllerBase
 {
-    private static readonly string connectionString = "DefaultEndpointsProtocol=https;AccountName=uploadfilerepository;AccountKey=AtqMADGJ1jsZ+lHvdDP2ynlW9Sr8fKcr9ojNVTdXWeTfWd8q9izdY9hhRkjUg4abKfYWFXVgHe4D+ASt2brVDA==;EndpointSuffix=core.windows.net";
+    //private static readonly string connectionString = "DefaultEndpointsProtocol=https;AccountName=uploadfilerepository;AccountKey=AtqMADGJ1jsZ+lHvdDP2ynlW9Sr8fKcr9ojNVTdXWeTfWd8q9izdY9hhRkjUg4abKfYWFXVgHe4D+ASt2brVDA==;EndpointSuffix=core.windows.net";
 
-    private readonly BlobContainerClient _container = new(connectionString, "uploadfilecontainer");
+    private readonly BlobContainerClient _uploadContainer;
+    private readonly BlobContainerClient _imageContainer;
     private readonly DbConnect _db;
     private readonly IHelpFunctions _help;
+    private readonly ConfigurationService _config;
 
     public UploadController(DbConnect db, IHelpFunctions help)
     {
         _db = db;
         _help = help;
+        _config = ConfigurationService.Load("BlobStorage");
+        _uploadContainer = new(_config.ConnectionString, "uploadfilecontainer");
+        _imageContainer = new(_config.ConnectionString, "imagecontainer");
     }
 
 
@@ -67,12 +69,31 @@ public class UploadController : ControllerBase
             }
 
             // Temporary save
-            using var imgStream = System.IO.File.OpenWrite(@$"Download/{imgName}");
+            var path = @$"Download/{imgName}";
+            using var imgStream = System.IO.File.OpenWrite(path);
             await uploadedFile.CopyToAsync(imgStream);
 
-            // Upload to azure blob storage
+            // Upload original image to azure blob storage
             using var stream = uploadedFile.OpenReadStream();
-            _container.UploadBlob(imgName, stream);
+            _uploadContainer.UploadBlob(imgName, stream);
+
+
+            if (System.IO.File.Exists(path)) {
+                using System.Drawing.Image image = System.Drawing.Image.FromFile(path);
+                try
+                {
+                    var devisionNumber = image.Width / 400;
+                    var summa = image.Width / devisionNumber;
+                    int height = (image.Height / devisionNumber);
+                    var resizedImage = (System.Drawing.Image)(new Bitmap(image, new Size(400, height)));
+                    //using var resizedStream = resizedImage.O;
+                    //_imageContainer.UploadBlob(imgName, resizedStream);
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine(e.Message);
+                }
+            };
 
             // Get current user roles
             var claims = HttpContext.User.Claims.Where(x => x.Value == "Roles").ToList();
@@ -143,7 +164,7 @@ public class UploadController : ControllerBase
     {
         string imgBase = String.Empty;
 
-        var blobImage = _container.GetBlobClient(model.Name);
+        var blobImage = _uploadContainer.GetBlobClient(model.Name);
         if (blobImage == null) return null;
 
         var path = $@"Download/{model.Name}";

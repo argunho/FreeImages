@@ -1,29 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+
+
+import { useEffect, useState } from "react";
 
 // Installed
-import axios from 'axios';
-import { Button, Checkbox, FormControlLabel, TextField } from '@mui/material';
-import { Check, Close } from '@mui/icons-material';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // Components
-import Form from '../components/Form';
-import Heading from '../components/Heading';
-import Loading from '../components/Loading';
-import HeaderConfig from '../functions/HeaderConfig';
+import Loading from "../components/Loading";
+import UserForm from "../components/UserForm";
+import { Button, TextField } from "@mui/material";
+import { Check, Close } from "@mui/icons-material";
 
+function Register(){
 
-function Register() {
-
-    const [roles, setRoles] = useState([])
+    const [loading, setLoading] = useState(false);
     const [modal, setModal] = useState(false);
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [response, setResponse] = useState(null);
-    const token = localStorage.getItem("token");
 
     const navigate = useNavigate();
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         // localStorage.removeItem("token");
@@ -43,18 +40,7 @@ function Register() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const handleRoles = (e) => {
-        const role = e.target.name;
-        const rolesList = [...roles];
-        const index = rolesList.indexOf(role);
-        if (index > -1)
-            rolesList.splice(index, 1);
-        else
-            rolesList.push(role);
-
-        setRoles(rolesList)
-    }
-
+    
     const verifyPassword = () => {
         var date = new Date();
         var currentDate = (date.toISOString()).slice(0, 10);
@@ -65,68 +51,34 @@ function Register() {
             setError(true);
     }
 
-    const submitForm = async (data) => {
-        let formData = data;
-        formData.roles = roles;
-        await axios.post("account/register", formData, HeaderConfig)
-            .then(res => {
-                if (!!res.data?.token) {
-                    localStorage.setItem("token", res.data.token);
-                    navigate("/sp/images");
-                } else
-                setResponse(res.data)
-            }, error => {
-                setResponse(error);
-            });
-    }
-
     if (loading)
         return <Loading />;
-
-    return (
-        <div className='wrapper'>
-            <Heading title="Form" />
-            {!modal && <Form
-                heading="Register"
-                inputs={{
-                    name: "",
-                    email: "",
-                    password: "",
-                    confirmPassword: ""
-                }}
-                confirmInputs={["password", "confirmPassword"]}
-                response={response}
-                onSubmit={submitForm}>
-                {!!token && <div className='d-column ai-start'>
-                    {["Admin", "Support"].map((role, i) => {
-                        return <FormControlLabel key={i} className='input-checkbox' control={
-                            <Checkbox color="default" onClick={handleRoles} name={role} />
-                        } label={role} />
-                    })}
-                </div>}
-            </Form>}
-
-            {!!modal && <div className='modal-container d-column'>
-                <div className='modal d-column'>
-                    <TextField
-                        label="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        error={error}
-                        helperText={!!error ? "Incorrect password" : ""}
-                    />
-                    <div className='buttons-wrapper d-row jc-end'>
-                        <Button onClick={() => navigate(-1)}>
-                            <Close color="error" />
-                        </Button>
-                        <Button onClick={verifyPassword} disabled={password.length === 0}>
-                            <Check />
-                        </Button>
-                    </div>
+    else if(modal)
+        return <div className='modal-container d-column'>
+            <div className='modal d-column'>
+                <TextField
+                    label="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    error={error}
+                    helperText={!!error ? "Incorrect password" : ""}
+                />
+                <div className='buttons-wrapper d-row jc-end'>
+                    <Button onClick={() => navigate(-1)}>
+                        <Close color="error" />
+                    </Button>
+                    <Button onClick={verifyPassword} disabled={password.length === 0}>
+                        <Check />
+                    </Button>
                 </div>
-            </div>}
-        </div >
-    )
+            </div>
+        </div>;
+    return <UserForm inputs={{
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+      }} heading="Register" confirmInputs={["password", "confirmPassword"]} />;
 }
 
 export default Register;

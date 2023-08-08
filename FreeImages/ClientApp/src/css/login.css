@@ -3,7 +3,6 @@
     letter-spacing: 1px !important;
     margin: 15px auto;
     padding: 35px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
     border-radius: 5px;
     width: 100%;
     border: 1px solid #7d7e7d;
@@ -11,7 +10,7 @@
     margin-top: 70px;
     font-family: league;
     transition: all 0.9s ease-in-out;
-    height: 500px;
+    min-height: 100px;
     position: relative;
     overflow: hidden;
     max-width: 500px;
@@ -29,9 +28,17 @@
 }
 
 .login-heading {
-    font-family: castor;
+    font-family: castor !important;
+    width: 100%;
 }
 
+.login-heading > p {
+    font-size: 40px;
+    text-align: center;
+    color: #1161c9;
+    font-family: dancing;
+    margin: 0 !important;
+}
 
 .input-checkbox>span {
     font-size: 16px !important;
@@ -39,6 +46,10 @@
     font-family: castor !important;
     letter-spacing: 0.5px;
     letter-spacing: 1px !important;
+}
+
+.login-container .buttons-wrapper {
+    margin-bottom: 30px;
 }
 
 .switch-link {

@@ -12,7 +12,7 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.AddColumn<byte[]>(
                 name: "PasswordVerefiritionCode",
-                table: "User",
+                table: "Users",
                 type: "varbinary(max)",
                 nullable: true);
         }
@@ -22,7 +22,7 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "PasswordVerefiritionCode",
-                table: "User");
+                table: "Users");
         }
     }
 }

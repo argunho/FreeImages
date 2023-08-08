@@ -33,7 +33,7 @@ function SupportLayout({ children }) {
       } else
         setAuthorized(true);
     } else if (!token && loc.pathname.indexOf("login") === -1 && loc.pathname.indexOf("register") === -1)
-      navigate(-1);
+      navigate("/");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loc])

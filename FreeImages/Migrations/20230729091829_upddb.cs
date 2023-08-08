@@ -12,7 +12,7 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.AddColumn<string>(
                 name: "Roles",
-                table: "User",
+                table: "Users",
                 type: "nvarchar(max)",
                 nullable: true);
         }
@@ -22,7 +22,7 @@ namespace FreeImages.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Roles",
-                table: "User");
+                table: "Users");
         }
     }
 }

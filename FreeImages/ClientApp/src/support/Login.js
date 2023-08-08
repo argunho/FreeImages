@@ -21,7 +21,7 @@ function Login() {
 
     const [form, setForm] = useState(defaultForm);
     const [loading, setLoading] = useState(false);
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [authorized, setAuthorized] = useState(false);
     const [loginLink, setLoginLink] = useState(false);
     const [response, setResponse] = useState(null);
     const [isVisiblePassword, setVisiblePassword] = useState(false);
@@ -85,9 +85,9 @@ function Login() {
 
                 if (token) {
                     localStorage.setItem("token", token);
-                    setLoggedIn(true);
+                    setAuthorized(true);
                     setTimeout(() => {
-                        navigate("/sp/images")
+                        window.location.href = "/sp/images";
                     }, 2000)
                 } else
                     console.error(errorMessage);
@@ -101,22 +101,23 @@ function Login() {
             })
     }
 
-    // Login form
-    const loginForm = <>
-        <h3 className="login-heading">
-            {(loginLink) ? "Send login link" : "Login"}
-        </h3>
-        <br />
-        <form onSubmit={submitHandler}>
-            <TextField
-                label="Email"
-                name="email"
-                variant="outlined"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })} />
+    return (
+        <div className={"login-container d-column"}>
 
-            {(!loginLink) &&
-                <>
+            <h3 className="login-heading">
+                {!authorized && (loginLink ? "Send login link" : "Login")}
+                {authorized && <p>Welcome {response?.user}</p>}
+            </h3>
+
+            {!authorized && <form onSubmit={submitHandler}>
+                <TextField
+                    label="Email"
+                    name="email"
+                    variant="outlined"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })} />
+
+                {!loginLink && <div>
                     <TextField
                         label="Password"
                         name="password"
@@ -142,23 +143,19 @@ function Login() {
                                 checked={isReliable} onClick={handleReliable} />
                         } label="Show login button" />
                     </div>
-                </>}
-            <div className="buttons-wrapper d-row jc-end">
-                <Button variant="outlined" color="inherit" className="submit-btn" disabled={loading} type="submit">Send</Button>
-            </div>
-        </form>
-        <p className="switch-link" onClick={() => setLoginLink(!loginLink)}>
-            {(loginLink) ? "Login" : "Forgot password?"}
-        </p>
-    </>;
+                </div>}
 
-    return (
-        <div className={"login-container" + ((loggedIn) ? " " + response?.alert : "")}>
+                <div className="buttons-wrapper d-row jc-end">
+                    <Button variant="outlined" color="inherit" className="submit-btn" disabled={loading} type="submit">Send</Button>
+                </div>
+            </form>}
 
-            {(loggedIn) ? ("Welcome " + response.user) : loginForm}
+            {!authorized && <p className="switch-link" onClick={() => setLoginLink(!loginLink)}>
+                {loginLink ? "Login" : "Forgot password?"}
+            </p>}
 
             {/* Loading */}
-            {(loading) && <div className="curtain-center"><CircularProgress /></div>}
+            {loading && <div className="curtain-center"><CircularProgress /></div>}
         </div>
     )
 }

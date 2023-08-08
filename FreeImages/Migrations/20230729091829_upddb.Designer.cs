@@ -87,7 +87,7 @@ namespace FreeImages.Migrations
                     b.ToTable("ListImages");
                 });
 
-            modelBuilder.Entity("FreeImages.Models.User", b =>
+            modelBuilder.Entity("FreeImages.Models.Users", b =>
                 {
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -113,7 +113,7 @@ namespace FreeImages.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("FreeImages.Models.Values", b =>

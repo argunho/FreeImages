@@ -9,7 +9,7 @@ public class DbConnect : DbContext
     public DbSet<ListImage>? ListImages => Set<ListImage>();
     public DbSet<Values> Values => Set<Values>();
     public DbSet<Visits> Visits => Set<Visits>();
-    public DbSet<User>? User => Set<User>();
+    public DbSet<User>? Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,11 +19,11 @@ public class DbConnect : DbContext
         //modelBuilder.Entity<IdentityRole>().HasData(
         //        new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" },
         //        new IdentityRole { Name = "Support", NormalizedName = "SUPPORT" },
-        //        new IdentityRole { Name = "User", NormalizedName = "USER" }
+        //        new IdentityRole { Name = "Users", NormalizedName = "USER" }
         //    );
 
         // Make keyless
-        //modelBuilder.Entity<User>(u => { u.HasNoKey(); });
+        //modelBuilder.Entity<Users>(u => { u.HasNoKey(); });
     }
 }
 

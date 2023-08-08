@@ -87,7 +87,7 @@ namespace FreeImages.Migrations
                     b.ToTable("ListImages");
                 });
 
-            modelBuilder.Entity("FreeImages.Models.User", b =>
+            modelBuilder.Entity("FreeImages.Models.Users", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -115,7 +115,7 @@ namespace FreeImages.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("FreeImages.Models.Values", b =>

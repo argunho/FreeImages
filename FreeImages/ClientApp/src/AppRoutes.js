@@ -1,17 +1,18 @@
+// Layouts
 import Layout from "./layouts/Layout";
 import SupportLayout from "./layouts/SupportLayout";
 
 // Support
 import ImagesList from "./support/ImagesList";
 import Logout from "./support/Logout";
-import Register from "./support/Register";
-import UploadFileForm from "./support/UploadFileForm";
 import Users from "./support/Users";
+import Login from "./support/Login";
+import UploadFile from "./support/UploadFile";
+import UserEdit from "./support/UserEdit";
+import Register from "./support/Register";
 
 // Pages
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import UploadFile from "./support/UploadFile";
 
 const AppRoutes = [
   {
@@ -28,35 +29,45 @@ const AppRoutes = [
     routes: [
       {
         path: '/sp/users',
-        element: <Users/>
+        element: <Users />
       },
       {
         path: '/sp/images',
-        element: <ImagesList/>
+        element: <ImagesList />
       },
       {
         path: '/sp/upload-image',
-        element: <UploadFile/>
+        element: <UploadFile />
       },
       {
         path: '/sp/register',
-        element: <Register/>
+        element: <Register />
       },
       {
         path: "/sp/login",
-        element: <Login/>
+        element: <Login />
       },
       {
         path: '/sp/logout',
-        element: <Logout/>
+        element: <Logout />
       },
       {
         path: "/sp/users/edit/:id",
-        element: <Login/>
+        element: <UserEdit inputs={{
+          name: "",
+          email: ""
+        }} />
+      },
+      {
+        path: "/sp/users/edit/password/:id",
+        element: <UserEdit inputs={{ 
+          currentPassword: "", 
+          password: "", 
+          confirmPassword: "" }} confirmInputs={["password", "confirmPassword"]} />
       },
       {
         path: '/sp/images/edit/:id',
-        element: <Logout/>
+        element: <Logout />
       }
     ]
   }

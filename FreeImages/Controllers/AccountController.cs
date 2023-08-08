@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -46,24 +47,27 @@ public class AccountController : ControllerBase
     {
         get
         {
-            return _db.User?.ToList() ?? Enumerable.Empty<User>();
+            return _db.Users?.ToList() ?? Enumerable.Empty<User>();
         }
     }
 
     #region GET
     [HttpGet("Logout")] // Logg out
-    public async Task<IActionResult> LogOut()
+    [Authorize]
+    public IActionResult LogOut()
     {
-        //try
-        //{
-        //await _signInManager.SignOutAsync();
+        try
+        {
+            var user = User as ClaimsPrincipal;
+            var identity = user.Identity as ClaimsIdentity;
+            foreach (var claim in User.Claims.ToList())
+                identity.TryRemoveClaim(claim);
+        }catch(Exception ex){
+            Console.WriteLine(ex.Message);
+        }
+
         _logger.LogInformation("Users are logged out.");
         return Ok();
-        //}
-        //catch (Exception e)
-        //{
-        //    return BadRequest(new { alert = "error", message = "Something has gone wrong.", erorrmMessage = "Error => " + e.Message });
-        //}
     }
 
     [HttpGet("LoginLink/{email}")] // Send authantication link
@@ -96,7 +100,7 @@ public class AccountController : ControllerBase
     [HttpGet("LoginWithoutPassword/{hash}")] // Login without password
     public async Task<IActionResult> SignInWidthoutPassword(string hash)
     {
-        var user = _db.User?.FirstOrDefault(x => x.LoginHash.ToString() == hash.ToString());
+        var user = _db.Users?.FirstOrDefault(x => x.LoginHash.ToString() == hash.ToString());
 
         if (hash == null || user == null)
             return BadRequest(new { alert = "error", message = "Something has gone wrong. There is no or no valid login link for users." });
@@ -160,7 +164,7 @@ public class AccountController : ControllerBase
         else if (!_help.CheckEmail(model.Email))
             return _help.Response("warning", "Incorrect email address");
         else if (_users.FirstOrDefault(x => x.Email == model.Email) != null)
-            return _help.Response("warning", "User with the same email already exists!");
+            return _help.Response("warning", "Users with the same email already exists!");
 
         var firstRegister = _users?.Count() == 0;
         // Check admin email
@@ -190,7 +194,7 @@ public class AccountController : ControllerBase
                     roles.Add("Support");
             }
 
-            roles?.Add("User");
+            roles?.Add("Users");
             // Create and save a user into the database
             var user = new User
             {
@@ -201,7 +205,7 @@ public class AccountController : ControllerBase
                 Roles = roles?.Count > 0 ? string.Join(",", roles) : null
             };
 
-            _db.User?.Add(user);
+            _db.Users?.Add(user);
 
             if (_help.Save())
             {
@@ -266,7 +270,7 @@ public class AccountController : ControllerBase
     // Get claims 
     private bool Permission(string role)
     {
-        //var claims = User.Claims.ToList();
+        //var claims = Users.Claims.ToList();
         var claimRoles = User.Claims?.FirstOrDefault(x => x.Type == "Roles")?.ToString();
         return claimRoles?.IndexOf(role) > -1;
     }

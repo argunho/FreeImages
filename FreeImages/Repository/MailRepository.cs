@@ -66,7 +66,7 @@ public class MailRepository
         try
         {
             var logo = ImageToBase64(@"wwwroot/logo.png");
-            MailMessage _mail = new MailMessage(new MailAddress("no-reply@alvesta.se", "Unlock User"), new MailAddress(toEmail));
+            MailMessage _mail = new MailMessage(new MailAddress("no-reply@alvesta.se", "Unlock Users"), new MailAddress(toEmail));
             _mail.Subject = mailSubject;
             _mail.Body = mailContent.Replace("{content}", mailContent).Replace("{logo}", logo);
             _mail.IsBodyHtml = true;

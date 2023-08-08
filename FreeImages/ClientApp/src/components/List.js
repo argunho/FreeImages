@@ -11,7 +11,7 @@ import Heading from './Heading';
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
 import Loading from './Loading';
-import { Check, Close, Delete, DeleteForever, Edit, Search } from '@mui/icons-material';
+import { Check, Close, DeleteForever, Edit, Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -23,36 +23,22 @@ function List(props) {
   const navigate = useNavigate();
 
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [confirm, setConfirm] = useState(false);
+  const [inProcess, setProcess] = useState(false);
   const [columns, setColumns] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
 
   const defaultColumn = [
     {
-      field: 'actions',
-      headerName: 'Actions',
-      sortable: false,
-      filterable: false,
-      headerClassName: 'actions-field',
-      width: props.columnWidth,
-      disableColumnMenu: true,
-      disableColumnSelector: true,
-      disableColumnFilter: true,
-      headerAlign: "center",
+      field: 'actions', headerName: 'Actions', sortable: false,
+      filterable: false, headerClassName: 'actions-field', width: props.columnWidth,
+      disableColumnMenu: true, disableColumnSelector: true, disableColumnFilter: true,  headerAlign: "center",
       renderCell: (params) => {
         const id = params.id;
-
-        // const deleteItem = async (e) => {
-        //   e.stopPropagation();
-        //   console.log(id)
-        //   setConfirmId(id);
-        // }
-
         let buttons = [
           { icon: <Search color="secondary" />, function: () => navigate(`view/${id}`) },
-          { icon: <Edit color="primary" />, function: () => navigate(`edit/${id}`) },
-          // { icon: <Delete color="error" />, function: (e) => deleteItem(e) }
+          { icon: <Edit color="primary" />, function: () => navigate(`edit/${id}`) }
         ];
 
         if (!props?.view)
@@ -69,17 +55,13 @@ function List(props) {
     }
   ]
 
-  useEffect(() => {
-    setLoading(true);
-    const arr = props.columns.concat(defaultColumn);
-    console.log(arr)
-    setColumns(arr);
+  useEffect(() => { 
+    setColumns(props.columns.concat(defaultColumn));
     getList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getList = async () => {
-    console.log(props.api)
     const response = await fetch(props.api, HeaderConfig);
     const data = await response.json();
     setLoading(false);
@@ -88,16 +70,25 @@ function List(props) {
 
   // const clickHandle = async (e) => {
   //   e.stopPropagation();
-  //   setConfirmId(null);
-  //   console.log(confirmId)
-  //   await axios.delete(`${props.api}/${confirmId}`, HeaderConfig).then(res => {
-  //     console.log(res);
-  //   })
   // }
 
+  const clickHandle = () => {
+    setConfirm(!confirm);
+    setProcess(!inProcess);
+  }
+
+  const reset = () => {
+    clickHandle();
+    setSelectedRows([]);
+  }
+
   const deleteSelected = async () => {
-    console.log(selectedRows.toString())
+    if (selectedRows.length === 0) return;
+    setConfirm(false);
+    console.log(selectedRows)
     await axios.delete(`${props.api}/${selectedRows.toString()}`, HeaderConfig).then(res => {
+      setProcess(false);
+      getList();
       console.log(res);
     })
   }
@@ -111,33 +102,34 @@ function List(props) {
 
       {/* Delete selected */}
       {!loading && <div className='buttons-wrapper d-row jc-end'>
-        <Button onClick={() => setConfirm(true)} color='error' variant='contained' disabled={selectedRows.length === 0 || confirm} size='medium'>
-          {confirm ? <CircularProgress style={{ marginRight: "14px" }} size={20} color='inherit'/> 
+        {!confirm && <Button onClick={clickHandle} color='error' variant='contained' disabled={selectedRows.length === 0 || inProcess} className='delete-btn'>
+          {inProcess ? <CircularProgress style={{ marginRight: "14px" }} size={20} color='inherit' />
             : <DeleteForever style={{ marginRight: "10px" }} />} Delete selected
-        </Button>
+        </Button>}
+
+        {/* Confirm alert */}
+        {confirm && <Alert severity='error' color='error' variant='standard' className="confirm-alert d-row jc-between">
+          <AlertTitle>Are you sure to do it?</AlertTitle>
+          <div className='confirm-buttons'>
+            {[
+              { icon: <Check color="error" />, function: deleteSelected },
+              { icon: <Close color="inherit" />, function: reset }
+            ].map((b, i) => {
+              return <IconButton key={i} onClick={b.function}>
+                {b.icon}
+              </IconButton>
+            })}
+          </div>
+        </Alert>}
       </div>}
 
-      {/* Confirm aler */}
-      {confirm && <Alert severity='error' color='error' variant='standard' className="confirm-alert d-row jc-between">
-        <AlertTitle>Are you sure to do it?</AlertTitle>
-        <div className='confirm-buttons'>
-          {[
-            { icon: <Check color="error" />, function: deleteSelected },
-            { icon: <Close color="inherit" />, function: () => setConfirm(false) }
-          ].map((b, i) => {
-            return <IconButton key={i} onClick={b.function}>
-              {b.icon}
-            </IconButton>
-          })}
-        </div>
-      </Alert>}
 
       {/* Items list} */}
       {(!loading && rows.length > 0) && <DataGrid
         rows={rows}
         columns={columns}
         pageSize={10}
-        rowsPerPageOptions={[15]}
+        rowsPerPageOptions={[10]}
         checkboxSelection
         density='comfortable'
         sx={{
@@ -153,8 +145,8 @@ function List(props) {
             textAlign: "center"
           },
           '& .MuiDataGrid-row': {
-            backgroundColor: confirm ? "#cccccc2c" : "#FFFFFF",
-            pointerEvents: confirm ? "none" : "auto"
+            backgroundColor: inProcess ? "#cccccc2c" : "#FFFFFF",
+            pointerEvents: inProcess ? "none" : "auto"
           }
         }}
         initialState={{
@@ -169,6 +161,11 @@ function List(props) {
           setSelectedRows(ids);
         }}
         // checkboxSelection={true}
+        rowSelectionModel={selectedRows}
+        rowCount={rows.length}
+        experimentalFeatures={{
+          lazyLoading: true,
+        }}
       />}
 
       {/* Empty list */}
