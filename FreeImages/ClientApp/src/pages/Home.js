@@ -19,15 +19,6 @@ function Home() {
 
   const navigate = useNavigate();
 
-  // const storage = "https://uploadfilerepository.blob.core.windows.net/uploadfilecontainer/";
-
-  const widths = [500, 1000, 1600];
-  const ratios = [2.2, 4, 6, 8];
-  const images = [
-    { src: "https://picsum.photos/id/1018/1920/1080/", aspect_ratio: 16 / 9 },
-    { src: "https://picsum.photos/id/1015/1920/1080/", aspect_ratio: 16 / 9 },
-  ]
-
   useEffect(() => {
     get();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -48,11 +39,10 @@ function Home() {
 
   const renderImg = (img, ind) => {
     console.log(img)
-    return <div className='divs'><img key={ind} src={img.path}
+    return <img key={ind} src={img.path}
       className="gallery-img"
       onClick={() => navigate(`view/img/${img.imageId}`)}
       alt={window.location.origin} />
-        </div>
   }
   const arr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
 
@@ -91,14 +81,6 @@ function Home() {
           </div>
         })}
       </div>
-
-      {/* <div className="gallery-wrapper">
-                <FlatList
-              list={imgs}
-              renderItem={renderImg}
-              renderWhenEmpty={() => <div className='not-found'>Not found</div>}
-            />
-      </div> */}
     </div>
   );
 }

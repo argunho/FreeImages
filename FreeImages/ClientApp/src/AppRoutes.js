@@ -10,6 +10,7 @@ import Login from "./support/Login";
 import UploadFile from "./support/UploadFile";
 import UserEdit from "./support/UserEdit";
 import Register from "./support/Register";
+import LoginWithHash from "./support/LoginWithHash";
 
 // Pages
 import Home from "./pages/Home";
@@ -46,6 +47,10 @@ const AppRoutes = [
       {
         path: "/sp/login",
         element: <Login />
+      },
+      {
+        path: "/sp/login/:hash",
+        element: <LoginWithHash />
       },
       {
         path: '/sp/logout',

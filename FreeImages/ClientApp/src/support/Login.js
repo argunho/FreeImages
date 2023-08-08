@@ -1,23 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+
+// Installed
 import axios from "axios";
 import { TextField, Button, Checkbox, FormControlLabel, CircularProgress } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
 
 // Css
 import './../css/login.css';
+import Response from '../components/Response';
 
 const defaultHeight = window.innerHeight;
 
 function Login() {
+    Login.displayName = "Login";
 
     const defaultForm = {
         email: "",
         password: "",
         remember: false
     }
-
-    const { param } = useParams();
 
     const [form, setForm] = useState(defaultForm);
     const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ function Login() {
     const [isReliable, setReliable] = useState(!!(localStorage.getItem("reliable")));
 
     const navigate = useNavigate();
-
+    
     useEffect(() => {
         const token = localStorage.getItem("token");
 
@@ -44,7 +46,7 @@ function Login() {
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
+    
     window.addEventListener('resize', function () {
         let height = window.innerHeight;
         const header = document.getElementById("header");
@@ -57,7 +59,8 @@ function Login() {
 
     // Form field change handler
     const changeHandler = (e) => {
-        setForm({ ...form, [e.target.name]: (e.target.type === "checkbox") ? e.target.checked : e.target.value })
+        setForm({ ...form, [e.target.name]: (e.target.type === "checkbox")
+             ? e.target.checked : e.target.value })
     }
 
     const handleReliable = () => {
@@ -68,29 +71,29 @@ function Login() {
         setReliable(!isReliable);
     }
 
+    const requestHandle = (res) => {
+        setLoading(false)
+        setResponse(res);
+        if (!!res.token) {
+            setAuthorized(true);
+            localStorage.setItem("token", res.token);
+            setTimeout(() => {
+                window.location.href = "/sp/images";
+            }, 2000)
+        } else
+            console.error(res.message);
+    }
+
     // Submit form
     const submitHandler = async e => {
         e.preventDefault();
-
         setLoading(true);
-        const api = (param != null) ? axios.get("account/LoginWithoutPassword/" + param)
-            : (loginLink) ? axios.get("account/LoginLink/" + form.email)
+        const api = (loginLink) ? axios.get("account/LoginLink/" + form.email)
                 : axios.post("account/login", form);
 
         await api.then(
             res => {
-                let { token, errorMessage } = res.data;
-                setLoading(false);
-                setResponse(res.data);
-
-                if (token) {
-                    localStorage.setItem("token", token);
-                    setAuthorized(true);
-                    setTimeout(() => {
-                        window.location.href = "/sp/images";
-                    }, 2000)
-                } else
-                    console.error(errorMessage);
+                requestHandle(res);
             }).catch(error => {
                 setLoading(false);
                 setResponse({
@@ -156,6 +159,9 @@ function Login() {
 
             {/* Loading */}
             {loading && <div className="curtain-center"><CircularProgress /></div>}
+
+            {/* Response */}
+            {!!response && <Response res={response} close={() => setResponse()}/>}
         </div>
     )
 }

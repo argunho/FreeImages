@@ -60,9 +60,13 @@ public class AccountController : ControllerBase
         {
             var user = User as ClaimsPrincipal;
             var identity = user.Identity as ClaimsIdentity;
-            foreach (var claim in User.Claims.ToList())
+            var claims = User.Claims.ToList();
+            foreach (var claim in claims)
                 identity.TryRemoveClaim(claim);
-        }catch(Exception ex){
+
+        }
+        catch (Exception ex)
+        {
             Console.WriteLine(ex.Message);
         }
 
@@ -71,57 +75,60 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("LoginLink/{email}")] // Send authantication link
-    public async Task<IActionResult> LoginLink(string email)
+    public async Task<JsonResult> LoginLink(string email)
     {
-        User user = null;
+        User user = await _db.Users?.FirstOrDefaultAsync(x => x.Email == email);
         if (user == null)
-            return BadRequest(new { alert = "error", message = "Users with matching email address not found ... " });
+            return _help.Response("error", "No users with matching email addresses found ... ");
 
         if (!_help.CheckEmail(email))
-            return BadRequest(new { alert = "error", message = "Incorrect email address" });
+            return _help.Response("error", "Incorrect email address");
 
-        user.LoginHash = Guid.NewGuid();
+        user.LoginHash = Guid.NewGuid().ToString();
+        user.LoginHashValidTime = DateTime.Now.AddHours(3);
 
         if (_help.Save())
         {
             var mailContent = "<h4>Hi " + user.Name + "!</h4>" +
-                       "<p>Here is the login link to log in to {domain}.</p>" +
-                       "<p>Click <a href='{domain}/login/" + user.LoginHash + "' target='_blank'>here</a> to login.</p>";
+                       "<p>Here is the login link to sign in to {domain}.</p>" +
+                       "<p>Click <a href='{domain}/login/" + user.LoginHash + "' target='_blank'>here</a> to login.</p>" +
+                       $"<p>Note! This link is valid for only 3 hours and will be expired {user.LoginHashValidTime?.ToString("yyyy.MM.dd HH:mm:ss")}.</p>";
 
-            if (!_mail.SendMail(email, "Login link", mailContent))
-                return BadRequest(new { alert = "error", message = "Something went wrong trying to send an email, please try again later ..." });
+            //if (!_mail.SendMail(email, "Login link", mailContent))
+            //  Here is the login link to sign in to {domain}  return _help.Response("error", "Something went wrong trying to send an email, please try again later ...");
 
-            return Ok(new { alert = "success", message = "It went well without any problems! <br/> Please check your email!" });
+            return _help.Response("success", "It went well without any problems! <br/> Please check your email!");
         }
 
-        return BadRequest(new { alert = "error", message = "Something went wrong ...." });
+        return _help.Response("error", "Something went wrong ....");
     }
 
+
     [HttpGet("LoginWithoutPassword/{hash}")] // Login without password
-    public async Task<IActionResult> SignInWidthoutPassword(string hash)
+    public async Task<IActionResult> SignInWidthoutPassword(string? hash)
     {
-        var user = _db.Users?.FirstOrDefault(x => x.LoginHash.ToString() == hash.ToString());
-
-        if (hash == null || user == null)
-            return BadRequest(new { alert = "error", message = "Something has gone wrong. There is no or no valid login link for users." });
-
         try
         {
-            //var roles = _userManager.GetRolesAsync(user).Result;
+            var user = await _db.Users?.FirstOrDefaultAsync(x => x.LoginHash.ToString() == hash.ToString());
 
-            user.LoginHash = Guid.Empty;
+            if (hash == null || user == null)
+                return _help.Response("error", "Ingen användare eller ingen giltig inloggningslänk hittades.");
+            else if (user.LoginHashValidTime?.Ticks > DateTime.Now.Ticks)
+                return _help.Response("error", "This link valid time already expired!");
+
+            user.LoginHash = null;
+            user.LoginHashValidTime = null;
             _help.Save();
 
-            //var token = GenerateJwtToken(user, roles.ToList(), 1);
-            //await _signInManager.SignInAsync(user, true, null);
-            //return Ok(new { alert = "success", token = token, user = user.Name, id = user.Id });
-            return Ok();
+            var token = GenerateJwtToken(user, 5);
+            return new JsonResult(new { token, user = user.Name, id = user.Id });
         }
         catch (Exception e)
         {
-            return BadRequest(new { alert = "error", message = "Something has gone wrong.", errorMessage = "Server error => " + e.Message });
+            return _help.Response("error", "Something has gone wrong. Error: " + e.Message);
         }
     }
+
     [HttpGet("ChangePassword")] // Send new password
     [Authorize]
     public async Task<IActionResult> ForgotPassword(string email)

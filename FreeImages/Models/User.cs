@@ -25,6 +25,7 @@ public class User
            _ = string.IsNullOrEmpty(Roles) ? new List<string>() : Roles.Split(',').ToList();
         }
     }
-    public Guid LoginHash { get; set; }
+    public string? LoginHash { get; set; }
+    public Nullable<DateTime> LoginHashValidTime { get; set; }
     public DateTime Date { get; set; } = DateTime.Now;
 }
