@@ -113,14 +113,14 @@ function Form({ children, ...props }) {
             {/* File upload */}
             {children && children}
 
-            {!props.disabled && <div className="buttons-wrapper d-row jc-end">
+            <div className="buttons-wrapper d-row jc-end">
                 {changed && <Button color="error" variant='outlined' onClick={reload} disabled={loading}>
                     <Close />
                 </Button>}
-                <Button type="submit" variant='outlined' color="inherit">
+                <Button type="submit" variant='outlined' color="inherit" disabled={props.disabled || !changed}>
                     {loading ? <CircularProgress className='loading-circular' /> : "Save"}
                 </Button>
-            </div>}
+            </div>
 
             {!!response && <Response res={response} close={() => setResponse()} />}
         </form>

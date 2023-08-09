@@ -81,7 +81,7 @@ function UserFormPage({ inputs, api, heading }) {
             heading={heading}
             confirmInputs={!!inputs ? ["password", "confirmPassword"] : null}
             permission={permission("Admin") && api !== "account/changePassword"}
-            disabled={disabled}
+            disabled={disabled || confirmDelete || confirmPasswordChange}
             api={api}
             res={response}
         >
@@ -100,10 +100,7 @@ function UserFormPage({ inputs, api, heading }) {
                 </Button>
 
                 {/* Delete user profile */}
-                <Button variant="text" color="error" onClick={(e) => {
-                    e.stopPropagation();
-                    setConfirmDelete(true);
-                }}>
+                <Button variant="text" color="error" onClick={() => setConfirmDelete(true)}>
                     Delete profile
                 </Button>
             </div>}
