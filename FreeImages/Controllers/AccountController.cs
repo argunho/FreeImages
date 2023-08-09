@@ -144,8 +144,8 @@ public class AccountController : ControllerBase
         var firstRegister = _users?.Count() == 0;
 
         // Check admin email
-        var developer = model.Email.Equals("aslan_argun@hotmail.com");
-        if (!firstRegister && model.Email != "aslan_argun@hotmail.com" && model.Roles.IndexOf("Developer") == -1 && !Permission("Admin"))
+        var support = model.Email.Equals("aslan_argun@hotmail.com");
+        if (!firstRegister && model.Email != "aslan_argun@hotmail.com" && model.Roles.IndexOf("Support") == -1 && !Permission("Admin"))
             return _help.Response("warning", "Permission is missing!");
 
 
@@ -159,17 +159,17 @@ public class AccountController : ControllerBase
             // Create roles
             var roles = model?.Roles;
 
-            if (developer || (roles?.Count == 0 && _users?.Count() == 0))
+            if (support || (roles?.Count == 0 && _users?.Count() == 0))
             {
                 if (roles?.IndexOf("Admin") == -1)
                     roles.Add("Admin");
-                if (roles?.IndexOf("Support") == -1)
+                if (roles?.IndexOf("Manager") == -1)
+                    roles.Add("Manager");
+                if (roles.IndexOf("Support") == -1 && support)
                     roles.Add("Support");
-                if (roles.IndexOf("Developer") == -1 && developer)
-                    roles.Add("Developer");
             }
 
-            roles?.Add("Users");
+            roles?.Add("User");
             // Create and save a user into the database
             var user = new User
             {
@@ -288,7 +288,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("SetNewPassword/{key}")] // Send new password
-    [Authorize(Roles = "Admin,Support,Developer")]
+    [Authorize(Roles = "Admin,Manager,Support")]
     public async Task<IActionResult> SetNewPassword(string key, AccountViewModel model)
     {
         var user = await _db.Users?.FirstOrDefaultAsync(x => x.Email == key || x.Id == key);
@@ -298,7 +298,7 @@ public class AccountController : ControllerBase
         var currentEmail = GetClaim("Email");
         if (user.Email != currentEmail)
         {
-            if ((user.Roles?.IndexOf("Admin") > -1 && !Permission("Developer")) || !Permission("Admin"))
+            if ((user.Roles?.IndexOf("Admin") > -1 && !Permission("Support")) || !Permission("Admin"))
                 return _help.Response("error", "Permission denied!");
         }
 

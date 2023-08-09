@@ -63,7 +63,7 @@ public class UserController : ControllerBase
         var currentEmail = GetClaim("Email");
         if (user.Email != currentEmail)
         {
-            if ((user.Roles?.IndexOf("Admin") > -1 && !Permission("Developer")) || !Permission("Admin"))
+            if ((user.Roles?.IndexOf("Admin") > -1 && !Permission("Support")) || !Permission("Admin"))
                 return _help.Response("error", "Permission denied!");
         }
 
@@ -85,7 +85,7 @@ public class UserController : ControllerBase
 
     #region Delete
     [HttpDelete("{ids}")]
-    [Authorize(Roles = "Admin,Developer")]
+    [Authorize(Roles = "Admin,Support")]
     public async Task<JsonResult> Delete(string? ids)
     {
         if (string.IsNullOrEmpty(ids))
@@ -93,7 +93,7 @@ public class UserController : ControllerBase
 
         List<string> idsList = ids.Split(",").ToList();
         var users = AllUsers.Where(x => idsList.Any(i => i == x.Id)).ToList();
-        var permission = Permission("Developer");
+        var permission = Permission("Support");
         if (users.Count(x => x.Roles?.IndexOf("Admin") > -1) > 0 && !permission)
             return _help.Response("error", "Permission denied!");
 
@@ -114,7 +114,7 @@ public class UserController : ControllerBase
         if (user == null)
             return _help.Response("error", "Users with matching emails have not been found ...");
 
-        var permission = Permission("Developer");
+        var permission = Permission("Support");
         var currentEmail = GetClaim("Email");
         if (user.Roles?.IndexOf("Admin") > -1 && !permission && currentEmail != user.Email)
             return _help.Response("error", "Permission denied!");

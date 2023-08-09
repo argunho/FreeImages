@@ -65,7 +65,7 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, c
                 response={response}
                 onSubmit={submitForm}>
                 {(!!token && !!permission) && <div className='d-column ai-start'>
-                    {["Admin", "Support"].map((role, i) => {
+                    {["Admin", "Manager"].map((role, i) => {
                         return <FormControlLabel key={i} className='input-checkbox' control={
                             <Checkbox color="default" checked={roles.indexOf(role) > -1} onClick={handleRoles} name={role} />
                         } label={role} />

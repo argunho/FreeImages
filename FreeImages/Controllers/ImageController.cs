@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace FreeImages.Controllers
 {
     [Route("[controller]")]
-    [Authorize(Roles = "Admin,Support")]
+    [Authorize(Roles = "Admin,Manager,Support")]
     public class ImageController : ControllerBase
     {
         private readonly DbConnect _db;
