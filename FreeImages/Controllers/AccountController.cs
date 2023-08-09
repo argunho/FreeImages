@@ -288,7 +288,7 @@ public class AccountController : ControllerBase
         return _help.Response("error", errorMessage);
     }
 
-    [HttpGet("SetNewPassword/{key}")] // Send new password
+    [HttpPut("SetNewPassword/{key}")] // Send new password
     [Authorize(Roles = "Admin,Manager,Support")]
     public async Task<IActionResult> SetNewPassword(string key, User model)
     {
