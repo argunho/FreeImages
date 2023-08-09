@@ -13,15 +13,13 @@ import Response from './Response';
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
 
-function UserForm({ children, api, inputs, heading, confirmInputs, permission, currentRoles, post, res }) {
+function UserForm({ children, api, inputs, heading, confirmInputs, permission, disabled, currentRoles, postRequest, res }) {
 
     const [roles, setRoles] = useState(currentRoles || [])
     const [response, setResponse] = useState();
     const token = localStorage.getItem("token");
 
     const navigate = useNavigate();
-
-    console.log(permission)
 
     useState(() => {
         if (!!res)
@@ -44,7 +42,7 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, c
         let formData = data;
         formData.roles = roles;
 
-        const apiRequest = !!post ? axios.post(`${api}`, formData, HeaderConfig) 
+        const apiRequest = !!postRequest ? axios.post(`${api}`, formData, HeaderConfig) 
             : axios.put(`${api}`, formData, HeaderConfig);
 
          await apiRequest.then(res => {
@@ -67,11 +65,12 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, c
                 inputs={inputs}
                 confirmInputs={confirmInputs}
                 response={response}
+                disabled={disabled}
                 onSubmit={submitForm}>
                 {(!!token && !!permission) && <div className='d-column ai-start'>
                     {["Admin", "Manager"].map((role, i) => {
                         return <FormControlLabel key={i} className='input-checkbox' control={
-                            <Checkbox color="default" checked={roles.indexOf(role) > -1} onClick={handleRoles} name={role} />
+                            <Checkbox disabled={disabled} color="default" checked={roles.indexOf(role) > -1} onClick={handleRoles} name={role} />
                         } label={role} />
                     })}
                 </div>}

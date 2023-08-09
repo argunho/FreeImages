@@ -98,7 +98,7 @@ function Form({ children, ...props }) {
                         className='fields'
                         size="medium"
                         required
-                        disabled={loading}
+                        disabled={loading || props.disabled}
                         name={x}
                         type={x.toLowerCase().indexOf("password") > -1 ? "password" : (x === "email" ? x : "text")}
                         value={form[x]}
@@ -113,14 +113,14 @@ function Form({ children, ...props }) {
                 {/* File upload */}
                 {children && children}
 
-                <div className="buttons-wrapper d-row jc-end">
+                {!props.disabled && <div className="buttons-wrapper d-row jc-end">
                     {ongoingForm ? <Button color="error" variant='outlined' onClick={resetForm}>
                         <Close />
                     </Button> : null}
                     <Button type="submit" variant='outlined' color="inherit">
                         {loading ? <CircularProgress className='loading-circular' /> : "Save"}
                     </Button>
-                </div>
+                </div>}
             </form>
 
             {!!response && <Response res={response} close={() => setResponse()} />}

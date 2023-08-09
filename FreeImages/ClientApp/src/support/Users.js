@@ -20,7 +20,7 @@ function Users() {
   return (
     <List api="user" columns={columns} title="Users" columnWidth={550} button={{
       title: "Register a new user",
-      url: "/sp/register",
+      url: "new",
       icon: <AddModerator />
     }} view={false} />
   )

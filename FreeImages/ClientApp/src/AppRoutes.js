@@ -8,13 +8,12 @@ import Logout from "./support/Logout";
 import Users from "./support/Users";
 import Login from "./support/Login";
 import UploadFile from "./support/UploadFile";
-import UserEdit from "./support/UserFormPagejs";
 import Register from "./support/Register";
 import LoginWithHash from "./support/LoginWithHash";
+import UserFormPage from "./support/UserFormPage";
 
 // Pages
 import Home from "./pages/Home";
-import UserFormPage from "./support/UserFormPagejs";
 
 const AppRoutes = [
   {
@@ -38,12 +37,12 @@ const AppRoutes = [
         element: <ImagesList />
       },
       {
-        path: '/sp/upload-image',
+        path: '/sp/images/upload',
         element: <UploadFile />
       },
       {
         path: '/sp/register',
-        element: <Register post={true} />
+        element: <Register />
       },
       {
         path: "/sp/login",
@@ -59,26 +58,34 @@ const AppRoutes = [
       },
       {
         path: "/sp/users/new",
-        element: <UserFormPage api="account/register"
+        element: <UserFormPage
+          api="account/register"
           inputs={{
             name: "",
             email: "",
             password: "",
             confirmPassword: ""
-          }} 
-          post={true} />
+          }}
+          heading="New user"
+          postRequest />
       },
       {
         path: "/sp/users/edit/:id",
-        element: <UserFormPage api="user" />
+        element: <UserFormPage
+          api="user"
+          heading="Edit user"
+        />
       },
       {
         path: "/sp/users/edit/password/:id",
-        element: <UserFormPage api="user/changePassword" inputs={{
-          currentPassword: "",
-          password: "",
-          confirmPassword: ""
-        }} />
+        element: <UserFormPage
+          api="user/changePassword"
+          inputs={{
+            currentPassword: "",
+            password: "",
+            confirmPassword: ""
+          }}
+          heading="Change password" />
       },
       {
         path: '/sp/images/edit/:id',

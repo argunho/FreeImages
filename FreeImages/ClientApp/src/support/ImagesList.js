@@ -21,7 +21,7 @@ function ImagesList() {
   return (
     <List api="image" columns={columns} title="Images" columnWidth={500} view={true} button={{
       title: "Upload an image",
-      url: "/sp/upload-image",
+      url: "upload",
       icon: <AddAPhoto />
     }}/>
   );

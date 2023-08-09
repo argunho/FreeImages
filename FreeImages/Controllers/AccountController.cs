@@ -116,8 +116,7 @@ public class AccountController : ControllerBase
             var identity = user.Identity as ClaimsIdentity;
             var claims = User.Claims.ToList();
             foreach (var claim in claims)
-                identity.TryRemoveClaim(claim);
-
+                identity?.TryRemoveClaim(claim);
         }
         catch (Exception ex)
         {
@@ -147,7 +146,6 @@ public class AccountController : ControllerBase
         var support = model.Email.Equals("aslan_argun@hotmail.com");
         if (!firstRegister && model.Email != "aslan_argun@hotmail.com" && model.Roles.IndexOf("Support") == -1 && !Permission("Admin"))
             return _help.Response("warning", "Permission is missing!");
-
 
         string errorMessage = String.Empty;
         try
@@ -191,7 +189,7 @@ public class AccountController : ControllerBase
                                       "<p>Password: " + model?.Password + "</p><br/>";
 
                     // Send a mail to new user
-                    _mail.SendEmail(user.Email, "Welcome " + model.Name, mailContent);
+                    _mail.SendEmail(user?.Email, "Welcome " + model?.Name, mailContent);
 
                 if (firstRegister) { 
                     var token = GenerateJwtToken(user);
@@ -330,7 +328,7 @@ public class AccountController : ControllerBase
                 {
                     user.Password = oldPassword;
                     user.PasswordVerificationCode = oldVerificationCode;
-                    _help.Save();
+                    await _help.Save();
                     return _help.Response("success", "The new password has been sent, check your email");
                 }
             }

@@ -45,12 +45,8 @@ public class UserController : ControllerBase
     public int UsersCount() => AllUsers.Count();
 
     [HttpGet("{id}")]
-    public async Task<JsonResult> GetById(string? id)
-    {
-        var user = await _db.Users?.FirstOrDefaultAsync(x => x.Id == id);
-        var permission = Permission("Admin");
-        return new JsonResult(new { user, permission });
-    }
+    public async Task<User> GetById(string? id) => 
+        await _db.Users?.FirstOrDefaultAsync(x => x.Id == id);
     #endregion
 
     #region PUT

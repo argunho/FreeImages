@@ -17,6 +17,7 @@ import axios from 'axios';
 
 // Css
 import '../css/form.css';
+import Confirm from './Confirm';
 
 function List(props) {
 
@@ -107,19 +108,7 @@ function List(props) {
         </Button>}
 
         {/* Confirm alert */}
-        {confirm && <Alert severity='error' color='error' variant='standard' className="confirm-alert d-row jc-between">
-          <AlertTitle>Are you sure to do it?</AlertTitle>
-          <div className='confirm-buttons'>
-            {[
-              { icon: <Check color="error" />, function: deleteSelected },
-              { icon: <Close color="inherit" />, function: reset }
-            ].map((b, i) => {
-              return <IconButton key={i} onClick={b.function}>
-                {b.icon}
-              </IconButton>
-            })}
-          </div>
-        </Alert>}
+        {confirm && <Confirm confirm={deleteSelected} reset={reset} />}
       </div>}
 
 
