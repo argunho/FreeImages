@@ -23,12 +23,12 @@ public class HelpFunctions : IHelpFunctions
     }
 
     // Save new or changed data
-    public bool Save()
+    public async Task<bool> Save()
     {
         try
         {
             _message = "It was successfully!";
-            return _db.SaveChanges() > -1;
+            return await _db.SaveChangesAsync() > -1;
         }
         catch (Exception ex)
         {

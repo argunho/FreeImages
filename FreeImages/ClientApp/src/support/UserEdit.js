@@ -44,11 +44,12 @@ function UserEdit({inputs, confirmInputs}) {
     return (
         <UserForm
             inputs={!!inputs ? inputs : {
-                name: userData?.name,
-                email: userData?.email
+                name: userData?.user.name,
+                email: userData?.user.email
             }}
-            heading={"Edit user: " + (!!userData ? userData?.name : "Unknown")}
+            heading={"Edit user: " + (!!userData ? userData?.user.name : "Unknown")}
             confirmInputs={confirmInputs}
+            permission={userData?.permission}
             res={response} 
         />
     );

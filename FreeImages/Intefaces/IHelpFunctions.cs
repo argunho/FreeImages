@@ -4,7 +4,7 @@ namespace FreeImages.Intefaces;
 
 public interface IHelpFunctions
 {
-    bool Save();
+    Task<bool> Save();
     bool Delete(int id);
     bool CheckEmail(string email);
     string Hash(int count = 0);

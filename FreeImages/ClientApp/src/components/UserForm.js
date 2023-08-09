@@ -12,13 +12,15 @@ import HeaderConfig from '../functions/HeaderConfig';
 import Response from './Response';
 
 
-function UserForm({ children, inputs, heading, confirmInputs, res }) {
+function UserForm({ children, inputs, heading, confirmInputs, permission, res }) {
 
     const [roles, setRoles] = useState([])
     const [response, setResponse] = useState();
     const token = localStorage.getItem("token");
 
     const navigate = useNavigate();
+
+    console.log(permission)
 
     useState(() => {
         if (!!res)
@@ -62,10 +64,10 @@ function UserForm({ children, inputs, heading, confirmInputs, res }) {
                 confirmInputs={confirmInputs}
                 response={response}
                 onSubmit={submitForm}>
-                {!!token && <div className='d-column ai-start'>
+                {(!!token && !!permission) && <div className='d-column ai-start'>
                     {["Admin", "Support"].map((role, i) => {
                         return <FormControlLabel key={i} className='input-checkbox' control={
-                            <Checkbox color="default" onClick={handleRoles} name={role} />
+                            <Checkbox color="default" checked={roles.indexOf(role) > -1} onClick={handleRoles} name={role} />
                         } label={role} />
                     })}
                 </div>}

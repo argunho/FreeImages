@@ -129,7 +129,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("ChangePassword")] // Send new password
-    [Authorize(Roles = "User")]
+    [Authorize]
     public async Task<IActionResult> ChangePassword(AccountViewModel model)
     {
         var email = model.Email;

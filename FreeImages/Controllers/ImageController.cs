@@ -65,7 +65,7 @@ namespace FreeImages.Controllers
                 var listImages = _db.ListImages.Where(x => ids.Any(i => i == x.ImageId)).ToList();
                 _db.ListImages?.RemoveRange(listImages);
                 _db.Images?.RemoveRange(images);
-                if (_help.Save())
+                if (await _help.Save())
                 {
                     foreach (var image in images)
                     {

@@ -43,7 +43,32 @@ public class UserController : ControllerBase
     public int UsersCount() => AllUsers.Count();
 
     [HttpGet("{id}")]
-    public async Task<User>? GetById(string? id) => 
-        await _db.Users?.FirstOrDefaultAsync(x => x.Id == id);
+    public async Task<JsonResult> GetById(string? id)
+    {
+        var user = await _db.Users?.FirstOrDefaultAsync(x => x.Id == id);
+        var permission = Permission("Admin");
+        return new JsonResult(new { user, permission });
+    }
+    #endregion
+
+    #region PUT
+    [HttpPut("{id}")]
+    public async Task<JsonResult> Put(string? id) {
+
+        return _help.Response("error");
+    }
+    #endregion
+
+    #region Helpers
+    // Get claims 
+    private bool Permission(string role)
+    {
+        var claimRoles = User.Claims?.FirstOrDefault(x => x.Type == "Roles")?.ToString();
+        return claimRoles?.IndexOf(role) > -1;
+    }
+
+    // Get claim type
+    public string? GetClaim(string name) =>
+        User.Claims?.FirstOrDefault(x => x.Type == name)?.Value?.ToString();
     #endregion
 }

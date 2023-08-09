@@ -103,7 +103,7 @@ public class UploadController : ControllerBase
             if (visible)
             {
                 uploadedImage.Name = imgName;
-                if (!_help.Save())
+                if (!await _help.Save())
                     return _help.Response("error");
             }
 
@@ -119,7 +119,7 @@ public class UploadController : ControllerBase
 
             _db.Images?.Add(imgData);
 
-            if (_help.Save())
+            if (await _help.Save())
             {
                 foreach (var image in _db.ListImages.ToList())
                 {
@@ -137,7 +137,7 @@ public class UploadController : ControllerBase
 
                 listImage.Base64 = "data:image/jpeg;base64," + ImageToBase64(listImage, 500);
                 _db.ListImages?.Add(listImage);
-                if (!_help.Save())
+                if (!await _help.Save())
                     return _help.Response("warning");
             }
             else
