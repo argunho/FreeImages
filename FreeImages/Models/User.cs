@@ -20,10 +20,6 @@ public class User
         {
             return string.IsNullOrEmpty(Roles) ? new List<string>() : Roles.Split(',').ToList();
         }
-        set
-        {
-           _ = string.IsNullOrEmpty(Roles) ? new List<string>() : Roles.Split(',').ToList();
-        }
     }
     public string? LoginHash { get; set; }
     public Nullable<DateTime> LoginHashValidTime { get; set; }

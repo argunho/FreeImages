@@ -1,24 +1,28 @@
 
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react';
 
 // Installed
-import { Close } from '@mui/icons-material'
-import { Button, CircularProgress, TextField } from '@mui/material'
+import { Button, CircularProgress, TextField } from '@mui/material';
+import { Close } from '@mui/icons-material';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Components
 import Response from './Response';
 
 // Functions
-import { useEffect } from 'react';
 
 function Form({ children, ...props }) {
+    Form.displayName = "Form";
 
     const inputs = Object.keys(props.inputs);
-    const [form, setForm] = useState(props.inputs);
+    const [formData, setFormData] = useState(props.inputs);
+    const [changed, setChanged] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [file, setFile] = useState(null);
     const [response, setResponse] = useState(null);
     const [errors, setErrors] = useState([]);
+
+    const navigate = useNavigate();
+    const loc = useLocation();
 
     useEffect(() => {
         let res = props.response;
@@ -26,8 +30,10 @@ function Form({ children, ...props }) {
             setLoading(false);
             if (!!res?.alert) {
                 setResponse(res);
-                if (res.alert === "success")
-                    resetForm();
+                if (res.alert === "success"){
+                    setLoading(false);
+                    setFormData(props.inputs)
+                }
             } else
                 console.warn(res);
         }
@@ -38,8 +44,9 @@ function Form({ children, ...props }) {
     const handleChange = e => {
         if (!e.target) return;
         setErrors([]);
+        setChanged(true);
         setResponse(null);
-        setForm({ ...form, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
     const submitForm = async (e) => {
@@ -48,7 +55,7 @@ function Form({ children, ...props }) {
         const confirm = props?.confirmInputs;
 
         // If exists inputs to validate
-        if (!!props?.confirmInputs && form[confirm[0]] !== form[confirm[1]]) {
+        if (!!props?.confirmInputs && formData[confirm[0]] !== formData[confirm[1]]) {
             setErrors(confirm);
             return;
         }
@@ -56,7 +63,7 @@ function Form({ children, ...props }) {
         // Form validation
         let invalidForm = false;
         inputs.forEach(input => {
-            if (form[input].length < 2) {
+            if (formData[input].length < 2) {
                 invalidForm = true;
                 setErrors(errors => [...errors, input])
             }
@@ -65,14 +72,7 @@ function Form({ children, ...props }) {
         if (invalidForm) return;
 
         setLoading(true);
-        props.onSubmit(form);
-    }
-
-    const resetForm = () => {
-        if (!!props.fileReset)
-            props.fileReset();
-        setForm(props.inputs);
-        setLoading(false);
+        props.onSubmit(formData);
     }
 
     const capitalize = (str) => {
@@ -80,51 +80,50 @@ function Form({ children, ...props }) {
         return str.charAt(0).toUpperCase() + str.slice(1)
     }
 
-    const ongoingForm = () => {
-        return (props.upload ? !file : false) || form !== props.inputs;
+    const reload = () => {
+        const pathname = loc.pathname;
+
+        navigate("/reload", { replace: true })
+        setTimeout(() => {
+            return navigate(pathname);
+        }, 100)
     }
 
-    // Response alert
-    if (!!response)
-        return
-
     return (
-        <>
-            <form onSubmit={submitForm}>
-                <h4 className='form-title'>{props.heading}</h4>
-                {inputs.map((x, ind) => (
-                    <TextField key={ind}
-                        label={capitalize(x)}
-                        className='fields'
-                        size="medium"
-                        required
-                        disabled={loading || props.disabled}
-                        name={x}
-                        type={x.toLowerCase().indexOf("password") > -1 ? "password" : (x === "email" ? x : "text")}
-                        value={form[x]}
-                        variant="outlined"
-                        inputProps={{
-                            minLength: x.toLowerCase().indexOf("password") > -1 ? 6 : 2
-                        }}
-                        error={errors.indexOf(x) > -1}
-                        onChange={handleChange} />
-                ))}
+        <form onSubmit={submitForm}>
+            <h4 className='form-title'>{props.heading}</h4>
+            {inputs.map((x, ind) => (
+                <TextField key={ind}
+                    label={capitalize(x)}
+                    className='fields'
+                    size="medium"
+                    required
+                    disabled={loading || props.disabled}
+                    name={x}
+                    type={x.toLowerCase().indexOf("password") > -1 ? "password" : (x === "email" ? x : "text")}
+                    value={formData[x] || ""}
+                    variant="outlined"
+                    inputProps={{
+                        minLength: x.toLowerCase().indexOf("password") > -1 ? 6 : 2
+                    }}
+                    error={errors.indexOf(x) > -1}
+                    onChange={handleChange} />
+            ))}
 
-                {/* File upload */}
-                {children && children}
+            {/* File upload */}
+            {children && children}
 
-                {!props.disabled && <div className="buttons-wrapper d-row jc-end">
-                    {ongoingForm ? <Button color="error" variant='outlined' onClick={resetForm}>
-                        <Close />
-                    </Button> : null}
-                    <Button type="submit" variant='outlined' color="inherit">
-                        {loading ? <CircularProgress className='loading-circular' /> : "Save"}
-                    </Button>
-                </div>}
-            </form>
+            {!props.disabled && <div className="buttons-wrapper d-row jc-end">
+                {changed && <Button color="error" variant='outlined' onClick={reload} disabled={loading}>
+                    <Close />
+                </Button>}
+                <Button type="submit" variant='outlined' color="inherit">
+                    {loading ? <CircularProgress className='loading-circular' /> : "Save"}
+                </Button>
+            </div>}
 
             {!!response && <Response res={response} close={() => setResponse()} />}
-        </>
+        </form>
     )
 }
 export default Form;

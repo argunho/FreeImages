@@ -1,3 +1,4 @@
+// Installed
 import { Alert, AlertTitle } from "@mui/material";
 
 function Response({ res, close }) {
@@ -15,7 +16,3 @@ function Response({ res, close }) {
 }
 
 export default Response;
-
-{/* <Alert variant="outlined" severity={res?.alert} onClick={close}> 
-        {res?.message ? res.message : "Successfully!"}
-    </Alert> */}

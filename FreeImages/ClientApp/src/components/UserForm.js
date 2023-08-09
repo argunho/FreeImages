@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // Installed
 import axios from 'axios';
@@ -8,23 +8,28 @@ import { useNavigate } from 'react-router-dom';
 // Components
 import Form from './Form';
 import Heading from './Heading';
-import Response from './Response';
 
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
+import Loading from './Loading';
 
-function UserForm({ children, api, inputs, heading, confirmInputs, permission, disabled, currentRoles, postRequest, res }) {
+function UserForm({ children, api, inputs, heading, confirmInputs, permission, disabled, loading, user, res }) {
 
-    const [roles, setRoles] = useState(currentRoles || [])
+    const [roles, setRoles] = useState([])
     const [response, setResponse] = useState();
     const token = localStorage.getItem("token");
 
     const navigate = useNavigate();
 
-    useState(() => {
+    useEffect(() => {
         if (!!res)
             setResponse(res);
     }, [res])
+
+    useEffect(() => {
+        if (!!user)
+            setRoles(user?.listRoles)
+    }, [user])
 
     const handleRoles = (e) => {
         const role = e.target.name;
@@ -38,29 +43,36 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, d
         setRoles(rolesList)
     }
 
-    const submitForm = async (data) => {
-        let formData = data;
-        formData.roles = roles;
+    const submitForm = async (formData) => {
+        let data = formData;
 
-        const apiRequest = !!postRequest ? axios.post(`${api}`, formData, HeaderConfig) 
-            : axios.put(`${api}`, formData, HeaderConfig);
+        // Update form data
+        data.roles = roles?.toString();
+        if (api.indexOf("changePassword") > -1 && !!user) {
+            data.name = user?.name;
+            data.email = user?.email;
+        }
 
-         await apiRequest.then(res => {
-                if (!!res.data?.token) {
-                    localStorage.setItem("token", res.data.token);
-                    navigate("/sp/images");
-                } else
-                    setResponse(res.data)
-            }, error => {
-                setResponse(error);
-            });
+        console.log(`${api}/${user?.id}`)
+        console.log(data)
+        const apiRequest = !user ? axios.post(`${api}`, data, HeaderConfig)
+            : axios.put(`${api}/${user?.id}`, data, HeaderConfig);
+
+        await apiRequest.then(res => {
+            if (!!res.data?.token) {
+                localStorage.setItem("token", res.data.token);
+                navigate("/sp/images");
+            } else
+                setResponse(res.data)
+        }, error => {
+            setResponse({ alert: "error", message: error?.message });
+        });
     }
 
-
     return (
-        <div className='wrapper'>
+        <div className='wrapper form-wrapper'>
             <Heading title="Form" />
-            <Form
+            {loading ? <Loading /> : <Form
                 heading={heading}
                 inputs={inputs}
                 confirmInputs={confirmInputs}
@@ -74,12 +86,9 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, d
                         } label={role} />
                     })}
                 </div>}
-            </Form>
+            </Form>}
 
             {!!children && children}
-
-            {/* Response */}
-            {response && <Response res={response} close={() => setResponse()} />}
         </div>
     )
 }

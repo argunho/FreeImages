@@ -128,7 +128,7 @@ public class AccountController : ControllerBase
     }
     #endregion
 
-    #region Post
+    #region POST
     [HttpPost("Register")] // Register
     public async Task<JsonResult> PostRegister(AccountViewModel model)
     {
@@ -155,7 +155,7 @@ public class AccountController : ControllerBase
             var hashedPassword = HashPassword(model, salt);
 
             // Create roles
-            var roles = model?.Roles;
+            var roles = model?.ListRoles;
 
             if (support || (roles?.Count == 0 && _users?.Count() == 0))
             {
@@ -250,8 +250,10 @@ public class AccountController : ControllerBase
         var email = user.Email;
 
         var currentEmail = GetClaim("Email");
-        if (user.Email != currentEmail || !VerifyPassword(model.Password, user))
+        if (user.Email != currentEmail && !Permission("Admin") && !Permission("Support"))
             return _help.Response("error", "Permission denied!");
+        if (!VerifyPassword(model?.CurrentPassword, user))
+            return _help.Response("error", "Current password is wrong!");
 
         string errorMessage = "Failed to try to change password, please try again later ...";
         try

@@ -141,6 +141,12 @@ button.menu-close:hover {
   padding: 0 16px !important;
 }
 
+.form-wrapper .confirm-alert {
+  max-width: 470px !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
 .confirm-alert,
 .delete-btn {
   height: 50px !important;

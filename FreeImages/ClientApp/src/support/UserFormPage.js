@@ -8,18 +8,17 @@ import { Button } from "@mui/material";
 import jwtDecode from 'jwt-decode';
 
 // Components
-import Loading from "../components/Loading";
 import UserForm from "../components/UserForm";
 import Confirm from "../components/Confirm";
 
 // Functions
 import HeaderConfig from "../functions/HeaderConfig";
 
-function UserFormPage({ inputs, api, heading, postRequest }) {
+function UserFormPage({ inputs, api, heading }) {
 
     const [response, setResponse] = useState();
     const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [confirm, setConfirm] = useState(false);
     const [decoded, setDecoded] = useState();
     const [disabled, setDisabled] = useState(false);
@@ -28,8 +27,8 @@ function UserFormPage({ inputs, api, heading, postRequest }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setLoading(true);
-        setDecoded(jwtDecode(localStorage.getItem("token")));
+        const decodedToken = jwtDecode(localStorage.getItem("token"));
+        setDecoded(decodedToken);
         if (!!id) {
             (async () => {
                 await axios.get(`user/${id}`, HeaderConfig).then(res => {
@@ -37,7 +36,7 @@ function UserFormPage({ inputs, api, heading, postRequest }) {
                     console.log(decoded)
                     if (!!data){
                         setUserData(data);
-                        setDisabled(decoded?.Email !== userData?.email || decoded?.Roles.indexOf("Admin") === -1)
+                        setDisabled(decodedToken?.Email !== data?.email && data?.roles.indexOf("Admin") > -1 && permission("Support"));
                     }
                     else
                         setResponse({ alert: "error", message: "User not found!" });
@@ -47,6 +46,7 @@ function UserFormPage({ inputs, api, heading, postRequest }) {
             })();
         } else
             setLoading(false);
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id])
 
@@ -55,7 +55,9 @@ function UserFormPage({ inputs, api, heading, postRequest }) {
         setResponse(res.data);
     }
 
-    if (loading) return <Loading />;
+    const permission = (role) => {
+        return decoded?.Roles.indexOf(role) > -1;
+    }
 
     return (
         <UserForm
@@ -63,27 +65,30 @@ function UserFormPage({ inputs, api, heading, postRequest }) {
                 name: userData?.name,
                 email: userData?.email
             }}
+            user={userData}
+            loading={loading}
             heading={heading}
             confirmInputs={!!inputs ? ["password", "confirmPassword"] : null}
-            permission={decoded?.Roles.indexOf("Admin") > -1}
+            permission={permission("Admin") && api !== "account/changePassword"}
             disabled={disabled}
-            currentRoles={userData?.listRoles}
             api={api}
-            postRequest={postRequest}
             res={response}
         >
             {/* Actions buttons */}
-            {(!confirm && !postRequest) && <div className="buttons-wrapper d-row js-end ai-end">
+            {(!confirm && api === "user" && !disabled) && <div className="buttons-wrapper d-row js-end ai-end">
                 <Button variant="text" color="info" onClick={() => navigate(`/sp/users/edit/password/${id}`)}>
                     Change password
                 </Button>
-                <Button variant="text" color="error" onClick={() => setConfirm(true)}>
+                <Button variant="text" color="error" onClick={(e) => {
+                    e.stopPropagation();
+                    setConfirm(true);
+                }}>
                     Delete profile
                 </Button>
             </div>}
 
             {/* Confirm alert */}
-            {(confirm && !postRequest && !disabled) && <Confirm confirm={deleteProfile} reset={() => setConfirm(false)} />}
+            {(confirm && !!userData) && <Confirm confirm={deleteProfile} reset={() => setConfirm(false)} />}
         </UserForm>
     );
 }

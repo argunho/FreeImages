@@ -66,8 +66,7 @@ const AppRoutes = [
             password: "",
             confirmPassword: ""
           }}
-          heading="New user"
-          postRequest />
+          heading="New user" />
       },
       {
         path: "/sp/users/edit/:id",
@@ -79,7 +78,7 @@ const AppRoutes = [
       {
         path: "/sp/users/edit/password/:id",
         element: <UserFormPage
-          api="user/changePassword"
+          api="account/changePassword"
           inputs={{
             currentPassword: "",
             password: "",

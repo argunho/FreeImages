@@ -127,20 +127,22 @@ function Login() {
                         onChange={changeHandler} />
 
                     <div className='d-column ai-start'>
-                        <FormControlLabel className='input-checkbox' control={
-                            <Checkbox color="default"
-                                checked={form.remember} onChange={changeHandler} name="remember" />
-                        } label="Remember me" />
 
                         <FormControlLabel className='input-checkbox' control={
                             <Checkbox color="default"
                                 checked={isVisiblePassword} onClick={() => setVisiblePassword(!isVisiblePassword)} />
                         } label="Show password" />
-
+                        
                         <FormControlLabel className='input-checkbox' control={
                             <Checkbox color="default"
                                 checked={isReliable} onClick={handleReliable} />
                         } label="Show login button" />
+
+                        <FormControlLabel className='input-checkbox' control={
+                            <Checkbox color="default"
+                                checked={form.remember} onChange={changeHandler} name="remember" />
+                        } label="Remember me" />
+
                     </div>
                 </div>}
 

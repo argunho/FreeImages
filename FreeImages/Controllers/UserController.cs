@@ -51,7 +51,7 @@ public class UserController : ControllerBase
 
     #region PUT
     [HttpPut("{id}")]
-    public async Task<JsonResult> Put(string? id, AccountViewModel model) {
+    public async Task<JsonResult> Put(string? id, User model) {
         var user = AllUsers.FirstOrDefault(x => x.Id == id);
         if(user == null)
             return _help.Response("error", "Users with matching emails have not been found ...");
@@ -67,7 +67,7 @@ public class UserController : ControllerBase
         {
             user.Name = model.Name;
             user.Email = model.Email;
-            user.Roles = model.Roles.ToString();
+            user.Roles = model?.Roles;
             if (!await _help.Save())
                 return _help.Response("error");
         }catch (Exception ex)
