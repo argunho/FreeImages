@@ -58,11 +58,11 @@ const AppRoutes = [
       },
       {
         path: "/sp/users/edit/:id",
-        element: <UserEdit />
+        element: <UserEdit api="user" />
       },
       {
         path: "/sp/users/edit/password/:id",
-        element: <UserEdit inputs={{ 
+        element: <UserEdit api="user/changePassword" inputs={{ 
           currentPassword: "", 
           password: "", 
           confirmPassword: "" }} confirmInputs={["password", "confirmPassword"]} />

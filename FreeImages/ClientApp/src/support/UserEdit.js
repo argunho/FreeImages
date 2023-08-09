@@ -12,7 +12,7 @@ import UserForm from "../components/UserForm";
 // Functions
 import HeaderConfig from "../functions/HeaderConfig";
 
-function UserEdit({inputs, confirmInputs}) {
+function UserEdit({inputs, confirmInputs, api}) {
 
     const [response, setResponse] = useState();
     const [userData, setUserData] = useState(null);
@@ -27,6 +27,7 @@ function UserEdit({inputs, confirmInputs}) {
             (async () => {
                 await axios.get(`user/${id}`, HeaderConfig).then(res => {
                     const data = res?.data;
+                    console.log(data.user)
                     if (!!data) 
                         setUserData(data);
                     else 
@@ -50,6 +51,7 @@ function UserEdit({inputs, confirmInputs}) {
             heading={"Edit user: " + (!!userData ? userData?.user.name : "Unknown")}
             confirmInputs={confirmInputs}
             permission={userData?.permission}
+            currentRoles={userData?.user.listRoles}
             res={response} 
         />
     );

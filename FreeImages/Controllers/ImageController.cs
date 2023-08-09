@@ -51,18 +51,18 @@ namespace FreeImages.Controllers
         #endregion
 
         #region DELETE
-        [HttpDelete("{idsString}")]
-        public async Task<JsonResult> Delete(string idsString)
+        [HttpDelete("{ids}")]
+        public async Task<JsonResult> Delete(string ids)
         {
-            if (string.IsNullOrEmpty(idsString))
+            if (string.IsNullOrEmpty(ids))
                 return _help.Response("error", "Id missing!");
 
-            List<int> ids = idsString.Split(",").Select(i => Convert.ToInt32(i)).ToList();
+            List<int> idsList = ids.Split(",").Select(i => Convert.ToInt32(i)).ToList();
 
             try
             {
-                var images = AllImages.Where(x => ids.Any(i => i == x.Id)).ToList();
-                var listImages = _db.ListImages.Where(x => ids.Any(i => i == x.ImageId)).ToList();
+                var images = AllImages.Where(x => idsList.Any(i => i == x.Id)).ToList();
+                var listImages = _db.ListImages.Where(x => idsList.Any(i => i == x.ImageId)).ToList();
                 _db.ListImages?.RemoveRange(listImages);
                 _db.Images?.RemoveRange(images);
                 if (await _help.Save())

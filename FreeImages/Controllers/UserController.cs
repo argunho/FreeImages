@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FreeImages.Models;
+using FreeImages.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreeImages.Controllers;
@@ -53,9 +55,75 @@ public class UserController : ControllerBase
 
     #region PUT
     [HttpPut("{id}")]
-    public async Task<JsonResult> Put(string? id) {
+    public async Task<JsonResult> Put(string? id, AccountViewModel model) {
+        var user = AllUsers.FirstOrDefault(x => x.Id == id);
+        if(user == null)
+            return _help.Response("error", "Users with matching emails have not been found ...");
 
-        return _help.Response("error");
+        var currentEmail = GetClaim("Email");
+        if (user.Email != currentEmail)
+        {
+            if ((user.Roles?.IndexOf("Admin") > -1 && !Permission("Developer")) || !Permission("Admin"))
+                return _help.Response("error", "Permission denied!");
+        }
+
+        try
+        {
+            user.Name = model.Name;
+            user.Email = model.Email;
+            user.Roles = model.Roles.ToString();
+            if (!await _help.Save())
+                return _help.Response("error");
+        }catch (Exception ex)
+        {
+            return _help.Response("error", $"Failed to try to change user data. Error: {ex.Message}");
+        }
+
+        return _help.Response("success");
+    }
+    #endregion
+
+    #region Delete
+    [HttpDelete("{ids}")]
+    [Authorize(Roles = "Admin,Developer")]
+    public async Task<JsonResult> Delete(string? ids)
+    {
+        if (string.IsNullOrEmpty(ids))
+            return _help.Response("error", "Id missing!");
+
+        List<string> idsList = ids.Split(",").ToList();
+        var users = AllUsers.Where(x => idsList.Any(i => i == x.Id)).ToList();
+        var permission = Permission("Developer");
+        if (users.Count(x => x.Roles?.IndexOf("Admin") > -1) > 0 && !permission)
+            return _help.Response("error", "Permission denied!");
+
+        _db.Users?.RemoveRange(users);
+        if (!await _help.Save())
+            return _help.Response("error");
+
+        return _help.Response("success");
+    }
+
+    [HttpDelete("profile/{id}")]
+    public async Task<JsonResult> DeleteProfile(string? id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return _help.Response("error", "Id missing!");
+
+        var user = AllUsers.FirstOrDefault(x => id == x.Id);
+        if (user == null)
+            return _help.Response("error", "Users with matching emails have not been found ...");
+
+        var permission = Permission("Developer");
+        var currentEmail = GetClaim("Email");
+        if (user.Roles?.IndexOf("Admin") > -1 && !permission && currentEmail != user.Email)
+            return _help.Response("error", "Permission denied!");
+
+        _db.Users?.Remove(user);
+        if (!await _help.Save())
+            return _help.Response("error");
+
+        return _help.Response("success");
     }
     #endregion
 

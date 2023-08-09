@@ -12,9 +12,9 @@ import HeaderConfig from '../functions/HeaderConfig';
 import Response from './Response';
 
 
-function UserForm({ children, inputs, heading, confirmInputs, permission, res }) {
+function UserForm({ children, api, inputs, heading, confirmInputs, permission, currentRoles, res }) {
 
-    const [roles, setRoles] = useState([])
+    const [roles, setRoles] = useState(currentRoles || [])
     const [response, setResponse] = useState();
     const token = localStorage.getItem("token");
 
@@ -42,7 +42,7 @@ function UserForm({ children, inputs, heading, confirmInputs, permission, res })
     const submitForm = async (data) => {
         let formData = data;
         formData.roles = roles;
-        await axios.post("account/register", formData, HeaderConfig)
+        await axios.post(`${api}`, formData, HeaderConfig)
             .then(res => {
                 if (!!res.data?.token) {
                     localStorage.setItem("token", res.data.token);

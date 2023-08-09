@@ -2,6 +2,7 @@
 using FreeImages.Intefaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 namespace FreeImages.Repository;

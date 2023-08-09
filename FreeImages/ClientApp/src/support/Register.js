@@ -78,7 +78,7 @@ function Register(){
         email: "",
         password: "",
         confirmPassword: ""
-      }} heading="Register" confirmInputs={["password", "confirmPassword"]} />;
+      }} api="account/register" heading="Register" confirmInputs={["password", "confirmPassword"]} />;
 }
 
 export default Register;
