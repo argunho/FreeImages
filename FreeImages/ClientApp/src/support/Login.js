@@ -71,29 +71,25 @@ function Login() {
         setReliable(!isReliable);
     }
 
-    const requestHandle = (res) => {
-        setLoading(false)
-        setResponse(res);
-        if (!!res.token) {
-            setAuthorized(true);
-            localStorage.setItem("token", res.token);
-            setTimeout(() => {
-                window.location.href = "/sp/images";
-            }, 2000)
-        } else
-            console.error(res.message);
-    }
-
     // Submit form
     const submitHandler = async e => {
         e.preventDefault();
         setLoading(true);
-        const api = (loginLink) ? axios.get("account/LoginLink/" + form.email)
+        const api = (loginLink) ? axios.get("account/sendLoginLink/" + form.email)
                 : axios.post("account/login", form);
 
         await api.then(
             res => {
-                requestHandle(res);
+                setLoading(false)
+                setResponse(res.data);
+                if (!!res.data.token) {
+                    setAuthorized(true);
+                    localStorage.setItem("token", res.data.token);
+                    setTimeout(() => {
+                        window.location.href = "/sp/images";
+                    }, 2000)
+                } else
+                    console.error(res.message);
             }).catch(error => {
                 setLoading(false);
                 setResponse({
@@ -161,7 +157,7 @@ function Login() {
             {loading && <div className="curtain-center"><CircularProgress /></div>}
 
             {/* Response */}
-            {!!response && <Response res={response} close={() => setResponse()}/>}
+            {(!!response && !authorized) && <Response res={response} close={() => setResponse()}/>}
         </div>
     )
 }

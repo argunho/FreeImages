@@ -18,7 +18,7 @@ function Logout() {
                 setTimeout(() => {
                     localStorage.removeItem("token");
                     navigate("/");
-                }, 100);
+                }, 1000);
             }
         })();
         // eslint-disable-next-line react-hooks/exhaustive-deps

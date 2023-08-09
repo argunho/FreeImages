@@ -24,7 +24,6 @@ function Form({ children, ...props }) {
         let res = props.response;
         if (!!res) {
             setLoading(false);
-            console.log(res)
             if (!!res?.alert) {
                 setResponse(res);
                 if (res.alert === "success")

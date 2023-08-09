@@ -18,11 +18,9 @@ function UserForm({ children, inputs, heading, confirmInputs, res }) {
     const [response, setResponse] = useState();
     const token = localStorage.getItem("token");
 
-    console.log(res)
     const navigate = useNavigate();
 
     useState(() => {
-        console.log(res)
         if (!!res)
             setResponse(res);
     }, [res])

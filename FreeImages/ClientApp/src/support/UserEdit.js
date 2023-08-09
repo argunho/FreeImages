@@ -22,22 +22,16 @@ function UserEdit({inputs, confirmInputs}) {
 
     useEffect(() => {
         setLoading(true);
-        console.log(id)
+
         if (!!id) {
             (async () => {
                 await axios.get(`user/${id}`, HeaderConfig).then(res => {
                     const data = res?.data;
-                    if (!!data) {
+                    if (!!data) 
                         setUserData(data);
-                        console.log(33,inputs)
-                        console.log(34,data)
-                        if(inputs?.name && inputs?.email){
-                            console.log(36,inputs)
-
-                        }
-                    } else {
+                    else 
                         setResponse({alert: "error", message: "User not found!"});
-                    }
+                    
                     setLoading(false);
                 })
             })();
@@ -49,13 +43,14 @@ function UserEdit({inputs, confirmInputs}) {
 
     return (
         <UserForm
-            inputs={inputs}
+            inputs={!!inputs ? inputs : {
+                name: userData?.name,
+                email: userData?.email
+            }}
             heading={"Edit user: " + (!!userData ? userData?.name : "Unknown")}
             confirmInputs={confirmInputs}
             res={response} 
-        >
-
-        </UserForm>
+        />
     );
 }
 

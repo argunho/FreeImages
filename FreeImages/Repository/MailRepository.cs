@@ -11,7 +11,7 @@ namespace FreeImages.Repository;
 public class MailRepository
 {
     // Service params
-    private readonly string _smtpString = "mail.hobbykitchen.com";
+    private readonly string _smtpString = "mail.hobbykitchen.online";
     private readonly string _emailString = "";
     private readonly string _passwordString = "_";
     private readonly string _logoString = "Free Images";

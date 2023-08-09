@@ -47,6 +47,14 @@
     margin-top: 40px !important;
 }
 
+.login-response {
+    margin-top: 100px;
+}
+
+.login-error {
+    cursor: pointer;
+}
+
 .input-checkbox>span {
     font-size: 16px !important;
     vertical-align: middle;

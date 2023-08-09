@@ -85,11 +85,10 @@ function List(props) {
   const deleteSelected = async () => {
     if (selectedRows.length === 0) return;
     setConfirm(false);
-    console.log(selectedRows)
+
     await axios.delete(`${props.api}/${selectedRows.toString()}`, HeaderConfig).then(res => {
       setProcess(false);
       getList();
-      console.log(res);
     })
   }
 

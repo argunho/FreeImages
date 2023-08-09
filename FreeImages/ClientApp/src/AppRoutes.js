@@ -58,10 +58,7 @@ const AppRoutes = [
       },
       {
         path: "/sp/users/edit/:id",
-        element: <UserEdit inputs={{
-          name: "",
-          email: ""
-        }} />
+        element: <UserEdit />
       },
       {
         path: "/sp/users/edit/password/:id",

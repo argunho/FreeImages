@@ -74,7 +74,7 @@ public class AccountController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("LoginLink/{email}")] // Send authantication link
+    [HttpGet("SendLoginLink/{email}")] // Send authantication link
     public async Task<JsonResult> LoginLink(string email)
     {
         User user = await _db.Users?.FirstOrDefaultAsync(x => x.Email == email);
@@ -247,7 +247,7 @@ public class AccountController : ControllerBase
             return _help.Response("warning", "Incorrect form data!");
         else if (!_help.CheckEmail(model.Email))
             return _help.Response("warning", "Incorrect email address");
-        else if (_users.FirstOrDefault(x => x.Email == model.Email) != null)
+        else if (await _db.Users.FirstOrDefaultAsync(x => x.Email == model.Email) != null)
             return _help.Response("warning", "Users with the same email already exists!");
 
         var firstRegister = _users?.Count() == 0;
@@ -329,7 +329,7 @@ public class AccountController : ControllerBase
         var errorMessage = String.Empty;
         try
         {
-            var user = _users.FirstOrDefault(x => x.Email == model.Email);
+            var user = await _db.Users?.FirstOrDefaultAsync(x => x.Email == model.Email);
             if (user == null || !VerifyPassword(model?.Password, user))
                 return _help.Response("warning", "Incorrect email address or password");
             else

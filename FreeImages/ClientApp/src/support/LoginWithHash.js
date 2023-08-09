@@ -8,6 +8,8 @@ import axios from "axios";
 // Components
 import Loading from "../components/Loading";
 import Response from "../components/Response";
+import { Error, ErrorRounded } from "@mui/icons-material";
+import { Alert, AlertTitle } from "@mui/material";
 
 function LoginWithHash() {
     LoginWithHash.displayName = "LoginWidthHash";
@@ -59,16 +61,20 @@ function LoginWithHash() {
         )
 
     return (
-        <div className={"d-column"}>
+        <div className={"login-response d-column"}>
             {authorized && <h3 className="login-heading">
                 <p>Welcome {response.user}</p>
             </h3>}
 
-            {/* Response */}
-            {!!response && <Response res={response} close={() => {
-                setResponse();
-                navigate("/");
-            }}/>}
+            {/* Error response */}
+            {(!authorized && !!response) && <Alert variant="filled"
+                severity="error"
+                color="error"
+                onClick={() => navigate("/")}
+                className="login-error">
+                <AlertTitle>Error</AlertTitle>
+                <p>{response.message}</p>
+            </Alert>}
         </div>
     )
 }

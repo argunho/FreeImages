@@ -27,7 +27,7 @@ function Home() {
   const get = async () => {
     const res = await fetch(`image/${page}/${perPage}`);
     const data = await res.json();
-    console.log(data)
+
     setImgs(data);
   }
 
@@ -38,7 +38,7 @@ function Home() {
   }
 
   const renderImg = (img, ind) => {
-    console.log(img)
+
     return <img key={ind} src={img.path}
       className="gallery-img"
       onClick={() => navigate(`view/img/${img.imageId}`)}
