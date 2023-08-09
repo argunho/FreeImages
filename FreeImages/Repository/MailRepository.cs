@@ -11,18 +11,21 @@ namespace FreeImages.Repository;
 public class MailRepository
 {
     // Service params
-    private readonly string _smtpString = "mail.hobbykocken.com";
-    private readonly string _emailString = "hobbykocken@hobbykocken.com";
-    private readonly string _passwordString = "HobbyKocken2021_";
+    private readonly string _smtpString = "mail.hobbykitchen.com";
+    private readonly string _emailString = "";
+    private readonly string _passwordString = "_";
+    private readonly string _logoString = "Free Images";
 
     // Template params
     public static string mailContent = "<div style='width:98%;overflow:hidden;display:block;border:2px solid #3B8506;margin:auto;background:#FFFFFF;font-family:Tahoma;'>" +
                                         "<div style='width:100%;height:140px;display:block;position:relative;'>" +
-                                        "<a href='{link}' style='width:100%;display:block:height:auto;' target='_blank'><img src='{logo}' alt='' style='width:90%;max-width:400px;height:120px;margin:10px auto;' /></a></div>" +
+                                        "<a href='{link}' style='width:100%;display:block:height:auto;' target='_blank'>" +
+                                        "<p style='width:90%;max-width:400px;height:120px;margin:10px auto;font-size:30px'>{logo}</p></a></div>" +
                                         "<div style='width:auto;padding:20px;font-size:18px;display:block;'>{content}</div>" +
                                         "<div style='width:96%;margin:20px 1%;display:block;padding:25px 1%;text-align:center;line-height:25px;" +
                                         "font-size:16px;border-top:2px solid #3B8506;'><div style='width:50%;min-width:320px;display:block;margin:auto;font-family:Franklin Gothic Medium;'>{footer}</div></div></div>";
 
+    //<img src='{logo}' alt='' style='width:90%;max-width:400px;height:120px;margin:10px auto;' />
     public static string? _message { get; set; }
 
 
@@ -32,12 +35,12 @@ public class MailRepository
         try
         {
             var logo = ImageToBase64(@"wwwroot/logo.png");
-            MailMessage _mail = new MailMessage(new MailAddress("no-reply@freipictures.club", "Free Pictures"), new MailAddress(toEmail));
+            MailMessage _mail = new(new MailAddress("no-reply@freipictures.club", "Free Pictures"), new MailAddress(toEmail));
             _mail.Subject = subject;
             _mail.Body = mailContent.Replace("{content}", content).Replace("{footer}", footer).Replace("{logo}", logo);
             _mail.IsBodyHtml = true;
 
-            SmtpClient _smtp = new SmtpClient();
+            SmtpClient _smtp = new();
             _smtp.Host = _smtpString;
             _smtp.Port = 25;
             _smtp.EnableSsl = false;
@@ -66,7 +69,7 @@ public class MailRepository
         try
         {
             var logo = ImageToBase64(@"wwwroot/logo.png");
-            MailMessage _mail = new MailMessage(new MailAddress("no-reply@alvesta.se", "Unlock Users"), new MailAddress(toEmail));
+            MailMessage _mail = new MailMessage(new MailAddress("no-reply@freeimages", "Free Images"), new MailAddress(toEmail));
             _mail.Subject = mailSubject;
             _mail.Body = mailContent.Replace("{content}", mailContent).Replace("{logo}", logo);
             _mail.IsBodyHtml = true;
@@ -77,7 +80,7 @@ public class MailRepository
             }
 
             SmtpClient _smtp = new SmtpClient();
-            _smtp.Host = "smtp.alvesta.local";
+            _smtp.Host = _smtpString;
             _smtp.Port = 25;
             _smtp.EnableSsl = false;
             _smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
@@ -99,15 +102,16 @@ public class MailRepository
         }
     }
 
-    public bool SendEmailWithoutCredentials(string mailTo, string subject, string content, string footer = "" ) // Email sending without user's email credentials
+    public bool SendEmail(string mailTo, string subject, string content, string footer = "") // Email sending without user's email credentials
     {
         try
         {
-            var logo = ImageToBase64(@"wwwroot/alvestakommun.png");
-            MailMessage _mail = new MailMessage(new MailAddress("info@freepictures.club", "Free Pictures"), new MailAddress(mailTo));
-            SmtpClient _smtp = new SmtpClient("smtp.alvesta.local");
+            //var logo = ImageToBase64(@"wwwroot/logo.png");
+            
+            MailMessage _mail = new(new MailAddress("info@freeimages.online", "Free Images"), new MailAddress(mailTo));
+            SmtpClient _smtp = new(_smtpString);
             _mail.Subject = subject;
-            _mail.Body = mailContent.Replace("{content}", content).Replace("{footer}", footer).Replace("{logo}", logo);
+            _mail.Body = mailContent.Replace("{content}", content).Replace("{footer}", footer).Replace("{logo}", _logoString);
             _mail.IsBodyHtml = true;
             _smtp.Send(_mail);
             return true;

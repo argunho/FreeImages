@@ -112,7 +112,7 @@ namespace FreeImages.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("PasswordVerefiritionCode")
+                    b.Property<byte[]>("PasswordVerificationCode")
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Roles")

@@ -11,7 +11,7 @@ namespace FreeImages.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<byte[]>(
-                name: "PasswordVerefiritionCode",
+                name: "PasswordVerificationCode",
                 table: "Users",
                 type: "varbinary(max)",
                 nullable: true);
@@ -21,7 +21,7 @@ namespace FreeImages.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PasswordVerefiritionCode",
+                name: "PasswordVerificationCode",
                 table: "Users");
         }
     }

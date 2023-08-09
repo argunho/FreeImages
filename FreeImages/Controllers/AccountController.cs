@@ -94,8 +94,8 @@ public class AccountController : ControllerBase
                        "<p>Click <a href='{domain}/login/" + user.LoginHash + "' target='_blank'>here</a> to login.</p>" +
                        $"<p>Note! This link is valid for only 3 hours and will be expired {user.LoginHashValidTime?.ToString("yyyy.MM.dd HH:mm:ss")}.</p>";
 
-            //if (!_mail.SendMail(email, "Login link", mailContent))
-            //  Here is the login link to sign in to {domain}  return _help.Response("error", "Something went wrong trying to send an email, please try again later ...");
+            if (!_mail.SendEmail(email, "Login link", mailContent))
+                return _help.Response("error", "Something went wrong trying to send an email, please try again later ...");
 
             return _help.Response("success", "It went well without any problems! <br/> Please check your email!");
         }
@@ -103,17 +103,16 @@ public class AccountController : ControllerBase
         return _help.Response("error", "Something went wrong ....");
     }
 
-
     [HttpGet("LoginWithoutPassword/{hash}")] // Login without password
     public async Task<IActionResult> SignInWidthoutPassword(string? hash)
     {
         try
         {
-            var user = await _db.Users?.FirstOrDefaultAsync(x => x.LoginHash.ToString() == hash.ToString());
+            var user = await _db.Users?.FirstOrDefaultAsync(x => x.LoginHash == hash);
 
             if (hash == null || user == null)
                 return _help.Response("error", "Ingen användare eller ingen giltig inloggningslänk hittades.");
-            else if (user.LoginHashValidTime?.Ticks > DateTime.Now.Ticks)
+            else if (user.LoginHashValidTime?.Ticks < DateTime.Now.Ticks)
                 return _help.Response("error", "This link valid time already expired!");
 
             user.LoginHash = null;
@@ -130,34 +129,112 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet("ChangePassword")] // Send new password
-    [Authorize]
-    public async Task<IActionResult> ForgotPassword(string email)
+    [Authorize(Roles = "User")]
+    public async Task<IActionResult> ChangePassword(AccountViewModel model)
     {
-        //if (!_help.CheckEmail(email))
-        return BadRequest("Incorrect email address");
+        var email = model.Email;
+        if (!_help.CheckEmail(email))
+            return _help.Response("error", "Incorrect email address");
 
-        ////var user = await _userManager.FindByEmailAsync(email);
-        //if (user == null)
-        //    return BadRequest("Users with matching emails have not been found ...");
+        var user = await _db.Users?.FirstOrDefaultAsync(x => x.Email == email);
+        if (user == null)
+            return _help.Response("error", "Users with matching emails have not been found ...");
 
-        //var newPassword = _help.Hash(10);
-        ////var remove = await _userManager.RemovePasswordAsync(user);
-        //if (remove.Succeeded)
-        //{
-        //    // If old pass removed, insert new pass
-        //    //var password = await _userManager.AddPasswordAsync(user, newPassword);
-        //    if (password.Succeeded)
-        //    {
-        //        var mailContent = "<h4>Hi " + user.Name + "</h4><br/>" +
-        //                      "<p>Your password has been changed.</p>" +
-        //                      "<p>Your new password is: <span style='font-weight:bold;margin-lleft:15px'>" + newPassword + "</span></p><br/>";
+        var currentEmail = GetClaim("Email");
+        if (user.Email != currentEmail || !VerifyPassword(model.Password, user))
+            return _help.Response("error", "Permission denied!");
 
-        //        // Mails
-        //        //_help.SendMail(user.Email, "Nytt lösenord", mailContent);
-        //        return Ok(new { alert = "success", message = "The new password has been sent, check your email" });
-        //    }
-        //}
-        //return BadRequest(new { alert = "error", message = "Failed to save new password, please try again later ..." });
+        string errorMessage = "Failed to try to change password, please try again later ...";
+        try
+        {
+            var newPassword = _help.Hash(10);
+
+            // Hash password
+            var salt = PasswordSalt(email);
+            var hashedPassword = HashPassword(model, salt);
+
+            user.Password = hashedPassword;
+            user.PasswordVerificationCode = salt;
+
+            if (!_help.Save())
+                return _help.Response("error");
+
+            var mailContent = "<h4>Hi " + user.Name + "</h4><br/>" +
+                          "<p>Your password has been changed by your self.</p>" +
+                          "<p>Your new password is: <span style='font-weight:bold;margin-lleft:15px'>" + newPassword + "</span></p><br/>";
+
+            // Mails
+            _mail.SendEmail(user.Email, "New password", mailContent);
+            return _help.Response("success", "The new password has been sent, check your email");
+        }
+        catch (Exception ex)
+        {
+            errorMessage += $" Error: {ex.Message}";
+        };
+
+
+        return _help.Response("error", errorMessage);
+    }
+
+    [HttpGet("SetNewPassword")] // Send new password
+    [Authorize(Roles = "Admin,Support,Developer")]
+    public async Task<IActionResult> SetNewPassword(string email)
+    {
+        if (!_help.CheckEmail(email))
+            return _help.Response("error", "Incorrect email address");
+
+        var user = await _db.Users?.FirstOrDefaultAsync(x => x.Email == email);
+        if (user == null)
+            return _help.Response("error", "Users with matching emails have not been found ...");
+
+        var currentEmail = GetClaim("Email");
+        if (user.Email != currentEmail)
+        {
+            if ((user.Roles?.IndexOf("Admin") > -1 && !Permission("Developer")) || !Permission("Admin"))
+                return _help.Response("error", "Permission denied!");
+        }
+
+        string errorMessage = "Failed to try to change password, please try again later ...";
+        try
+        {
+            var newPassword = _help.Hash(10);
+            var oldPassword = user.Password;
+            var oldVerificationCode = user.PasswordVerificationCode;
+
+            // Hash password
+            var salt = PasswordSalt(email);
+            var model = new AccountViewModel
+            {
+                Email = email,
+                Password = newPassword
+            };
+            var hashedPassword = HashPassword(model, salt);
+
+            user.Password = hashedPassword;
+            user.PasswordVerificationCode = salt;
+
+            if (_help.Save())
+            {
+                var mailContent = "<h4>Hi " + user.Name + "</h4><br/>" +
+                              "<p>Your password has been changed.</p>" +
+                              "<p>Your new password is: <span style='font-weight:bold;margin-lleft:15px'>" + newPassword + "</span></p><br/>";
+
+                // Mails
+                if (!_mail.SendEmail(user.Email, "New password", mailContent))
+                {
+                    user.Password = oldPassword;
+                    user.PasswordVerificationCode = oldVerificationCode;
+                    _help.Save();
+                    return _help.Response("success", "The new password has been sent, check your email");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage += $" Error: {ex.Message}";
+        };
+
+        return _help.Response("error", errorMessage);
     }
     #endregion
 
@@ -174,6 +251,7 @@ public class AccountController : ControllerBase
             return _help.Response("warning", "Users with the same email already exists!");
 
         var firstRegister = _users?.Count() == 0;
+
         // Check admin email
         var developer = model.Email.Equals("aslan_argun@hotmail.com");
         if (!firstRegister && model.Email != "aslan_argun@hotmail.com" && model.Roles.IndexOf("Developer") == -1 && !Permission("Admin"))
@@ -184,14 +262,11 @@ public class AccountController : ControllerBase
         try
         {
             // Hash password
-            RNGCryptoServiceProvider provider = new();
-            byte[] salt = new byte[model.Email.Length * 2];
-            provider.GetBytes(salt);
+            var salt = PasswordSalt(model.Email);
             var hashedPassword = HashPassword(model, salt);
 
             // Create roles
             var roles = model?.Roles;
-
 
             if (developer || (roles?.Count == 0 && _users?.Count() == 0))
             {
@@ -199,6 +274,8 @@ public class AccountController : ControllerBase
                     roles.Add("Admin");
                 if (roles?.IndexOf("Support") == -1)
                     roles.Add("Support");
+                if (roles.IndexOf("Developer") == -1 && developer)
+                    roles.Add("Developer");
             }
 
             roles?.Add("Users");
@@ -208,7 +285,7 @@ public class AccountController : ControllerBase
                 Name = model?.Name,
                 Email = model?.Email,
                 Password = hashedPassword,
-                PasswordVerefiritionCode = salt,
+                PasswordVerificationCode = salt,
                 Roles = roles?.Count > 0 ? string.Join(",", roles) : null
             };
 
@@ -216,18 +293,17 @@ public class AccountController : ControllerBase
 
             if (_help.Save())
             {
-                if (firstRegister)
-                {
-                    var token = GenerateJwtToken(user);
-
                     var mailContent = "<h4>Hi " + model?.Name + "!</h4><br/>" +
                                       "<p>Welcome as a new user on {domain}.</p>" +
                                       "<p>Below are your login details. Please, save them for future reference.</p><br/>" +
                                       "<p>Username: " + model?.Email + "</p>" +
                                       "<p>Password: " + model?.Password + "</p><br/>";
-                    // Send a mail to new user
-                    //_help.SendMail(user.Email, "Välkommen " + model.Name, mailContent);
 
+                    // Send a mail to new user
+                    _mail.SendEmail(user.Email, "Welcome " + model.Name, mailContent);
+
+                if (firstRegister) { 
+                    var token = GenerateJwtToken(user);
                     return new JsonResult(new { alert = "success", token });
                 }
                 else
@@ -273,13 +349,25 @@ public class AccountController : ControllerBase
     #endregion
 
     #region Helpers
-
     // Get claims 
     private bool Permission(string role)
     {
         //var claims = Users.Claims.ToList();
         var claimRoles = User.Claims?.FirstOrDefault(x => x.Type == "Roles")?.ToString();
         return claimRoles?.IndexOf(role) > -1;
+    }
+
+    // Get claim type
+    public string? GetClaim(string name) =>
+        User.Claims?.FirstOrDefault(x => x.Type == name)?.Value?.ToString();
+
+    // Generate password verification code (salt)
+    private static byte[] PasswordSalt(string email)
+    {
+        using RNGCryptoServiceProvider provider = new();
+        byte[] salt = new byte[email.Length * 2];
+        provider.GetBytes(salt);
+        return salt;
     }
 
     // Hash password
@@ -304,7 +392,7 @@ public class AccountController : ControllerBase
     private bool VerifyPassword(string password, User model)
     {
         int keySize = (model.Email.Length * 2);
-        var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, model.PasswordVerefiritionCode, _iterations, _hashAlgorithm, keySize);
+        var hashToCompare = Rfc2898DeriveBytes.Pbkdf2(password, model.PasswordVerificationCode, _iterations, _hashAlgorithm, keySize);
         return CryptographicOperations.FixedTimeEquals(hashToCompare, Convert.FromHexString(model.Password));
     }
 
