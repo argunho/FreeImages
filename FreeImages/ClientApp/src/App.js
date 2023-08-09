@@ -5,6 +5,7 @@ import AppRoutes from './AppRoutes';
 // Components
 import Loading from './components/Loading';
 
+
 // Css
 import './css/styles.css';
 import './css/fonts.css';

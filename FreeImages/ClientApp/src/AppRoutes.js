@@ -20,6 +20,10 @@ const AppRoutes = [
     layout: Layout,
     routes: [
       {
+        path: "/*",
+        element: <Home />
+      },
+      {
         path: "/",
         element: <Home />
       }

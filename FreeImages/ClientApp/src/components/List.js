@@ -2,22 +2,22 @@
 import { useEffect, useState } from 'react';
 
 // Installed 
-import { Alert, AlertTitle, Button, CircularProgress, IconButton } from '@mui/material';
+import { Alert, Button, CircularProgress, IconButton } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-
-// Components
-import Heading from './Heading';
-
-// Functions
-import HeaderConfig from '../functions/HeaderConfig';
-import Loading from './Loading';
-import { Check, Close, DeleteForever, Edit, Search } from '@mui/icons-material';
+import { DeleteForever, Edit, Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+// Components
+import Heading from './Heading';
+import Loading from './Loading';
+import Confirm from './Confirm';
+
+// Functions
+import HeaderConfig from '../functions/HeaderConfig';
+
 // Css
 import '../css/form.css';
-import Confirm from './Confirm';
 
 function List(props) {
 
@@ -39,7 +39,8 @@ function List(props) {
         const id = params.id;
         let buttons = [
           { icon: <Search color="secondary" />, function: () => navigate(`view/${id}`) },
-          { icon: <Edit color="primary" />, function: () => navigate(`edit/${id}`) }
+          { icon: <Edit color="primary" />, function: () => navigate(`edit/${id}`) },
+          {params}
         ];
 
         if (!props?.view)

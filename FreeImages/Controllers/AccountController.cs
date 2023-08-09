@@ -105,7 +105,7 @@ public class AccountController : ControllerBase
             return _help.Response("error", "Something has gone wrong. Error: " + e.Message);
         }
     }
-    
+
     [HttpGet("Logout")] // Logg out
     [Authorize]
     public IActionResult LogOut()
@@ -182,16 +182,17 @@ public class AccountController : ControllerBase
 
             if (await _help.Save())
             {
-                    var mailContent = "<h4>Hi " + model?.Name + "!</h4><br/>" +
-                                      "<p>Welcome as a new user on {domain}.</p>" +
-                                      "<p>Below are your login details. Please, save them for future reference.</p><br/>" +
-                                      "<p>Username: " + model?.Email + "</p>" +
-                                      "<p>Password: " + model?.Password + "</p><br/>";
+                var mailContent = "<h4>Hi " + model?.Name + "!</h4><br/>" +
+                                  "<p>Welcome as a new user on {domain}.</p>" +
+                                  "<p>Below are your login details. Please, save them for future reference.</p><br/>" +
+                                  "<p>Username: " + model?.Email + "</p>" +
+                                  "<p>Password: " + model?.Password + "</p><br/>";
 
-                    // Send a mail to new user
-                    _mail.SendEmail(user?.Email, "Welcome " + model?.Name, mailContent);
+                // Send a mail to new user
+                _mail.SendEmail(user?.Email, "Welcome " + model?.Name, mailContent);
 
-                if (firstRegister) { 
+                if (firstRegister)
+                {
                     var token = GenerateJwtToken(user);
                     return new JsonResult(new { alert = "success", token });
                 }
@@ -276,7 +277,7 @@ public class AccountController : ControllerBase
 
             // Mails
             _mail.SendEmail(user.Email, "New password", mailContent);
-            return _help.Response("success", "The new password has been sent, check your email");
+            return _help.Response("success", "The new password has been sent, check your email.");
         }
         catch (Exception ex)
         {
@@ -289,7 +290,7 @@ public class AccountController : ControllerBase
 
     [HttpGet("SetNewPassword/{key}")] // Send new password
     [Authorize(Roles = "Admin,Manager,Support")]
-    public async Task<IActionResult> SetNewPassword(string key, AccountViewModel model)
+    public async Task<IActionResult> SetNewPassword(string key, User model)
     {
         var user = await _db.Users?.FirstOrDefaultAsync(x => x.Email == key || x.Id == key);
         if (user == null)
@@ -311,10 +312,11 @@ public class AccountController : ControllerBase
 
             // Hash password
             var salt = PasswordSalt(user.Email);
-            model.Email = user.Email;
-            model.Password = newPassword;
-
-            var hashedPassword = HashPassword(model, salt);
+            var hashedPassword = HashPassword(new AccountViewModel
+            {
+                Email = model?.Email,
+                Password = newPassword
+            }, salt);
 
             user.Password = hashedPassword;
             user.PasswordVerificationCode = salt;

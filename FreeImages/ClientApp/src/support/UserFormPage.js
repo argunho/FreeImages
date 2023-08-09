@@ -19,9 +19,10 @@ function UserFormPage({ inputs, api, heading }) {
     const [response, setResponse] = useState();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [confirm, setConfirm] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
     const [decoded, setDecoded] = useState();
     const [disabled, setDisabled] = useState(false);
+    const [confirmPasswordChange, setConfirmPasswordChange] = useState(false);
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ function UserFormPage({ inputs, api, heading }) {
                 await axios.get(`user/${id}`, HeaderConfig).then(res => {
                     const data = res?.data;
                     console.log(decoded)
-                    if (!!data){
+                    if (!!data) {
                         setUserData(data);
                         setDisabled(decodedToken?.Email !== data?.email && data?.roles.indexOf("Admin") > -1 && permission("Support"));
                     }
@@ -50,13 +51,23 @@ function UserFormPage({ inputs, api, heading }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id])
 
+    const sendNewPassword = async () => {
+        const res = await axios.put(`account/setNewPassword/${id}`, userData, HeaderConfig);
+        setResponse(res?.data);
+    }
+
     const deleteProfile = async () => {
         const res = await axios.delete(`user/profile/${id}`, HeaderConfig);
-        setResponse(res.data);
+        setResponse(res?.data);
     }
 
     const permission = (role) => {
         return decoded?.Roles.indexOf(role) > -1;
+    }
+
+    const reset = () => {
+        setConfirmDelete(false);
+        setConfirmPasswordChange(false);
     }
 
     return (
@@ -75,20 +86,31 @@ function UserFormPage({ inputs, api, heading }) {
             res={response}
         >
             {/* Actions buttons */}
-            {(!confirm && api === "user" && !disabled) && <div className="buttons-wrapper d-row js-end ai-end">
+            {(!confirmDelete && !confirmPasswordChange && api === "user" && !disabled) && <div className="buttons-wrapper d-row js-end ai-end">
+
+                {/* Set new password */}
+                {(permission("Admin") || permission("Support")) &&
+                    <Button variant="text" color="warning" onClick={() => setConfirmPasswordChange(true)}>
+                        Send password
+                    </Button>}
+
+                {/* Change password for all users */}
                 <Button variant="text" color="info" onClick={() => navigate(`/sp/users/edit/password/${id}`)}>
                     Change password
                 </Button>
+
+                {/* Delete user profile */}
                 <Button variant="text" color="error" onClick={(e) => {
                     e.stopPropagation();
-                    setConfirm(true);
+                    setConfirmDelete(true);
                 }}>
                     Delete profile
                 </Button>
             </div>}
 
             {/* Confirm alert */}
-            {(confirm && !!userData) && <Confirm confirm={deleteProfile} reset={() => setConfirm(false)} />}
+            {((confirmDelete || confirmPasswordChange) && !!userData) && 
+                <Confirm confirm={confirmDelete ? deleteProfile : sendNewPassword} reset={reset} />}
         </UserForm>
     );
 }
