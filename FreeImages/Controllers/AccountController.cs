@@ -402,11 +402,13 @@ public class AccountController : ControllerBase
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
         IdentityOptions opt = new IdentityOptions();
 
-        var claims = new List<Claim>();
-        claims.Add(new Claim("Id", user.Id));
-        claims.Add(new Claim("Name", user.Name));
-        claims.Add(new Claim("Email", user.Email));
-        claims.Add(new Claim("Roles", user.Roles.ToString()));
+        List<Claim> claims = new()
+        {
+            new Claim("Id", user.Id),
+            new Claim("Name", user.Name),
+            new Claim("Email", user.Email),
+            new Claim("Roles", user.Roles.ToString())
+        };
 
         foreach (var r in user.ListRoles)
             claims.Add(new Claim(opt.ClaimsIdentity.RoleClaimType, r));

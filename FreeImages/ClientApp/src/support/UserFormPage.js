@@ -52,13 +52,21 @@ function UserFormPage({ inputs, api, heading }) {
     }, [id])
 
     const sendNewPassword = async () => {
+        reset();
         const res = await axios.put(`account/setNewPassword/${id}`, userData, HeaderConfig);
         setResponse(res?.data);
     }
 
     const deleteProfile = async () => {
+        reset();
         const res = await axios.delete(`user/profile/${id}`, HeaderConfig);
         setResponse(res?.data);
+        if(res.data.alert === "success"){
+            setTimeout(() => {
+                navigate("/sp/users");
+            }, 2000)
+        }
+            
     }
 
     const permission = (role) => {
