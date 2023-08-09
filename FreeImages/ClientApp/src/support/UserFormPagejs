@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 
 // Installed
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { Button } from "@mui/material";
 
 // Components
 import Loading from "../components/Loading";
@@ -12,13 +13,15 @@ import UserForm from "../components/UserForm";
 // Functions
 import HeaderConfig from "../functions/HeaderConfig";
 
-function UserEdit({inputs, confirmInputs, api}) {
+function UserFormPage({ inputs, confirmInputs, api, post }) {
 
     const [response, setResponse] = useState();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [confirm, setConfirm] = useState(false);
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setLoading(true);
@@ -28,17 +31,22 @@ function UserEdit({inputs, confirmInputs, api}) {
                 await axios.get(`user/${id}`, HeaderConfig).then(res => {
                     const data = res?.data;
                     console.log(data.user)
-                    if (!!data) 
+                    if (!!data)
                         setUserData(data);
-                    else 
-                        setResponse({alert: "error", message: "User not found!"});
-                    
+                    else
+                        setResponse({ alert: "error", message: "User not found!" });
+
                     setLoading(false);
                 })
             })();
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id])
+
+    const deleteProfile = async () => {
+        const res = await axios.delete(`user/profile/${id}`, HeaderConfig);
+        setResponse(res.data);
+    }
 
     if (loading) return <Loading />;
 
@@ -49,12 +57,23 @@ function UserEdit({inputs, confirmInputs, api}) {
                 email: userData?.user.email
             }}
             heading={"Edit user: " + (!!userData ? userData?.user.name : "Unknown")}
-            confirmInputs={confirmInputs}
+            confirmInputs={!!inputs ? ["password", "confirmPassword"] : null}
             permission={userData?.permission}
             currentRoles={userData?.user.listRoles}
-            res={response} 
-        />
+            api={api}
+            post={post}
+            res={response}
+        >
+            <div className="buttons-wrapper d-row js-end ai-end">
+                <Button variant="text" color="info" onClick={() => navigate(`/sp/users/edit/password/${id}`)}>
+                    Change password
+                </Button>
+                <Button variant="text" color="error" onClick={() => setConfirm(true)}>
+                    Delete profile
+                </Button>
+            </div>
+        </UserForm>
     );
 }
 
-export default UserEdit;
+export default UserFormPage;

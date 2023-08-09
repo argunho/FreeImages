@@ -23,7 +23,6 @@ function Register(){
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        // localStorage.removeItem("token");
         if (!!token)
             setLoading(false);
         else {
@@ -73,6 +72,7 @@ function Register(){
                 </div>
             </div>
         </div>;
+
     return <UserForm inputs={{
         name: "",
         email: "",

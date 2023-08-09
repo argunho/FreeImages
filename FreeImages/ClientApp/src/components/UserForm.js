@@ -1,18 +1,19 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
 
 // Installed
 import axios from 'axios';
 import { Checkbox, FormControlLabel } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 // Components
 import Form from './Form';
 import Heading from './Heading';
-import HeaderConfig from '../functions/HeaderConfig';
 import Response from './Response';
 
+// Functions
+import HeaderConfig from '../functions/HeaderConfig';
 
-function UserForm({ children, api, inputs, heading, confirmInputs, permission, currentRoles, res }) {
+function UserForm({ children, api, inputs, heading, confirmInputs, permission, currentRoles, post, res }) {
 
     const [roles, setRoles] = useState(currentRoles || [])
     const [response, setResponse] = useState();
@@ -42,8 +43,11 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, c
     const submitForm = async (data) => {
         let formData = data;
         formData.roles = roles;
-        await axios.post(`${api}`, formData, HeaderConfig)
-            .then(res => {
+
+        const apiRequest = !!post ? axios.post(`${api}`, formData, HeaderConfig) 
+            : axios.put(`${api}`, formData, HeaderConfig);
+
+         await apiRequest.then(res => {
                 if (!!res.data?.token) {
                     localStorage.setItem("token", res.data.token);
                     navigate("/sp/images");

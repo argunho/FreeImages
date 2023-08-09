@@ -8,12 +8,13 @@ import Logout from "./support/Logout";
 import Users from "./support/Users";
 import Login from "./support/Login";
 import UploadFile from "./support/UploadFile";
-import UserEdit from "./support/UserEdit";
+import UserEdit from "./support/UserFormPagejs";
 import Register from "./support/Register";
 import LoginWithHash from "./support/LoginWithHash";
 
 // Pages
 import Home from "./pages/Home";
+import UserFormPage from "./support/UserFormPagejs";
 
 const AppRoutes = [
   {
@@ -42,7 +43,7 @@ const AppRoutes = [
       },
       {
         path: '/sp/register',
-        element: <Register />
+        element: <Register post={true} />
       },
       {
         path: "/sp/login",
@@ -57,15 +58,27 @@ const AppRoutes = [
         element: <Logout />
       },
       {
+        path: "/sp/users/new",
+        element: <UserFormPage api="account/register"
+          inputs={{
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: ""
+          }} 
+          post={true} />
+      },
+      {
         path: "/sp/users/edit/:id",
-        element: <UserEdit api="user" />
+        element: <UserFormPage api="user" />
       },
       {
         path: "/sp/users/edit/password/:id",
-        element: <UserEdit api="user/changePassword" inputs={{ 
-          currentPassword: "", 
-          password: "", 
-          confirmPassword: "" }} confirmInputs={["password", "confirmPassword"]} />
+        element: <UserFormPage api="user/changePassword" inputs={{
+          currentPassword: "",
+          password: "",
+          confirmPassword: ""
+        }} />
       },
       {
         path: '/sp/images/edit/:id',

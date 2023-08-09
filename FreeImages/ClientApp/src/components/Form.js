@@ -112,7 +112,6 @@ function Form({ children, ...props }) {
 
                 {/* File upload */}
                 {children && children}
-                {/* {props.uploadFile && <FileUpload onUploadChange={(file) => setFile(file)} loading={loading} reset={file === null} />} */}
 
                 <div className="buttons-wrapper d-row jc-end">
                     {ongoingForm ? <Button color="error" variant='outlined' onClick={resetForm}>
