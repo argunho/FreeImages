@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics.Eventing.Reader;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 using System.Security.Claims;
@@ -332,9 +333,9 @@ public class AccountController : ControllerBase
                 {
                     user.Password = oldPassword;
                     user.PasswordVerificationCode = oldVerificationCode;
-                    await _help.Save();
-                    return _help.Response("success", "The new password has been sent, check your email");
-                }
+                    await _help.Save();                
+                } else
+                    return _help.Response("success", $"The new password has been sent to user email {model.Email}");
             }
         }
         catch (Exception ex)
