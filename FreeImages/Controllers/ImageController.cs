@@ -48,6 +48,10 @@ namespace FreeImages.Controllers
         [AllowAnonymous]
         public IEnumerable<ListImage> GetImages(int page, int count) =>
             AllListImages?.OrderByDescending(x => x.Id).Skip(count * (page - 1))?.Take(count).ToList() ?? Enumerable.Empty<ListImage>();
+
+        [HttpGet("{id:int}")]
+        public async Task<Image?> GetById(int id)
+            => await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
         #endregion
 
         #region DELETE

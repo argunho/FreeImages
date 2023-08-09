@@ -53,8 +53,6 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, d
             data.email = user?.email;
         }
 
-        console.log(`${api}/${user?.id}`)
-        console.log(data)
         const apiRequest = !user ? axios.post(`${api}`, data, HeaderConfig)
             : axios.put(`${api}/${user?.id}`, data, HeaderConfig);
 

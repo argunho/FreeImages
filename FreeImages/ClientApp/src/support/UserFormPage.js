@@ -65,8 +65,7 @@ function UserFormPage({ inputs, api, heading }) {
             setTimeout(() => {
                 navigate("/sp/users");
             }, 2000)
-        }
-            
+        }        
     }
 
     const permission = (role) => {
