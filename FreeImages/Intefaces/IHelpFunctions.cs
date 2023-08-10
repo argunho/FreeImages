@@ -10,4 +10,5 @@ public interface IHelpFunctions
     string Hash(int count = 0);
     DateTime DateFromString(string data);
     JsonResult Response(string alert, string? msg = null);
+
 }

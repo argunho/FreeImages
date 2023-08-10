@@ -19,9 +19,6 @@ public class ListImage
             return $"https://uploadfilerepository.blob.core.windows.net/uploadfilecontainer/{Name}";
         }
     }
-    public int? Width { get; set; }
-    public int? Height { get; set; }
-
     [Column(TypeName = "varchar(MAX)")]
     public string? Base64 { get; set; }
     [Required]

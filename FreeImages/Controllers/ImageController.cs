@@ -2,26 +2,25 @@
 using FreeImages.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+using System.Security;
 
 namespace FreeImages.Controllers
 {
     [Route("[controller]")]
-    [Authorize(Roles = "Admin,Manager,Support")]
+    [Authorize]
     public class ImageController : ControllerBase
     {
         private readonly DbConnect _db;
         private readonly IHelpFunctions _help;
         private readonly ConfigurationService _config;
-        private readonly BlobContainerClient _uploadContainer;
-        private readonly BlobContainerClient _imageContainer;
+        private readonly BlobContainerClient _blobContainer;
 
         public ImageController(DbConnect db, IHelpFunctions help)
         {
             _db = db;
             _help = help;
             _config = ConfigurationService.Load("BlobStorage");
-            _uploadContainer = new(_config.ConnectionString, "uploadfilecontainer");
+            _blobContainer = new(_config.ConnectionString, "uploadfilecontainer");
         }
 
         public IEnumerable<ListImage> AllListImages
@@ -54,6 +53,51 @@ namespace FreeImages.Controllers
             => await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
         #endregion
 
+        #region PUT
+        [HttpPut("{id:int}")]
+        public async Task<JsonResult> Put(int id, Image model)
+        {
+            var image = await _db.Images.FirstOrDefaultAsync(x => x.Id.Equals(id));
+            if (image == null)
+            {
+                return _help.Response("warning", "No image found with matching Id.");
+            }
+
+            var currentUserEmail = GetClaim("Email");
+
+            if (!Permission("Admin,Support,Manager") && currentUserEmail != image?.Author.Email)
+                return _help.Response("warning", "Permission denied!");
+
+            var blobImage = _blobContainer.GetBlobClient(image.Name);
+            if(blobImage == null)
+            {          
+                await Delete(image.Id.ToString());
+                return _help.Response("warning", "No image found with matching image name.");
+            }         
+
+            image.Name = model.Name;
+            image.Keywords = model.Keywords;
+
+            var listImage = await _db.ListImages.FirstOrDefaultAsync(x => x.ImageId == id); 
+            if (listImage == null) { 
+                var newlistImage = new ListImage { 
+                    Name = image.Name,
+                    Keywords = image.Keywords,
+                    ImageId = image.Id
+                };
+            } else
+            {
+                listImage.Name = model.Name;
+                listImage.Keywords = model.Keywords;
+            }
+
+            if (!await _help.Save())
+                return _help.Response("error");
+
+            return _help.Response("success");
+        }
+        #endregion
+
         #region DELETE
         [HttpDelete("{ids}")]
         public async Task<JsonResult> Delete(string ids)
@@ -73,8 +117,7 @@ namespace FreeImages.Controllers
                 {
                     foreach (var image in images)
                     {
-                        await _uploadContainer.DeleteBlobAsync(image.Name);
-                        //await _imageContainer.DeleteBlobAsync(image.Name);
+                        await _blobContainer.DeleteBlobAsync(image.Name);
                     }
                 }
             }
@@ -87,6 +130,19 @@ namespace FreeImages.Controllers
         }
 
         #endregion
+
+        #region Helpers
+        // Check permission
+        private bool Permission(string roles)
+        {
+            var claimRoles = User.Claims?.Where(x => x.Value == "Roles")?.ToList();
+            return claimRoles?.Count(x => roles.Split(",").Any(r => r == x.Value)) > 0;
+        }
+
+        // Get claim type
+        public string? GetClaim(string name) =>
+            User.Claims?.FirstOrDefault(x => x.Type == name)?.Value?.ToString();
+        #endregion
     }
 }
-//?? Enumerable.Empty<ListImage>()
+

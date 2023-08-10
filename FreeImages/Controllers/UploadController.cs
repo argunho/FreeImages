@@ -13,8 +13,7 @@ public class UploadController : ControllerBase
 {
     //private static readonly string connectionString = "DefaultEndpointsProtocol=https;AccountName=uploadfilerepository;AccountKey=AtqMADGJ1jsZ+lHvdDP2ynlW9Sr8fKcr9ojNVTdXWeTfWd8q9izdY9hhRkjUg4abKfYWFXVgHe4D+ASt2brVDA==;EndpointSuffix=core.windows.net";
 
-    private readonly BlobContainerClient _uploadContainer;
-    private readonly BlobContainerClient _imageContainer;
+    private readonly BlobContainerClient _blobContainer;
     private readonly DbConnect _db;
     private readonly IHelpFunctions _help;
     private readonly ConfigurationService _config;
@@ -24,8 +23,7 @@ public class UploadController : ControllerBase
         _db = db;
         _help = help;
         _config = ConfigurationService.Load("BlobStorage");
-        _uploadContainer = new(_config.ConnectionString, "uploadfilecontainer");
-        _imageContainer = new(_config.ConnectionString, "imagecontainer");
+        _blobContainer = new(_config.ConnectionString, "uploadfilecontainer");
     }
 
 
@@ -75,10 +73,11 @@ public class UploadController : ControllerBase
 
             // Upload original image to azure blob storage
             using var stream = uploadedFile.OpenReadStream();
-            _uploadContainer.UploadBlob(imgName, stream);
+            _blobContainer.UploadBlob(imgName, stream);
 
 
-            if (System.IO.File.Exists(path)) {
+            if (System.IO.File.Exists(path))
+            {
                 using System.Drawing.Image image = System.Drawing.Image.FromFile(path);
                 try
                 {
@@ -107,13 +106,17 @@ public class UploadController : ControllerBase
                     return _help.Response("error");
             }
 
-            var author = HttpContext?.User?.Identity?.Name;
+            //var author = HttpContext?.User?.Identity?.Name;
+
+            var author = await _db.Users.FirstOrDefaultAsync(x => x.Email == GetClaimsData("Email"));
 
             var imgData = new Models.Image
             {
                 Name = name,
                 Keywords = keywords,
-                Author = author ?? GetClaimsData("Name"),
+                Author = author,
+                Width = img.Width,
+                Height = img.Height,
                 Visible = visible
             };
 
@@ -130,8 +133,6 @@ public class UploadController : ControllerBase
                 {
                     Name = imgName,
                     Keywords = keywords,
-                    Width = img.Width,
-                    Height = img.Height,
                     ImageId = imgData.Id
                 };
 
@@ -153,18 +154,15 @@ public class UploadController : ControllerBase
     #endregion
 
     #region Help Functions
-    private string? GetClaimsData(string? value)
-    {
-        var claim = User.Claims?.FirstOrDefault(x => x?.Type == value);
-        return claim?.Value.ToString();
-    }
+    private string? GetClaimsData(string? value) =>
+        User.Claims?.FirstOrDefault(x => x?.Type == value)?.Value.ToString();
 
     // Convert image from path to base64 string
     public async Task<string> ImageToBase64(ListImage model, int resize = 0)
     {
         string imgBase = String.Empty;
 
-        var blobImage = _uploadContainer.GetBlobClient(model.Name);
+        var blobImage = _blobContainer.GetBlobClient(model.Name);
         if (blobImage == null) return null;
 
         var path = $@"Download/{model.Name}";
@@ -195,29 +193,3 @@ public class UploadController : ControllerBase
     }
     #endregion
 }
-
-
-//var fileInfo = new GroupDocs.Metadata.Cloud.Sdk.Model.FileInfo
-//{
-//    FilePath = imgName
-//};
-
-//var options = new AddOptions
-//{
-//    FileInfo = fileInfo,
-//    Properties = new List<AddProperty>
-//    {
-//        new AddProperty
-//        {
-//            Value = $"Copyright {DateTime.Now:yyyy}",
-//            SearchCriteria = new SearchCriteria
-//            {
-//                TagOptions = new TagOptions
-//                {
-//                   PossibleName = "Copyright"
-//                }
-//            },
-//            Type = "String",
-//        }
-//    }
-//};

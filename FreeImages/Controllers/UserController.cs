@@ -59,7 +59,7 @@ public class UserController : ControllerBase
         var currentEmail = GetClaim("Email");
         if (user.Email != currentEmail)
         {
-            if ((user.Roles?.IndexOf("Admin") > -1 && !Permission("Support")) || !Permission("Admin"))
+            if (user.Roles?.IndexOf("Admin") > -1 && !Permission("Support,Admin"))
                 return _help.Response("error", "Permission denied!");
         }
 
@@ -124,11 +124,11 @@ public class UserController : ControllerBase
     #endregion
 
     #region Helpers
-    // Get claims 
-    private bool Permission(string role)
+    // Check permission
+    private bool Permission(string roles)
     {
-        var claimRoles = User.Claims?.FirstOrDefault(x => x.Type == "Roles")?.ToString();
-        return claimRoles?.IndexOf(role) > -1;
+        var claimRoles = User.Claims?.Where(x => x.Value == "Roles")?.ToList();
+        return claimRoles?.Count(x => roles.Split(",").Any(r => r == x.Value)) > 0;
     }
 
     // Get claim type

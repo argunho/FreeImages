@@ -18,7 +18,9 @@ namespace FreeImages.Models
             }
         }
         public byte[]? ImgInByte { get; set; }
-        public string?  Author { get; set; }
+        public User?  Author { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
         public bool Visible { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;
     }

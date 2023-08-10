@@ -9,12 +9,14 @@ namespace FreeImages.Repository;
 
 public class HelpFunctions : IHelpFunctions
 {
-    private DbConnect _db;
-    private string? _message { get; set; }
+    private readonly DbConnect _db;
+    private IHttpContextAccessor _contextAccessor;
+    private static string? _message { get; set; }
 
-    public HelpFunctions(DbConnect db)
+    public HelpFunctions(DbConnect db, IHttpContextAccessor contextAccessor)
     {
         _db = db;
+        _contextAccessor = contextAccessor; 
     }
 
     // Delete data
