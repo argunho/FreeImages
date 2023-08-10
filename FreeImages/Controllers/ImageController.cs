@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
 using FreeImages.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -57,40 +58,61 @@ namespace FreeImages.Controllers
         [HttpPut("{id}")]
         public async Task<JsonResult> Put(int id, ListImage model)
         {
-            var image = await _db.Images.FirstOrDefaultAsync(x => x.Id.Equals(id));
-            if (image == null)
-              return _help.Response("warning", "No image found with matching Id.");
-
-            var currentUserEmail = GetClaim("Email");
-
-            if (!Permission("Admin,Support,Manager") && currentUserEmail != image?.Author?.Email)
-                return _help.Response("warning", "Permission denied!");
-
-            var blobImage = _blobContainer.GetBlobClient(image.Name);
-            if(blobImage == null)
-            {          
-                await Delete(image.Id.ToString());
-                return _help.Response("warning", "No image found with matching image name.");
-            }         
-
-            image.Name = model.Name;
-            image.Keywords = model.Keywords;
-
-            var listImage = await _db.ListImages.FirstOrDefaultAsync(x => x.ImageId == id); 
-            if (listImage == null) { 
-                var newlistImage = new ListImage { 
-                    Name = image.Name,
-                    Keywords = image.Keywords,
-                    ImageId = image.Id
-                };
-            } else
+            try
             {
-                listImage.Name = model.Name;
-                listImage.Keywords = model.Keywords;
+                var image = await _db.Images.FirstOrDefaultAsync(x => x.Id.Equals(id));
+                if (image == null)
+                  return _help.Response("warning", "No image found with matching Id.");
+
+                var currentUserEmail = GetClaim("Email");
+
+                if (!Permission("Admin,Support,Manager") && currentUserEmail != image?.Author?.Email)
+                    return _help.Response("warning", "Permission denied!");
+
+                // Blob image exists
+                var blobImage = _blobContainer.GetBlockBlobClient(image?.Name);
+                if(!await blobImage.ExistsAsync())
+                {          
+                    await Delete(image.Id.ToString());
+                    return _help.Response("warning", "No image found with matching image name.");
+                }
+
+                image.Name = model.Name;
+                image.Keywords = model.Keywords;
+
+                var listImage = await _db.ListImages.FirstOrDefaultAsync(x => x.ImageId == id); 
+                if (listImage == null) { 
+                    var newlistImage = new ListImage { 
+                        Name = image.Name,
+                        Keywords = image.Keywords,
+                        ImageId = image.Id
+                    };
+                } else
+                {
+                    listImage.Name = model.Name;
+                    listImage.Keywords = model.Keywords;
+                }
+
+                if (!await _help.Save())
+                    return _help.Response("error");
+                else
+                {
+                    // Rename blob image name
+                    if (image?.Name != model.Name)
+                    {
+                        var newBlobImage = _blobContainer.GetBlockBlobClient(model.Name);
+                        if (!await newBlobImage.ExistsAsync())
+                        {
+                            await newBlobImage.StartCopyFromUriAsync(blobImage.Uri);
+                            await blobImage.DeleteIfExistsAsync();
+                        }
+                    }
+                }
+            } catch (Exception ex)
+            {
+                return _help.Response("error", "Error: " + ex.Message);
             }
 
-            if (!await _help.Save())
-                return _help.Response("error");
 
             return _help.Response("success");
         }
@@ -115,7 +137,8 @@ namespace FreeImages.Controllers
                 {
                     foreach (var image in images)
                     {
-                        await _blobContainer.DeleteBlobAsync(image.Name);
+                        var blobImage = _blobContainer.GetBlockBlobClient(image.Name);
+                        await blobImage.DeleteIfExistsAsync();
                     }
                 }
             }
