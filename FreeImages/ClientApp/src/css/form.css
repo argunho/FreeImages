@@ -46,6 +46,23 @@ form textarea {
   color: #212529 !important;
 }
 
+.form-wrapper .confirm-alert {
+  max-width: 470px !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+.form-wrapper .image-wrapper {
+  max-width: 500px !important;
+  margin: 50px auto -20px auto;
+}
+
+.image-wrapper img {
+  max-width: 100%;
+  max-height: 300px;
+  max-height: fit-content;
+}
+
 /* #region Modal */
 .modal-container {
   position: fixed;
@@ -81,7 +98,7 @@ form textarea {
 }
 /* #endregion */
 
-/* Alert */
+/* #region Alert */
 .alert-wrapper {
   position: fixed;
   bottom: 0;
@@ -108,3 +125,4 @@ form textarea {
 .success {
   background-color: #2E7D32;
 }
+/* #endregion */

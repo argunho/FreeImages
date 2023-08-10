@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Drawing;
+using System.Security;
 
 namespace FreeImages.Controllers;
 [Route("[controller]")]
@@ -81,9 +82,9 @@ public class UploadController : ControllerBase
                 using System.Drawing.Image image = System.Drawing.Image.FromFile(path);
                 try
                 {
-                    var devisionNumber = image.Width / 400;
-                    var summa = image.Width / devisionNumber;
-                    int height = (image.Height / devisionNumber);
+                    var devisionNumber = img.Width / 400;
+                    var summa = img.Width / devisionNumber;
+                    int height = (img.Height / devisionNumber);
                     var resizedImage = (System.Drawing.Image)(new Bitmap(image, new Size(400, height)));
                     //using var resizedStream = resizedImage.O;
                     //_imageContainer.UploadBlob(imgName, resizedStream);
@@ -96,7 +97,7 @@ public class UploadController : ControllerBase
 
             // Get current user roles
             var claims = HttpContext.User.Claims.Where(x => x.Value == "Roles").ToList();
-            var visible = claims?.ToString()?.IndexOf("Admin") > -1 || claims?.ToString()?.IndexOf("Support") > -1;
+            var visible = Permission("Admin,Support,Manager");
 
             ListImage uploadedImage = new();
             if (visible)
@@ -112,7 +113,7 @@ public class UploadController : ControllerBase
 
             var imgData = new Models.Image
             {
-                Name = name,
+                Name = imgName,
                 Keywords = keywords,
                 Author = author,
                 Width = img.Width,
@@ -153,12 +154,18 @@ public class UploadController : ControllerBase
     }
     #endregion
 
-    #region Help Functions
+    #region Help Functions    
+    // Check permission
+    private bool Permission(string roles)
+    {
+        var claimRoles = User.Claims?.FirstOrDefault(x => x.Type == "Roles")?.Value.Split(",").ToList();
+        return claimRoles?.Count(x => roles.Split(",").Any(r => r == x)) > 0;
+    }
     private string? GetClaimsData(string? value) =>
         User.Claims?.FirstOrDefault(x => x?.Type == value)?.Value.ToString();
 
     // Convert image from path to base64 string
-    public async Task<string> ImageToBase64(ListImage model, int resize = 0)
+    public async Task<string?> ImageToBase64(ListImage? model, int resize = 0)
     {
         string imgBase = String.Empty;
 

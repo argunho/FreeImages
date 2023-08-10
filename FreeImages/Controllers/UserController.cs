@@ -127,8 +127,8 @@ public class UserController : ControllerBase
     // Check permission
     private bool Permission(string roles)
     {
-        var claimRoles = User.Claims?.Where(x => x.Value == "Roles")?.ToList();
-        return claimRoles?.Count(x => roles.Split(",").Any(r => r == x.Value)) > 0;
+        var claimRoles = User.Claims?.FirstOrDefault(x => x.Type == "Roles")?.Value.Split(",").ToList();
+        return claimRoles?.Count(x => roles.Split(",").Any(r => r == x)) > 0;
     }
 
     // Get claim type

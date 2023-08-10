@@ -45,7 +45,7 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, d
 
     const submitForm = async (formData) => {
         let data = formData;
-
+        setResponse();
         // Update form data
         data.roles = roles?.toString();
         if (api.indexOf("changePassword") > -1 && !!user) {

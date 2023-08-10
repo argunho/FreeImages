@@ -10,19 +10,12 @@ namespace FreeImages.Repository;
 public class HelpFunctions : IHelpFunctions
 {
     private readonly DbConnect _db;
-    private IHttpContextAccessor _contextAccessor;
+
     private static string? _message { get; set; }
 
-    public HelpFunctions(DbConnect db, IHttpContextAccessor contextAccessor)
+    public HelpFunctions(DbConnect db)
     {
         _db = db;
-        _contextAccessor = contextAccessor; 
-    }
-
-    // Delete data
-    public bool Delete(int id)
-    {
-        return true;
     }
 
     // Save new or changed data
@@ -56,7 +49,6 @@ public class HelpFunctions : IHelpFunctions
     public string Hash(int count = 0)
     {
         var hash = Guid.NewGuid().ToString();
-
         return hash.Substring(0, count).Replace("-", "");
     }
 

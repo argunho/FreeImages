@@ -52,6 +52,7 @@ function Form({ children, ...props }) {
     const submitForm = async (e) => {
         e.preventDefault();
 
+        setResponse();
         const confirm = props?.confirmInputs;
 
         // If exists inputs to validate
@@ -72,6 +73,7 @@ function Form({ children, ...props }) {
         if (invalidForm) return;
 
         setLoading(true);
+        console.log(formData)
         props.onSubmit(formData);
     }
 

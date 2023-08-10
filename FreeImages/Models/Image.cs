@@ -1,27 +1,36 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System;
 
-namespace FreeImages.Models
+namespace FreeImages.Models;
+
+public class Image
 {
-    public class Image
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Keywords { get; set; }
+    [NotMapped]
+    public string? ViewName
     {
-        [Key]
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Keywords { get; set; }
-        [NotMapped]
-        public string? Path
+        get
         {
-            get
-            {
-                return $"https://uploadfilerepository.blob.core.windows.net/uploadfilecontainer/{Name}";
-            }
+            return string.IsNullOrEmpty(Name) ? String.Empty 
+                : $"{((string.Concat(Name[..1].ToUpper(), Name[1..]))[..(Name.IndexOf("_") > -1 ? Name.LastIndexOf("_") : Name.Length)])}";
         }
-        public byte[]? ImgInByte { get; set; }
-        public User?  Author { get; set; }
-        public int? Width { get; set; }
-        public int? Height { get; set; }
-        public bool Visible { get; set; }
-        public DateTime Date { get; set; } = DateTime.Now;
     }
+    [NotMapped]
+    public string? Path
+    {
+        get
+        {
+            return $"https://uploadfilerepository.blob.core.windows.net/uploadfilecontainer/{Name}";
+        }
+    }
+    public byte[]? ImgInByte { get; set; }
+    public User? Author { get; set; }
+    public int? Width { get; set; }
+    public int? Height { get; set; }
+    public bool Visible { get; set; }
+    public DateTime Date { get; set; } = DateTime.Now;
 }

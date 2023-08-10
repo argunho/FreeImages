@@ -114,37 +114,12 @@ button.menu-close:hover {
   font-size: 25px !important;
   letter-spacing: 1px !important;
 }
-
-/* .submenu {
-  margin: -10px 0 0 50px !important;
-  width: auto !important;
-  padding: 5px !important;
-}
-
-.submenu div {
-  background: transparent !important;
-}
-
-.submenu span {
-  margin-left: -25px !important;
-  font-size: 14px !important;
-}
-
-.submenu svg {
-  color: #BDBDBD !important;
-} */
 /* #endregion */
 
 /* #region Table */
 .confirm-alert {
   width: 100%;
   padding: 0 16px !important;
-}
-
-.form-wrapper .confirm-alert {
-  max-width: 470px !important;
-  margin-right: auto !important;
-  margin-left: auto !important;
 }
 
 .confirm-alert,
