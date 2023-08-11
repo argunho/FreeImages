@@ -60,7 +60,6 @@ form textarea {
 .image-wrapper img {
   max-width: 100%;
   max-height: 300px;
-  max-height: fit-content;
 }
 
 /* #region Modal */

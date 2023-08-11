@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Installed
-import { TextField, Button, FormControl } from '@mui/material';
+import { TextField, Button, FormControl, CardMedia } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import FlatList from 'flatlist-react/lib';
@@ -27,8 +27,26 @@ function Home() {
   const get = async () => {
     const res = await fetch(`image/${page}/${perPage}`);
     const data = await res.json();
+    if (!!data) {
+      // const images = {
+      //   arr01: [],
+      //   arr02: [],
+      //   arr03: [],
+      //   arr04: [],
+      // }
+      // for (var i = 0; i < data.length; i++) {
+      //   if (i % 4 === 0)
+      //     images.arr04.push(data[i])
+      //   else if (i % 3 === 0)
+      //     images.arr03.push(data[i])
+      //   else if (i % 2 === 0)
+      //     images.arr02.push(data[i])
+      //   else
+      //     images.arr01.push(data[i])
+      // }
+      setImgs(data);
+    }
 
-    setImgs(data);
   }
 
   const search = async () => {
@@ -38,13 +56,12 @@ function Home() {
   }
 
   const renderImg = (img, ind) => {
-
-    return <img key={ind} src={img.path}
-      className="gallery-img"
-      onClick={() => navigate(`view/img/${img.imageId}`)}
-      alt={window.location.origin} />
+    return <div key={ind} className='gallery-image-wrapper d-column'>
+      <img src={img.path}
+        className="gallery-img"
+        onClick={() => navigate(`view/img/${img.imageId}`)}
+        alt={window.location.origin} /></div>
   }
-  const arr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
 
   return (
     <div className='gallery-container'>
@@ -67,20 +84,47 @@ function Home() {
         </Button>
       </FormControl>
 
-      <div className='gallery-row'>
+      <div className="gallery-container">
+
+            <div className="gallery-view-wrapper" >
+
+            <FlatList
+              list={imgs}
+              renderItem={(img) => {
+                return <div className="gallery-active-img" key={img.id}>
+                <CardMedia
+                    className="gallery-image"
+                    component="img"
+                    image={img.path}
+                    alt={img.namename}
+                />
+            </div>
+              }}
+              renderWhenEmpty={() => <div className='not-found'>Not found</div>}
+            />
+
+                    {/* <div className="gallery-chooice-wrapper">
+                        <div className="gallery-chooice-list">
+                            {galleryImages("gallery-chooice-img")}
+                        </div>
+                    </div> */}
+                </div>
+        </div>
+
+      {/* <div className='gallery-row'>
+
         {Array(4).fill().map((v, ind) => {
-          const firstNumber = ind * 6 + (ind % 2 === 0 ? 0 : 1);
-          const lastNumber = firstNumber + 6 + (ind % 2 === 0 ? 0 : 1);
-          console.log("sliced", arr.slice(firstNumber, lastNumber))
+          const index = ind + 1;
           return <div className='gallery-column' key={ind}>
             <FlatList
-              list={imgs.slice(firstNumber, lastNumber)}
+              list={imgs[`arr0${index}`]}
               renderItem={renderImg}
               renderWhenEmpty={() => <div className='not-found'>Not found</div>}
             />
           </div>
         })}
-      </div>
+
+      </div> */}
     </div>
   );
 }

@@ -30,7 +30,7 @@ function Form({ children, ...props }) {
             setLoading(false);
             if (!!res?.alert) {
                 setResponse(res);
-                if (res.alert === "success"){
+                if (res.status === 200){
                     setLoading(false);
                     setFormData(props.inputs)
                 }
@@ -73,7 +73,6 @@ function Form({ children, ...props }) {
         if (invalidForm) return;
 
         setLoading(true);
-        console.log(formData)
         props.onSubmit(formData);
     }
 

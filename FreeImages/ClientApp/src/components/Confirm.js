@@ -7,7 +7,7 @@ function Confirm({ confirm, reset }) {
     Confirm.displayName = "Confirm";
 
     return (
-        <Alert severity='error' color='error' variant='standard' className="confirm-alert d-row jc-between">
+        <Alert severity='error' color='error' variant='standard' className="confirm-alert scale-in-center d-row jc-between">
             <AlertTitle>Are you sure to do it?</AlertTitle>
             <div className='confirm-buttons'>
                 <IconButton onClick={confirm}>

@@ -34,7 +34,6 @@ function UserFormPage({ inputs, api, heading }) {
             (async () => {
                 await axios.get(`user/${id}`, HeaderConfig).then(res => {
                     const data = res?.data;
-                    console.log(decoded)
                     if (!!data) {
                         setUserData(data);
                         setDisabled(decodedToken?.Email !== data?.email && data?.roles.indexOf("Admin") > -1 && permission("Support"));

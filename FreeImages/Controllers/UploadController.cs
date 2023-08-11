@@ -4,16 +4,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Drawing;
-using System.Security;
 
 namespace FreeImages.Controllers;
+
 [Route("[controller]")]
 [ApiController]
 [Authorize]
 public class UploadController : ControllerBase
 {
-    //private static readonly string connectionString = "DefaultEndpointsProtocol=https;AccountName=uploadfilerepository;AccountKey=AtqMADGJ1jsZ+lHvdDP2ynlW9Sr8fKcr9ojNVTdXWeTfWd8q9izdY9hhRkjUg4abKfYWFXVgHe4D+ASt2brVDA==;EndpointSuffix=core.windows.net";
-
     private readonly BlobContainerClient _blobContainer;
     private readonly DbConnect _db;
     private readonly IHelpFunctions _help;
@@ -24,7 +22,8 @@ public class UploadController : ControllerBase
         _db = db;
         _help = help;
         _config = ConfigurationService.Load("BlobStorage");
-        _blobContainer = new(_config.ConnectionString, "uploadfilecontainer");
+        _blobContainer = new(_config.ConnectionString, "freeimagescontainer");
+        _blobContainer.CreateIfNotExists();
     }
 
 
@@ -35,15 +34,19 @@ public class UploadController : ControllerBase
         if (uploadedFile == null)
             return _help.Response("warning", "An image file or image information missing!");
 
-        // Images name
-        var imgName = $"{name.ToLower().Replace(" ", "")}_{DateTime.Now.ToString("yyyyMMddHHmmss")}." +
+        // New image name
+        var imgName = $"{name.ToLower().Replace(" ", "")}_{DateTime.Now:yyyyMMddHHmmss}." +
                             $"{uploadedFile.ContentType[(uploadedFile.ContentType.IndexOf("/") + 1)..]}";
-        //+uploadedFile.ContentType.Substring(uploadedFile.ContentType.IndexOf("/") + 1);
 
         try
         {
-            var img = System.Drawing.Image.FromStream(uploadedFile.OpenReadStream());
+            var path = @$"Download/{imgName}";
 
+
+            using var stream = uploadedFile.OpenReadStream();
+            
+            var img = System.Drawing.Image.FromStream(stream);
+            bool rotated = false
             // Rotate img
             if (img != null && img.PropertyIdList.Contains(0x0112))
             {
@@ -55,48 +58,57 @@ public class UploadController : ControllerBase
 
                     case 8: // rotated 90 right
                         img.RotateFlip(rotateFlipType: RotateFlipType.Rotate270FlipNone);
+                        rotated = true;
                         break;
 
                     case 3: // bottoms up
                         img.RotateFlip(rotateFlipType: RotateFlipType.Rotate180FlipNone);
+                        rotated = true;
                         break;
 
                     case 6: // rotated 90 left
                         img.RotateFlip(rotateFlipType: RotateFlipType.Rotate90FlipNone);
+                        rotated = true;
                         break;
                 }
             }
 
-            // Temporary save
-            var path = @$"Download/{imgName}";
-            using var imgStream = System.IO.File.OpenWrite(path);
-            await uploadedFile.CopyToAsync(imgStream);
+            //// Temporary save uploaded image
+            //using (var downloadPath = System.IO.File.OpenWrite(path)) // <= Save to download folder uploded file
+            //await uploadedFile.CopyToAsync(downloadPath);
+            
 
-            // Upload original image to azure blob storage
-            using var stream = uploadedFile.OpenReadStream();
-            _blobContainer.UploadBlob(imgName, stream);
-
-
-            if (System.IO.File.Exists(path))
+            if(rotated)
             {
-                using System.Drawing.Image image = System.Drawing.Image.FromFile(path);
-                try
-                {
-                    var devisionNumber = img.Width / 400;
-                    var summa = img.Width / devisionNumber;
-                    int height = (img.Height / devisionNumber);
-                    var resizedImage = (System.Drawing.Image)(new Bitmap(image, new Size(400, height)));
-                    //using var resizedStream = resizedImage.O;
-                    //_imageContainer.UploadBlob(imgName, resizedStream);
-                }
-                catch (Exception e)
-                {
-                    Console.Error.WriteLine(e.Message);
-                }
-            };
+                img.Save(path);
+                // Upload original image to azure blob storage
+                BlobClient blobClient = _blobContainer.GetBlobClient(imgName);
+                await blobClient.UploadAsync(Path.Combine("Download", imgName), true);
+            }
+            else
+            {
+                // Save to blob container folder uploded file
+                await _blobContainer.UploadBlobAsync(imgName, stream); 
+            }
 
-            // Get current user roles
-            var claims = HttpContext.User.Claims.Where(x => x.Value == "Roles").ToList();
+            //// Resize image
+            //if (System.IO.File.Exists(path))
+            //{
+            //    using System.Drawing.Image image = System.Drawing.Image.FromFile(path);
+            //    try
+            //    {
+            //        using var downlodStream = new MemoryStream();
+            //        var resizedImage = ResizedImage(image, 300);
+            //        resizedImage.Save(downlodStream, image.RawFormat);
+            //        downlodStream.Position = 0;
+            //        await _blobContainer.UploadBlobAsync("resized_" + imgName, downlodStream);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Console.Error.WriteLine(e.Message);
+            //    }
+            //}
+
             var visible = Permission("Admin,Support,Manager");
 
             ListImage uploadedImage = new();
@@ -106,8 +118,6 @@ public class UploadController : ControllerBase
                 if (!await _help.Save())
                     return _help.Response("error");
             }
-
-            //var author = HttpContext?.User?.Identity?.Name;
 
             var author = await _db.Users.FirstOrDefaultAsync(x => x.Email == GetClaimsData("Email"));
 
@@ -125,11 +135,6 @@ public class UploadController : ControllerBase
 
             if (await _help.Save())
             {
-                foreach (var image in _db.ListImages.ToList())
-                {
-                    image.Base64 = "data:image/jpeg;base64," + ImageToBase64(image, 500);
-                }
-
                 ListImage listImage = new()
                 {
                     Name = imgName,
@@ -144,6 +149,8 @@ public class UploadController : ControllerBase
             }
             else
                 return _help.Response("warning");
+            
+            System.IO.File.Delete(path);
         }
         catch (Exception ex)
         {
@@ -165,31 +172,26 @@ public class UploadController : ControllerBase
         User.Claims?.FirstOrDefault(x => x?.Type == value)?.Value.ToString();
 
     // Convert image from path to base64 string
-    public async Task<string?> ImageToBase64(ListImage? model, int resize = 0)
+    public string? ImageToBase64(ListImage? model, int resizeNumber = 0)
     {
         string imgBase = String.Empty;
 
-        var blobImage = _blobContainer.GetBlobClient(model.Name);
-        if (blobImage == null) return null;
-
-        var path = $@"Download/{model.Name}";
-        using FileStream fileStream = System.IO.File.OpenWrite(path);
-        blobImage.DownloadToAsync(fileStream);
-
+        var path = $@"Download/{model?.Name}";
         if (!System.IO.File.Exists(path)) return null;
         try
         {
-            using System.Drawing.Image img = System.Drawing.Image.FromFile(path);
-            using MemoryStream m = new();
-            System.Drawing.Image imageToConvert = img;
-            //var devisionNumber = img.Width / resize;
-            //var summa = img.Width / devisionNumber;
-            //int height = (img.Height / devisionNumber);
-            //imageToConvert = (System.Drawing.Image)(new Bitmap(img, new Size(resize, height)));
+            using (var img = System.Drawing.Image.FromFile(path))
+            {
+                using MemoryStream m = new();
+                System.Drawing.Image imageToConvert = img;
+                if (resizeNumber > 0)
+                    imageToConvert = ResizedImage(img, resizeNumber);
 
-            //imageToConvert.Save(m, img?.RawFormat);
-            byte[] imageBytes = m.ToArray();
-            imgBase = Convert.ToBase64String(imageBytes);// Convert byte[] to Base64 String
+                imageToConvert?.Save(m, img.RawFormat);
+                byte[] imageBytes = m.ToArray();
+                imgBase = Convert.ToBase64String(imageBytes);// Convert byte[] to Base64 String         
+            }
+            System.IO.File.Delete(path);
         }
         catch (Exception ex)
         {
@@ -197,6 +199,14 @@ public class UploadController : ControllerBase
         }
 
         return imgBase;
+    }
+
+    public System.Drawing.Image ResizedImage(System.Drawing.Image img, int resizeNumber)
+    {
+        var devisionNumber = img.Width / resizeNumber;
+        //var summa = img.Width / devisionNumber;
+        int height = (img.Height / devisionNumber);
+        return new Bitmap(img, new Size(resizeNumber, height)) as System.Drawing.Image;
     }
     #endregion
 }

@@ -16,7 +16,7 @@ public class ListImage
     {
         get
         {
-            return $"https://uploadfilerepository.blob.core.windows.net/uploadfilecontainer/{Name}";
+            return $"https://uploadfilerepository.blob.core.windows.net/freeimagescontainer/{Name}";
         }
     }
     [Column(TypeName = "varchar(MAX)")]

@@ -67,7 +67,6 @@ function UploadFile(props) {
     }
 
     const submitForm = async (formData) => {
-
         let data = new FormData();
         data.append("uploadedFile", file);
 
@@ -75,9 +74,11 @@ function UploadFile(props) {
             .then(res => {
                 setResponse(res.data);
                 setLoading(false);
-                // setResult(true);
-                // if (res.data.result === "success")
-                //     resetForm();
+                if (res.status === 200) {
+                    setFile();
+                    setImage(null);
+                }
+                console.log(res)
             }, error => {
                 setResponse(error)
             })
@@ -94,7 +95,7 @@ function UploadFile(props) {
                 }}
                 response={response}
                 onSubmit={submitForm}
-                fileReset={() => setFile()}>
+                reset={() => setFile()}>
                 <div className='upload-file-container'>
                     {/* File error message */}
                     {error && <Alert severity='error' color="error">{error}</Alert>}

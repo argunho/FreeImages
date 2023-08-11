@@ -23,7 +23,7 @@ function FileFormPage() {
     const [image, setImage] = useState({});
     const [loading, setLoading] = useState(true);
     const [confirm, setConfirm] = useState(false);
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState();
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -47,7 +47,7 @@ function FileFormPage() {
 
     const submitForm = async (formData) => {
         setResponse();
-        await axios.put(`image/${id}`, formData, HeaderConfig).then(res => {
+        await axios.put(`image/update/${id}`, formData, HeaderConfig).then(res => {
             setResponse(res.data)
         }, error => {
             setResponse({ alert: "error", message: error?.message });
@@ -74,23 +74,22 @@ function FileFormPage() {
             {loading ? <Loading /> : <Form
                 heading="Edit image"
                 inputs={{
-                    name: image?.name,
+                    name: image?.viewName,
                     keywords: image?.keywords
                 }}
                 response={response}
                 onSubmit={submitForm} />}
 
             {/* Actions buttons */}
-            {<div className="buttons-wrapper d-row js-end ai-end">
-
+            <div className="buttons-wrapper d-row js-end ai-end">
                 {/* Delete user profile */}
-                <Button variant="text" color="error" onClick={() => setConfirm(true)}>
+                {!confirm && <Button variant="text" color="error" onClick={() => setConfirm(true)}>
                     Delete image
-                </Button>
-            </div>}
+                </Button>}
 
-            {/* Confirm alert */}
-            {confirm && <Confirm confirm={deleteImage} reset={() => setConfirm(false)} />}
+                {/* Confirm alert */}
+                {confirm && <Confirm confirm={deleteImage} reset={() => setConfirm(false)} />}
+            </div>
         </div>
     )
 }

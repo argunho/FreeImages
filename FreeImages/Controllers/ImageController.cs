@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Specialized;
 using FreeImages.Services;
+using FreeImages.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security;
@@ -8,6 +9,7 @@ using System.Security;
 namespace FreeImages.Controllers
 {
     [Route("[controller]")]
+    [ApiController]
     [Authorize]
     public class ImageController : ControllerBase
     {
@@ -55,14 +57,16 @@ namespace FreeImages.Controllers
         #endregion
 
         #region PUT
-        [HttpPut("{id}")]
-        public async Task<JsonResult> Put(int id, ListImage model)
+        [HttpPut("update/{id:int}")]
+        public async Task<JsonResult> Put(int id, ImageViewModel model)
         {
             try
             {
-                var image = await _db.Images.FirstOrDefaultAsync(x => x.Id.Equals(id));
+                var image = await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
+                var imageName = $"{model?.Name?.ToLower().Replace(" ", "")}_{DateTime.Now:yyyyMMddHHmmss}{image?.Name[image.Name.LastIndexOf(".")..]}";
+
                 if (image == null)
-                  return _help.Response("warning", "No image found with matching Id.");
+                    return _help.Response("warning", "No image found with matching Id.");
 
                 var currentUserEmail = GetClaim("Email");
 
@@ -71,26 +75,29 @@ namespace FreeImages.Controllers
 
                 // Blob image exists
                 var blobImage = _blobContainer.GetBlockBlobClient(image?.Name);
-                if(!await blobImage.ExistsAsync())
-                {          
+                if (!await blobImage.ExistsAsync())
+                {
                     await Delete(image.Id.ToString());
                     return _help.Response("warning", "No image found with matching image name.");
                 }
 
-                image.Name = model.Name;
-                image.Keywords = model.Keywords;
+                image.Name = imageName;
+                image.Keywords = model?.Keywords;
 
-                var listImage = await _db.ListImages.FirstOrDefaultAsync(x => x.ImageId == id); 
-                if (listImage == null) { 
-                    var newlistImage = new ListImage { 
-                        Name = image.Name,
+                var listImage = await _db.ListImages.FirstOrDefaultAsync(x => x.ImageId == id);
+                if (listImage == null)
+                {
+                    var newlistImage = new ListImage
+                    {
+                        Name = imageName,
                         Keywords = image.Keywords,
                         ImageId = image.Id
                     };
-                } else
+                }
+                else
                 {
-                    listImage.Name = model.Name;
-                    listImage.Keywords = model.Keywords;
+                    listImage.Name = imageName;
+                    listImage.Keywords = model?.Keywords;
                 }
 
                 if (!await _help.Save())
@@ -98,9 +105,9 @@ namespace FreeImages.Controllers
                 else
                 {
                     // Rename blob image name
-                    if (image?.Name != model.Name)
+                    if (image?.ViewName != model?.Name)
                     {
-                        var newBlobImage = _blobContainer.GetBlockBlobClient(model.Name);
+                        var newBlobImage = _blobContainer.GetBlockBlobClient(imageName);
                         if (!await newBlobImage.ExistsAsync())
                         {
                             await newBlobImage.StartCopyFromUriAsync(blobImage.Uri);
@@ -108,11 +115,11 @@ namespace FreeImages.Controllers
                         }
                     }
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return _help.Response("error", "Error: " + ex.Message);
             }
-
 
             return _help.Response("success");
         }
@@ -149,7 +156,6 @@ namespace FreeImages.Controllers
 
             return _help.Response("success");
         }
-
         #endregion
 
         #region Helpers
