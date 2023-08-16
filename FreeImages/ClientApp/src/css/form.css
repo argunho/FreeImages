@@ -62,43 +62,6 @@ form textarea {
   max-height: 300px;
 }
 
-/* #region Cropped image */
-.crop-image-block {
-  width: 100%;
-  max-width: 800px;
-  margin: 20px auto 50px auto;
-}
-
-.crop-image-block div:not(.btn-wrapper) {
-    display: flex;
-    justify-content: center;
-    width: max-content;
-    margin: auto;
-}
-
-.crop-image-block img {
-    margin: auto;
-    max-height: 500px !important;
-}
-
-.crop-image-block .btn-wrapper {
-    text-align: center !important;
-}
-
-.crop-image-block .btn-wrapper > button,
-.crop-image-block .btn-wrapper > button:disabled {
-  min-width: 80px;
-  margin: 10px 5px 0 0;
-  min-height: 40px;
-  font-size: 16px;
-}
-
-.crop-image-block .btn-wrapper > button:disabled {
-  height: 42px;
-  margin-top: 11px;
-}
-
-/* #endregion */
 
 /* #region Modal */
 .modal-container {

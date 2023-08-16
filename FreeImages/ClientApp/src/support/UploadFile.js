@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 // Installed
-import { Alert, Button, ButtonBase, Checkbox, CircularProgress, FormControlLabel, IconButton } from '@mui/material';
-import { Close, Crop169, CropDin, CropPortrait, Refresh, Upload, UploadFileOutlined } from '@mui/icons-material';
+import { Alert, Button, Checkbox, CircularProgress, FormControlLabel, IconButton } from '@mui/material';
+import { Check, Close, Crop169, CropDin, CropFree, CropPortrait, Refresh, UploadFileOutlined } from '@mui/icons-material';
 import ReactCrop from 'react-image-crop';
 import axios from 'axios';
 
@@ -17,10 +17,6 @@ import HeaderConfig from '../functions/HeaderConfig';
 import './../css/fileUpload.css';
 import 'react-image-crop/dist/ReactCrop.css';
 
-// Images
-import upload from './../assets/images/upload.png';
-
-
 function UploadFile(props) {
     UploadFile.displayName = "UploadFile";
 
@@ -31,19 +27,20 @@ function UploadFile(props) {
     const [response, setResponse] = useState();
     const [cropImageTools, setCropImageTools] = useState(false);
     const [croppedImage, setCroppedImage] = useState(null);
-    const [croppedImageSrc, setCroppedImageSrc] = useState(null);
-    const [isBackground, setIsBackground] = useState(false);
-    const [ratio, setRatio] = useState(1/1);
+    const [isCropActivated, setCropActivate] = useState(true);
+    const [ratio, setRatio] = useState(0);
 
     // For crop image --->
-    const [imgSrc, setImgSrc] = useState();
-    const [crop, setCrop] = useState({
+    const defaultCrop = {
         unit: '%', // Can be 'px' or '%'
         x: 25,
         y: 25,
         width: 50,
-        height: 50
-    });
+        height: 50,
+    };
+
+    // const [imgSrc, setImgSrc] = useState();
+    const [crop, setCrop] = useState(defaultCrop);
     const [completedCrop, setCompletedCrop] = useState(null);
     // End
 
@@ -118,10 +115,6 @@ function UploadFile(props) {
 
             const reader = new FileReader();
 
-            setCropImageTools(true);
-            reader.addEventListener('load', () => setImgSrc(reader.result));
-            setTimeout(() => { cropImageButtons.current.scrollIntoView(); }, 1000)
-
             reader.onload = (e) => {
                 const image = new Image();
                 image.src = e.target.result;
@@ -130,6 +123,12 @@ function UploadFile(props) {
                 // if (file) props.onUploadChange(file);
                 if (file) setFile(file);
             };
+
+            if (isCropActivated) {
+                setCropImageTools(true);
+                // reader.addEventListener('load', () => setImgSrc(reader.result));
+                // setTimeout(() => { cropImageButtons.current.scrollIntoView(); }, 1000)
+            }
 
             setLoading(false);
 
@@ -141,14 +140,13 @@ function UploadFile(props) {
         let data = new FormData();
         data.append("uploadedFile", file);
 
-        let api = `upload/${formData?.name}/${formData?.keywords}/${isBackground}`;
+        let api = `upload/${formData?.name}/${formData?.keywords}/${isCropActivated}`;
 
         if (!!croppedImage) {
             data = {
                 name: formData.name,
                 keywords: formData.keywords,
-                croppedFile: croppedImage,
-                background: isBackground
+                croppedFile: croppedImage
             }
 
             api = "upload/cropped";
@@ -167,20 +165,6 @@ function UploadFile(props) {
             })
     }
 
-    // For crop image --->
-    const onLoad = (img) => {
-        console.log(168, img)
-        imgRef.current = img;
-    };
-
-    // Change crop size
-    const cropHandle = (params) => {
-        setCrop({ ...crop, aspect: 0 })
-        setTimeout(() => {
-            setCrop({ ...crop, aspect: params });
-        }, 300)
-    }
-
     return (
         <div className='wrapper'>
             <Heading title="Form" />
@@ -193,17 +177,17 @@ function UploadFile(props) {
                 response={response}
                 onSubmit={submitForm}
                 reset={() => setFile()}>
-                
+
                 {/* File upload */}
                 <div className='upload-file-container d-column' style={{ height: !!image ? "250px" : "180px" }}>
                     {/* File error message */}
                     {error && <Alert severity='error' color="error">{error}</Alert>}
 
                     {/* Uploaded image */}
-                    {(!croppedImage && !!image) && <img src={image} alt="" className="uploaded-image" />}
+                    {(!completedCrop && !!image) && <img src={image} alt="" className="uploaded-image" />}
 
                     {/* Cropped image */}
-                    {!!image && <canvas
+                    {(!!image && !!completedCrop) && <canvas
                         ref={previewCanvasRef}
                         style={{
                             // width: Math.round(completedCrop?.width ?? 0),
@@ -226,9 +210,16 @@ function UploadFile(props) {
                     </IconButton>}
 
                     {/* File upload button */}
-                    {!image && <Button className="upload-file-button d-column" color='inherit' onClick={() => uploadFile.current.click()}>
+                    {!image && <Button className="upload-file-button d-column" color='inherit'
+                        onClick={() => {
+                            setCroppedImage();
+                            setCropImageTools(false);
+                            setImage();
+                            setCrop(defaultCrop);
+                            uploadFile.current.click();
+                        }}>
                         {(loading) ? <CircularProgress className="upload-symbol image-load-symbol" />
-                            : <UploadFileOutlined className='upload-file-symbol' fontSize='large'/>}
+                            : <UploadFileOutlined className='upload-file-symbol' fontSize='large' />}
                         Ladda upp en bild
                     </Button>}
 
@@ -238,38 +229,43 @@ function UploadFile(props) {
                 </div>
 
                 {/* Crop image */}
-                {cropImageTools && <div className="crop-image-block slide-in-bottom">
+                {(isCropActivated && cropImageTools) && <div className="crop-image-block slide-in-bottom d-column">
                     <ReactCrop
                         crop={crop}
-                        onChange={(c) => {
-                            setCrop(c);
-                            console.log("crop", c)
-                        }}
-                        onComplete={(c) => {
-                            setCompletedCrop(c);
-                            console.log(228, c);
-                        }}
-                        minWidth={50}
-                        minHeight={50}
+                        onChange={(value) => setCrop(value)}
+                        onComplete={(value) => setCompletedCrop(value)}
+                        minWidth={150}
+                        minHeight={150}
                         keepSelection={true}
                         aspect={ratio}
                     >
-                        <img src={imgSrc} ref={imgRef} alt="" />
+                        <img src={image} ref={imgRef} alt="" />
                     </ReactCrop>
 
                     <div className="btn-wrapper" ref={cropImageButtons}>
                         {/* Buttons to change image crop params */}
-                        {[{ name: <Crop169 />, aspect: 16 / 9 }, { name: <CropPortrait />, aspect: 12 / 16 }, { name: <CropDin />, aspect: 1 / 1 }].map((s, i) => (
+                        {[{ name: <Crop169 />, aspect: 16 / 9 },
+                        { name: <CropPortrait />, aspect: 12 / 16 },
+                        { name: <CropDin />, aspect: 1 / 1 },
+                        { name: <CropFree />, aspect: 0 }].map((s, i) => (
                             <Button variant="contained" disabled={s.aspect === ratio}
                                 onClick={() => setRatio(s.aspect)} key={i}>
                                 {s.name}
                             </Button>
                         ))}
 
-                        <Button variant="contained" onClick={() => {
+
+                        {!!completedCrop && <Button variant="outlined" onClick={() => {
                             setCropImageTools(false);
-                            setCroppedImageSrc(croppedImage);
-                        }}>
+                        }} color="success">
+                            <Check />
+                        </Button>}
+
+                        <Button variant="outlined" onClick={() => {
+                            setCropImageTools(false);
+                            setCroppedImage(null);
+                            setCompletedCrop(null);
+                        }} color="error">
                             <Close />
                         </Button>
 
@@ -283,8 +279,10 @@ function UploadFile(props) {
 
                 {/* Checkbox */}
                 <FormControlLabel className='input-checkbox' control={
-                    <Checkbox color="default" onClick={() => setIsBackground(!isBackground)} />
-                } label="Can use as a header background" />
+                    <Checkbox color="default" checked={isCropActivated} onClick={() => {
+                        setCropActivate(!isCropActivated);
+                        setCropImageTools(!isCropActivated && !!image);
+                    }} />} label="Use crop" />
             </Form>
         </div>
     )

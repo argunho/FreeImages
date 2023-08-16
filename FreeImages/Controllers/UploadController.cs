@@ -138,6 +138,7 @@ public class UploadController : ControllerBase
                 using (var downloadPath = System.IO.File.OpenWrite(path))
                 {
                     await stream.CopyToAsync(downloadPath);
+                    stream.Position = 0;
                 }
                 // Save to blob container folder uploded file
                 await _blobContainer.UploadBlobAsync(imgName, stream);
@@ -184,8 +185,8 @@ public class UploadController : ControllerBase
                     Keywords = model?.Keywords,
                     ImageId = imgData.Id
                 };
-
-                listImage.Base64 = "data:image/jpeg;base64," + ImageToBase64(listImage, 500);
+//"data:image/jpeg;base64," +
+                listImage.Base64 =  ImageToBase64(listImage, 500);
                 _db.ListImages?.Add(listImage);
                 if (!await _help.Save())
                     return _help.Response("warning");
