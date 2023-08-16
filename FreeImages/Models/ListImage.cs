@@ -21,6 +21,7 @@ public class ListImage
     }
     [Column(TypeName = "varchar(MAX)")]
     public string? Base64 { get; set; }
+    public bool Background { get; set; }
     [Required]
     public int ImageId { get; set; }
 }

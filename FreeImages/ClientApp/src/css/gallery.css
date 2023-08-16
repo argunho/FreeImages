@@ -1,8 +1,8 @@
 .gallery-container {
-    width: 100%;
+    width: 90%;
     margin: 0 auto;
-    height: 200vh;
-    max-width: 1800px;
+    height: auto;
+    max-width: 2000px;
     overflow: hidden;
 }
 
@@ -15,7 +15,7 @@
     flex-wrap: wrap;
     flex-direction: row;
     padding: 0 4px;
-    height: 200vh;
+    height: max-content;
     overflow: hidden;
 }
 
@@ -24,29 +24,78 @@
     /* IE10 */
     flex: 25%;
     width: 25%;
-    padding: 4px 0;
 }
 
-.gallery-image-wrapper {
-    height: max-content;
-    max-height: 500px;
+.gallery-img-wrapper {
+    width: calc(100% - 20px);
+    margin: 0 10px 20px 10px;
     overflow: hidden;
-    position: relative;
+    max-height: 550px;
+    box-shadow: 0 0 2px 2px #94949488;
 }
 
 .gallery-img {
     margin: auto;
-    flex-grow: 4;
-    /* vertical-align: middle; */
-    max-width: 500px;
+    vertical-align: middle;
+    width: 100%;
     cursor: pointer;
-    max-height: 700px;
-    padding: 10px;
 }
 
+/* #region For specific height */
+.gallery-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    flex-wrap: wrap;
+    flex-direction: column;
+    transition: all 0.9s ease-in-out;
+    width: 100%;
+    overflow: hidden;
+    /* flex-wrap: wrap-reverse;
+    flex-direction: column-reverse;
+    max-height: 600px;
+    align-items: stretch;*/
+}
+
+.gallery-image-wrapper {
+    width: 25%;
+    overflow: hidden;
+    display: flex;
+}
+
+.gallery-image {
+    margin: auto;
+    vertical-align: middle;
+    width: 100%;
+    cursor: pointer;
+    padding: 5px;
+    image-orientation: from-image;
+}
+
+/* #endregion */
 
 /* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 1080px) {
+    .gallery-column {
+        -ms-flex: calc(100% / 3);
+        /* IE10 */
+        flex: calc(100% / 3);
+        width: calc(100% / 3);
+    }
+
+    .gallery-image-wrapper {
+        max-height: 350px;
+        width: calc(100% - 14px);
+        margin: 0 7px 14px 7px;
+    }
+}
+
 @media screen and (max-width: 800px) {
+    .gallery-container {
+        width: 100%;
+    }
+    
     .gallery-column {
         -ms-flex: 50%;
         flex: 50%;
@@ -60,5 +109,9 @@
         -ms-flex: 100%;
         flex: 100%;
         max-width: 100%;
+    }
+
+    .gallery-image-wrapper {
+        max-height: 450px;
     }
 }

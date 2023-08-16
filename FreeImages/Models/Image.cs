@@ -24,7 +24,7 @@ public class Image
     {
         get
         {
-            return $"https://uploadfilerepository.blob.core.windows.net/freeimnagescontainer/{Name}";
+            return $"https://uploadfilerepository.blob.core.windows.net/freeimagescontainer/{Name}";
         }
     }
     public byte[]? ImgInByte { get; set; }

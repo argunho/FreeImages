@@ -44,7 +44,7 @@ namespace FreeImages.Controllers
 
         #region GET
         [HttpGet]
-        public IEnumerable<Image> Get() => AllImages;
+        public IEnumerable<Image> Get() => AllImages.OrderByDescending(x => x.Id).ToList();
 
         [HttpGet("{page}/{count}")]
         [AllowAnonymous]
@@ -54,6 +54,21 @@ namespace FreeImages.Controllers
         [HttpGet("{id:int}")]
         public async Task<Image?> GetById(int id)
             => await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
+
+        [HttpGet("bg")]
+        [AllowAnonymous]
+        public async Task<string?> GetBackground()
+        {
+            Random rand = new();
+            var images = await _db.ListImages.Where(x => x.Background).ToListAsync();
+            if (images.Count > 0)
+            {
+                int skip = rand.Next(0, images.Count());
+                var path = images.Skip(skip).Take(1).First()?.Base64;
+                return path;
+            }
+            return null;
+        }
         #endregion
 
         #region PUT
@@ -169,6 +184,31 @@ namespace FreeImages.Controllers
         // Get claim type
         public string? GetClaim(string name) =>
             User.Claims?.FirstOrDefault(x => x.Type == name)?.Value?.ToString();
+
+        // Convert Base64 image string to IFormFile
+        public IFormFile? Base64ToIFormFile(string base64string, string name)
+        {
+            if (base64string == null || name == null)
+                return null;
+            try
+            {
+                var str = base64string.Substring(base64string.IndexOf(",") + 1);
+                byte[] bytes = Convert.FromBase64String(str);
+                MemoryStream stream = new (bytes);
+
+                return new FormFile(stream, 0, bytes.Length, "image/jpeg", name)
+                {
+                    Headers = new HeaderDictionary(),
+                    ContentType = "image/jpeg"
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+
+        }
         #endregion
     }
 }
