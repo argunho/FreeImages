@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 // Installed
-import { Alert, Button, Checkbox, CircularProgress, FormControlLabel } from '@mui/material';
-import { Close, Crop169, CropDin, CropPortrait, Refresh } from '@mui/icons-material';
+import { Alert, Button, ButtonBase, Checkbox, CircularProgress, FormControlLabel, IconButton } from '@mui/material';
+import { Close, Crop169, CropDin, CropPortrait, Refresh, Upload, UploadFileOutlined } from '@mui/icons-material';
 import ReactCrop from 'react-image-crop';
 import axios from 'axios';
 
@@ -33,7 +33,7 @@ function UploadFile(props) {
     const [croppedImage, setCroppedImage] = useState(null);
     const [croppedImageSrc, setCroppedImageSrc] = useState(null);
     const [isBackground, setIsBackground] = useState(false);
-    const [ratio, setRatio] = useState(16 / 9);
+    const [ratio, setRatio] = useState(1/1);
 
     // For crop image --->
     const [imgSrc, setImgSrc] = useState();
@@ -63,7 +63,6 @@ function UploadFile(props) {
             return;
         }
 
-        console.log(65, completedCrop)
         const image = imgRef.current;
         const canvas = previewCanvasRef.current;
         const _crop = completedCrop;
@@ -93,7 +92,6 @@ function UploadFile(props) {
 
         // Save image base 64 string
         setCroppedImage(canvas.toDataURL("image/jpeg"));
-        console.log("canvas", canvas.toDataURL("image/jpeg"))
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [completedCrop]);
@@ -195,38 +193,44 @@ function UploadFile(props) {
                 response={response}
                 onSubmit={submitForm}
                 reset={() => setFile()}>
-                <div className='upload-file-container'>
+                
+                {/* File upload */}
+                <div className='upload-file-container d-column' style={{ height: !!image ? "250px" : "180px" }}>
                     {/* File error message */}
                     {error && <Alert severity='error' color="error">{error}</Alert>}
+
                     {/* Uploaded image */}
-                    {image ? <div className='uploaded-image-wrapper'>
-                        {!croppedImage && <img src={image} alt="" className="uploaded-image" />}
-                        {/* To save cropped image */}
-                        <canvas
-                            ref={previewCanvasRef}
-                            // Rounding is important so the canvas width and height matches/is a multiple for sharpness.
-                            style={{
-                                // width: Math.round(completedCrop?.width ?? 0),
-                                height: "100%",
-                                // height: Math.round(completedCrop?.height ?? 0),
-                                alignSelf: "center",
-                                margin: "auto"
-                            }}
-                        />
-                        <Button
-                            variant='outlined'
-                            size="small"
-                            onClick={() => uploadFile.current.click()}
-                            disabled={props.disabled}>
-                            <Refresh />
-                        </Button>
-                    </div> :
-                        <div className="upload-file-wrapper" onClick={() => uploadFile.current.click()}>
-                            {(loading) ? <CircularProgress className="upload-symbol image-load-symbol" />
-                                : <img className='upload-file-symbol' height="90" src={upload} alt="Upload File" />}
-                            <br />
-                            <p className='upload-file-label'>Ladda upp en bild</p>
-                        </div>}
+                    {(!croppedImage && !!image) && <img src={image} alt="" className="uploaded-image" />}
+
+                    {/* Cropped image */}
+                    {!!image && <canvas
+                        ref={previewCanvasRef}
+                        style={{
+                            // width: Math.round(completedCrop?.width ?? 0),
+                            // height: Math.round(completedCrop?.height ?? 0),
+                            height: "100%",
+                            alignSelf: "center",
+                            margin: "auto"
+                        }}
+                    />}
+
+                    {/* Refresh button */}
+                    {!!image && <IconButton
+                        variant='outlined'
+                        size="small"
+                        color="inherit"
+                        className='refresh-button'
+                        onClick={() => uploadFile.current.click()}
+                        disabled={props.disabled}>
+                        <Refresh />
+                    </IconButton>}
+
+                    {/* File upload button */}
+                    {!image && <Button className="upload-file-button d-column" color='inherit' onClick={() => uploadFile.current.click()}>
+                        {(loading) ? <CircularProgress className="upload-symbol image-load-symbol" />
+                            : <UploadFileOutlined className='upload-file-symbol' fontSize='large'/>}
+                        Ladda upp en bild
+                    </Button>}
 
                     {/* File upload input */}
                     <input type="file" className="none" ref={uploadFile}
@@ -245,8 +249,8 @@ function UploadFile(props) {
                             setCompletedCrop(c);
                             console.log(228, c);
                         }}
-                        minWidth={200}
-                        minHeight={200}
+                        minWidth={50}
+                        minHeight={50}
                         keepSelection={true}
                         aspect={ratio}
                     >
@@ -256,8 +260,8 @@ function UploadFile(props) {
                     <div className="btn-wrapper" ref={cropImageButtons}>
                         {/* Buttons to change image crop params */}
                         {[{ name: <Crop169 />, aspect: 16 / 9 }, { name: <CropPortrait />, aspect: 12 / 16 }, { name: <CropDin />, aspect: 1 / 1 }].map((s, i) => (
-                            <Button variant="contained"
-                                onClick={() => setRatio(s.crop)} key={i}>
+                            <Button variant="contained" disabled={s.aspect === ratio}
+                                onClick={() => setRatio(s.aspect)} key={i}>
                                 {s.name}
                             </Button>
                         ))}

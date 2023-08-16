@@ -10,7 +10,7 @@ import axios from 'axios';
 // Css
 import './../css/header.css';
 
-function Header({ children, authorized, url }) {
+function Header({ children, authorized, cls }) {
 
   const [bgImg, setBgImg] = useState();
 
@@ -31,7 +31,7 @@ function Header({ children, authorized, url }) {
   }, [])
 
   return (
-    <header className='d-row jc-between' style={!!bgImg ? { background: `url(${bgImg})` } : null}>
+    <header className={`d-row jc-between ${cls}`} style={!!bgImg ? { background: `url(${bgImg})` } : null}>
       <p className='logotype d-column' onClick={() => navigate("/")}>
         Free images
       </p>

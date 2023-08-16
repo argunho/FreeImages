@@ -44,7 +44,7 @@ function SupportLayout({ children }) {
 
   return (
     <>
-      <Header authorized={authorized}>
+      <Header authorized={authorized} cls="support">
         {/* Menu button for authorized users */}
         {authorized && <Button
           className={'menu-button' + (visible ? " menu-open" : "")}
