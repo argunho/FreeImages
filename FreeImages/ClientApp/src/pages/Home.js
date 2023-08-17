@@ -59,7 +59,7 @@ function Home() {
     if(!img?.base64)
     return null;
     return <div key={ind} className='gallery-img-wrapper d-column'>
-      <img src={img?.base64}
+      <img src={img?.base64String}
         className="gallery-img"
         onClick={() => navigate(`view/img/${img.imageId}`)}
         alt={window.location.origin} /></div>

@@ -54,21 +54,6 @@ namespace FreeImages.Controllers
         [HttpGet("{id:int}")]
         public async Task<Image?> GetById(int id)
             => await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
-
-        [HttpGet("bg")]
-        [AllowAnonymous]
-        public async Task<string?> GetBackground()
-        {
-            Random rand = new();
-            var images = await _db.ListImages.Where(x => x.Background).ToListAsync();
-            if (images.Count > 0)
-            {
-                int skip = rand.Next(0, images.Count());
-                var path = images.Skip(skip).Take(1).First()?.Base64;
-                return path;
-            }
-            return null;
-        }
         #endregion
 
         #region PUT

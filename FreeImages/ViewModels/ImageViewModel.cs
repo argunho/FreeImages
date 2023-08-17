@@ -15,6 +15,4 @@ public class ImageViewModel
     public string? CroppedFile { get; set; }
 
     public IFormFile? FormFile { get; set; }
-
-    public bool Background { get; set; }
 }

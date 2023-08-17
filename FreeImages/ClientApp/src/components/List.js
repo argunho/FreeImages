@@ -2,16 +2,15 @@
 import { useEffect, useState } from 'react';
 
 // Installed 
-import { Alert, Button, CircularProgress, IconButton } from '@mui/material';
+import { Alert, IconButton } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { DeleteForever, Edit, Search } from '@mui/icons-material';
+import { Edit, Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Components
 import Heading from './Heading';
 import Loading from './Loading';
-import Confirm from './Confirm';
 
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
@@ -25,7 +24,6 @@ function List(props) {
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [confirm, setConfirm] = useState(false);
   const [inProcess, setProcess] = useState(false);
   const [columns, setColumns] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -71,19 +69,12 @@ function List(props) {
     setRows(data);
   }
 
-  const clickHandle = () => {
-    setConfirm(!confirm);
-    setProcess(!inProcess);
-  }
-
-  const reset = () => {
-    clickHandle();
+  const resetSelected = () => {
     setSelectedRows([]);
   }
 
   const deleteSelected = async () => {
     if (selectedRows.length === 0) return;
-    setConfirm(false);
 
     await axios.delete(`${props.api}/${selectedRows.toString()}`, HeaderConfig).then(res => {
       setProcess(false);
@@ -93,26 +84,19 @@ function List(props) {
 
   return (
     <div className='wrapper'>
-      <Heading title={props.title} button={props.button} />
+      <Heading 
+      title={props.title} 
+      button={props.button} 
+      selected={selectedRows}
+      progress={inProcess}
+      deleteSelected={deleteSelected}
+      reset={resetSelected} />
 
       {/* Loading */}
       {!!loading && <Loading />}
 
-
       {/* Content */}
       {(!loading && rows.length > 0) && <>
-
-        {/* Delete selected */}
-        <div className='buttons-wrapper d-row jc-end'>
-          {!confirm && <Button onClick={clickHandle} color='error' variant='contained' disabled={selectedRows.length === 0 || inProcess} className='delete-btn'>
-            {inProcess ? <CircularProgress style={{ marginRight: "14px" }} size={20} color='inherit' />
-              : <DeleteForever style={{ marginRight: "10px" }} />} Delete selected
-          </Button>}
-
-          {/* Confirm alert */}
-          {confirm && <Confirm confirm={deleteSelected} reset={reset} />}
-        </div>
-
 
         {/* Items list} */}
         <DataGrid
@@ -127,7 +111,8 @@ function List(props) {
             width: "100%",
             justifyContent: "stretch",
             '& .MuiDataGrid-columnHeaders, .MuiDataGrid-columnHeadersInner:hover .MuiSvgIcon-root, .MuiDataGrid-columnHeadersInner .css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root': {
-              color: "#FFFFFF"
+              color: "#FFFFFF",
+              border: 0
             },
             '& .MuiDataGrid-columnHeadersInner': {
               width: "100%",

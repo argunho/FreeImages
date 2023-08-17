@@ -16,19 +16,6 @@ function Header({ children, authorized, cls }) {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const bg = localStorage.getItem("bg");
-    if (!!bg)
-      setBgImg(bg);
-    (async () => {
-      const res = await axios.get("image/bg");
-
-      if (res.status === 200) {
-        setBgImg(res.data);
-        localStorage.setItem("bg", res.data);
-      }
-    })();
-  }, [])
 
   return (
     <header className={`d-row jc-between ${cls}`} style={!!bgImg ? { background: `url(${bgImg})` } : null}>

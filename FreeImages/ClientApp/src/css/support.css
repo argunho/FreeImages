@@ -118,12 +118,11 @@ button.menu-close:hover {
 
 /* #region Table */
 .confirm-alert {
-  width: 100%;
+  width: calc(100% - 32px) !important;
   padding: 0 16px !important;
 }
 
-.confirm-alert,
-.delete-btn {
+.confirm-alert {
   height: 50px !important;
 }
 

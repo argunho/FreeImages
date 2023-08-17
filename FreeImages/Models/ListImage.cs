@@ -20,17 +20,17 @@ public class ListImage
         }
     }
     [Column(TypeName = "varchar(MAX)")]
-    public string? Base64
+    public string? Base64 { get; set; }
+
+    [NotMapped]
+    public string? Base64String
     {
         get
         {
             return "data:image/jpeg;base64," + Base64;
         }
-        set {
-            _ = value;
-        }
     }
-    public bool Background { get; set; }
+
     [Required]
     public int ImageId { get; set; }
 }

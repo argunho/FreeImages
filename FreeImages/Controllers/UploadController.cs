@@ -40,7 +40,6 @@ public class UploadController : ControllerBase
             {
                 Name = name,
                 Keywords = keywords,
-                Background = background,
                 FormFile = uploadedFile
             };
 
@@ -185,8 +184,8 @@ public class UploadController : ControllerBase
                     Keywords = model?.Keywords,
                     ImageId = imgData.Id
                 };
-//"data:image/jpeg;base64," +
-                listImage.Base64 =  ImageToBase64(listImage, 500);
+
+                listImage.Base64 =  ImageToBase64(uploadedFile, 500);
                 _db.ListImages?.Add(listImage);
                 if (!await _help.Save())
                     return _help.Response("warning");
@@ -229,26 +228,28 @@ public class UploadController : ControllerBase
     }
 
     // Convert image from path to base64 string
-    public string? ImageToBase64(ListImage? model, int resizeNumber = 0)
+    public string? ImageToBase64(IFormFile file, int resizeNumber = 0)
     {
         string imgBase = String.Empty;
 
-        var path = $@"Download/{model?.Name}";
-        if (!System.IO.File.Exists(path)) return null;
+        //var path = $@"Download/{model?.Name}";
+        //if (!System.IO.File.Exists(path)) return null;
         try
         {
-            using (var img = System.Drawing.Image.FromFile(path))
+            using (var img = System.Drawing.Image.FromStream(file.OpenReadStream()))
             {
                 using MemoryStream m = new();
                 System.Drawing.Image imageToConvert = img;
                 if (resizeNumber > 0)
                     imageToConvert = ResizedImage(img, resizeNumber);
 
-                imageToConvert?.Save(m, img.RawFormat);
+                imageToConvert?.Save(m, img?.RawFormat);
+
+                // Convert byte[] to Base64 String  
                 byte[] imageBytes = m.ToArray();
-                imgBase = Convert.ToBase64String(imageBytes);// Convert byte[] to Base64 String         
+                imgBase = Convert.ToBase64String(imageBytes);
             }
-            System.IO.File.Delete(path);
+            //System.IO.File.Delete(path);
         }
         catch (Exception ex)
         {
