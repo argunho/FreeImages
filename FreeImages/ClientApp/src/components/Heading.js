@@ -8,7 +8,8 @@ import { useNavigate } from 'react-router-dom';
 // Components
 import Confirm from './Confirm';
 
-function Heading({ title, button, selected, progress, deleteSelected, reset }) {
+function Heading({ title, button, selected, response, deleteSelected, reset }) {
+    Heading.displayName = "Heading";
 
     const [confirm, setConfirm] = useState(false);
     const [inProcess, setProcess] = useState(false);
@@ -16,8 +17,9 @@ function Heading({ title, button, selected, progress, deleteSelected, reset }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        setProcess(progress);
-    }, [progress])
+        if(!!response)
+        setProcess(false);
+    }, [response])
 
     const clickHandle = () => {
         setConfirm(!confirm);
@@ -25,7 +27,6 @@ function Heading({ title, button, selected, progress, deleteSelected, reset }) {
     }
 
     const deleteItems = () => {
-        setProcess(true);
         setConfirm(false);
         deleteSelected();
     }
@@ -51,7 +52,7 @@ function Heading({ title, button, selected, progress, deleteSelected, reset }) {
                     </IconButton>}
 
                     {/* Delete selected */}
-                    {progress !== undefined && <IconButton onClick={clickHandle}
+                    {deleteSelected !== undefined && <IconButton onClick={clickHandle}
                         color='error' title="Delete selected"
                         disabled={selected?.length === 0 || inProcess} className='delete-btn'>
                         {inProcess ? <CircularProgress size={20} color='inherit' />

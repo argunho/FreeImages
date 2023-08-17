@@ -14,6 +14,7 @@ import HeaderConfig from '../functions/HeaderConfig';
 import Loading from './Loading';
 
 function UserForm({ children, api, inputs, heading, confirmInputs, permission, disabled, loading, user, res }) {
+    UserForm.displayName = "UserForm";
 
     const [roles, setRoles] = useState([])
     const [response, setResponse] = useState();

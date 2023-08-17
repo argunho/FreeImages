@@ -10,6 +10,7 @@ import FlatList from 'flatlist-react/lib';
 import '../css/gallery.css';
 
 function Home() {
+  Home.displayName = "Home";
 
   const [imgs, setImgs] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");

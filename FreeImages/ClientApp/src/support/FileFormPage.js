@@ -3,19 +3,19 @@ import { useEffect, useState } from 'react';
 // Installed
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Button } from '@mui/material';
 
 // Components
 import Heading from '../components/Heading';
 import Loading from '../components/Loading';
 import Form from '../components/Form';
+import Confirm from '../components/Confirm';
 
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
 
 // Css
 import './../css/form.css';
-import { Button } from '@mui/material';
-import Confirm from '../components/Confirm';
 
 function FileFormPage() {
     FileFormPage.displayName = "FileFormPage";
@@ -72,7 +72,7 @@ function FileFormPage() {
                 <img src={image?.path} alt={image?.viewName} />
             </div>}
             {loading ? <Loading /> : <Form
-                heading="Edit image"
+                heading="Edit image data"
                 inputs={{
                     name: image?.viewName,
                     keywords: image?.keywords
@@ -81,7 +81,7 @@ function FileFormPage() {
                 onSubmit={submitForm} />}
 
             {/* Actions buttons */}
-            <div className="buttons-wrapper d-row js-end ai-end">
+            {!loading && <div className="buttons-wrapper d-row js-end ai-end">
                 {/* Delete user profile */}
                 {!confirm && <Button variant="text" color="error" onClick={() => setConfirm(true)}>
                     Delete image
@@ -89,7 +89,7 @@ function FileFormPage() {
 
                 {/* Confirm alert */}
                 {confirm && <Confirm confirm={deleteImage} reset={() => setConfirm(false)} />}
-            </div>
+            </div>}
         </div>
     )
 }

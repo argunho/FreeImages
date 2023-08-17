@@ -14,7 +14,6 @@ import UserFormPage from "./support/UserFormPage";
 
 // Pages
 import Home from "./pages/Home";
-import FileForm from "./support/FileFormPage";
 import FileFormPage from "./support/FileFormPage";
 
 const AppRoutes = [

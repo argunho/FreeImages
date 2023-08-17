@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 // Installed
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { Alert, AlertTitle } from "@mui/material";
 
 // Components
 import Loading from "../components/Loading";
-import Response from "../components/Response";
-import { Error, ErrorRounded } from "@mui/icons-material";
-import { Alert, AlertTitle } from "@mui/material";
 
 function LoginWithHash() {
     LoginWithHash.displayName = "LoginWidthHash";

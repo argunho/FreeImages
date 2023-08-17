@@ -15,6 +15,7 @@ import Confirm from "../components/Confirm";
 import HeaderConfig from "../functions/HeaderConfig";
 
 function UserFormPage({ inputs, api, heading }) {
+    UserFormPage.displayName = "UserFormPage";
 
     const [response, setResponse] = useState();
     const [userData, setUserData] = useState(null);

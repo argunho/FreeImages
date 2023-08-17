@@ -97,6 +97,7 @@ function UploadFile(props) {
         ev.preventDefault();
         if (loading) return;
 
+        setResponse();
         setError();
         setLoading(true);
 

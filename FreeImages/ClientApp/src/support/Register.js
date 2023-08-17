@@ -13,6 +13,7 @@ import { Button, TextField } from "@mui/material";
 import { Check, Close } from "@mui/icons-material";
 
 function Register(){
+    Register.displayName = "Register";
 
     const [loading, setLoading] = useState(false);
     const [modal, setModal] = useState(false);

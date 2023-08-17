@@ -17,6 +17,8 @@ const columns = [
 ]
 
 function Users() {
+  Users.displayName = "Users";
+  
   return (
     <List api="user" columns={columns} title="Users" columnWidth={550} button={{
       title: "Register a new user",

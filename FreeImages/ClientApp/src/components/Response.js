@@ -2,6 +2,7 @@
 import { Alert, AlertTitle } from "@mui/material";
 
 function Response({ res, close }) {
+    Response.displayName = "Response";
 
     const capitalize = (str) => {
         if (!str) return;

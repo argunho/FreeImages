@@ -236,19 +236,17 @@ public class UploadController : ControllerBase
         //if (!System.IO.File.Exists(path)) return null;
         try
         {
-            using (var img = System.Drawing.Image.FromStream(file.OpenReadStream()))
-            {
-                using MemoryStream m = new();
-                System.Drawing.Image imageToConvert = img;
-                if (resizeNumber > 0)
-                    imageToConvert = ResizedImage(img, resizeNumber);
+            using var img = System.Drawing.Image.FromStream(file.OpenReadStream());
+            using MemoryStream m = new();
+            System.Drawing.Image imageToConvert = img;
+            if (resizeNumber > 0)
+                imageToConvert = ResizedImage(img, resizeNumber);
 
-                imageToConvert?.Save(m, img?.RawFormat);
+            imageToConvert?.Save(m, img?.RawFormat);
 
-                // Convert byte[] to Base64 String  
-                byte[] imageBytes = m.ToArray();
-                imgBase = Convert.ToBase64String(imageBytes);
-            }
+            // Convert byte[] to Base64 String  
+            byte[] imageBytes = m.ToArray();
+            imgBase = Convert.ToBase64String(imageBytes);
             //System.IO.File.Delete(path);
         }
         catch (Exception ex)

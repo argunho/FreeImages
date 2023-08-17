@@ -26,6 +26,8 @@ const columns = [
 ];
 
 function ImagesList() {
+  ImagesList.displayName = "ImagesList";
+  
   return (
     <List api="image" columns={columns} title="Images" columnWidth={400} view={true} button={{
       title: "Upload an image",

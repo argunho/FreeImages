@@ -26,15 +26,14 @@ function Form({ children, ...props }) {
 
     useEffect(() => {
         let res = props.response;
+        setResponse(res);
         if (!!res) {
+            setChanged(false)
             setLoading(false);
-            if (!!res?.alert) {
-                setResponse(res);
-                if (res.status === 200){
-                    setLoading(false);
+            console.log(!!res.start, res, res.status, props.inputs)
+            if (res?.alert === "success")
                     setFormData(props.inputs)
-                }
-            } else
+            else
                 console.warn(res);
         }
 

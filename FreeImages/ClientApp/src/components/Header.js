@@ -1,16 +1,16 @@
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // Installed
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { Home } from '@mui/icons-material';
-import axios from 'axios';
 
 // Css
 import './../css/header.css';
 
 function Header({ children, authorized, cls }) {
+  Header.displayName = "Header";
 
   const [bgImg, setBgImg] = useState();
 

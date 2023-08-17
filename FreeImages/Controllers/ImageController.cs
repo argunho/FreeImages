@@ -23,7 +23,7 @@ namespace FreeImages.Controllers
             _db = db;
             _help = help;
             _config = ConfigurationService.Load("BlobStorage");
-            _blobContainer = new(_config.ConnectionString, "uploadfilecontainer");
+            _blobContainer = new(_config.ConnectionString, "freeimagescontainer");
         }
 
         public IEnumerable<ListImage> AllListImages

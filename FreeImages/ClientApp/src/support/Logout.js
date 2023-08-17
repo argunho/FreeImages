@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import HeaderConfig from '../functions/HeaderConfig';
 
 function Logout() {
+    Logout.displayName = "Logout";
 
     const navigate = useNavigate();
 

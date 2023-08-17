@@ -12,6 +12,7 @@ const menu = [
 ]
 
 function SideMenu(props) {
+    SideMenu.displayName = "SideMenu";
 
     const [visible, setVisible] = useState(false);
     const navigate = useNavigate();

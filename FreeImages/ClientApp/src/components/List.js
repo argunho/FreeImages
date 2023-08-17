@@ -19,14 +19,16 @@ import HeaderConfig from '../functions/HeaderConfig';
 import '../css/form.css';
 
 function List(props) {
+  List.displayName = "List";
 
   const navigate = useNavigate();
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [inProcess, setProcess] = useState(false);
   const [columns, setColumns] = useState([]);
+  const [inProcess, setProcess] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [response, setResponse] = useState(null);
 
   const defaultColumn = [
     {
@@ -69,16 +71,13 @@ function List(props) {
     setRows(data);
   }
 
-  const resetSelected = () => {
-    setSelectedRows([]);
-  }
-
   const deleteSelected = async () => {
     if (selectedRows.length === 0) return;
 
-    await axios.delete(`${props.api}/${selectedRows.toString()}`, HeaderConfig).then(res => {
-      setProcess(false);
-      getList();
+    await axios.delete(`${props.api}/${selectedRows.toString()}`, HeaderConfig).then(res => {  
+        setResponse(res.data);
+        setProcess(false);
+        setRows(rows.filter(x => selectedRows.some(y => y !== x.id)));
     })
   }
 
@@ -88,9 +87,12 @@ function List(props) {
       title={props.title} 
       button={props.button} 
       selected={selectedRows}
-      progress={inProcess}
-      deleteSelected={deleteSelected}
-      reset={resetSelected} />
+      response={response}
+      deleteSelected={() => {
+        deleteSelected();
+        setProcess(true);
+       }}
+      reset={() => setSelectedRows([])} />
 
       {/* Loading */}
       {!!loading && <Loading />}
