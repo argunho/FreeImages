@@ -50,8 +50,8 @@ namespace FreeImages.Controllers
         [AllowAnonymous]
         public JsonResult GetImages(int page, int count)
         {
-            var images = AllListImages?.Skip(count * (page - 1))?.Take(count)?.ToList();
-            return new JsonResult(new { images, count = images?.Count });
+            var images = AllListImages;
+            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count)?.ToList(), count = images?.Count() });
         }
 
         [HttpGet("{page}/{count}/{keywords}")]
@@ -61,8 +61,8 @@ namespace FreeImages.Controllers
             if (keywords == null) return null;
 
             List<string>? keys = keywords?.Split(",").ToList();
-            var images = AllListImages?.Where(x => x.Keywords != null && keys.Any(k => x.Keywords.Contains(k)))?.Skip(count * (page - 1))?.Take(count)?.ToList();
-            return new JsonResult(new { images, count = images?.Count });
+            var images = AllListImages?.Where(x => x.Keywords != null && keys.Any(k => x.Keywords.Contains(k)))?.ToList();
+            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count).ToList(), count = images?.Count });
         }
 
 

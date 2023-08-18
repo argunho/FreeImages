@@ -25,20 +25,21 @@ function Home() {
   const navigate = useNavigate();
   const loc = useLocation();
   const { number, keywords } = useParams();
-  const perPage = 3;
+  const perPage = 4;
 
   useEffect(() => {
     setLoading(true);
+    console.log(number)
     if (!!number)
-      setPage(number);
+      setPage(parseInt(number));
     get();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loc])
 
   const get = async () => {
     setImgs(null);
-    const res = (!!keywords) ? await fetch(`image/${page}/${perPage}/${keywords}`)
-      : await fetch(`image/${page}/${perPage}`);
+    const res = (!!keywords) ? await fetch(`image/${number || page}/${perPage}/${keywords}`)
+      : await fetch(`image/${number || page}/${perPage}`);
     const data = await res.json();
     if (!!data) {
       const imgs = data?.images;
@@ -78,7 +79,7 @@ function Home() {
     if (!!keywords)
       search();
     else
-      navigate("/" + value);
+      navigate("/" + (value > 1 ? value : ""));
   }
 
   return (
@@ -133,8 +134,9 @@ function Home() {
         })}
 
         {/* Pagination */}
-        {count}
-        {count > perPage && <Pagination variant="outlined" color="primary" count={count / perPage} page={page} onChange={paginate} />}
+        {count > perPage && <div className='buttons-wrapper d-row'>
+          <Pagination variant="outlined" color="secondary" count={count % perPage} page={page} onChange={paginate} />
+        </div>}
 
       </div>}
 
