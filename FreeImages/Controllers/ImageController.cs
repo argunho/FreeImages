@@ -63,7 +63,10 @@ namespace FreeImages.Controllers
             try
             {
                 var image = await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
-                var imageName = $"{model?.Name?.ToLower().Replace(" ", "")}_{DateTime.Now:yyyyMMddHHmmss}{image?.Name[image.Name.LastIndexOf(".")..]}";
+                var imageName = image.Name;
+                var nameIsChanged = (image?.ViewName != model?.Name);
+                if(nameIsChanged)                    
+                    imageName = $"{model?.Name?.ToLower().Replace(" ", "")}_{DateTime.Now:yyyyMMddHHmmss}{image?.Name[image.Name.LastIndexOf(".")..]}";
 
                 if (image == null)
                     return _help.Response("warning", "No image found with matching Id.");
@@ -105,7 +108,7 @@ namespace FreeImages.Controllers
                 else
                 {
                     // Rename blob image name
-                    if (image?.ViewName != model?.Name)
+                    if (nameIsChanged)
                     {
                         var newBlobImage = _blobContainer.GetBlockBlobClient(imageName);
                         if (!await newBlobImage.ExistsAsync())

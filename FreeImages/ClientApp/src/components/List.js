@@ -74,25 +74,38 @@ function List(props) {
   const deleteSelected = async () => {
     if (selectedRows.length === 0) return;
 
-    await axios.delete(`${props.api}/${selectedRows.toString()}`, HeaderConfig).then(res => {  
-        setResponse(res.data);
-        setProcess(false);
-        setRows(rows.filter(x => selectedRows.some(y => y !== x.id)));
+    await axios.delete(`${props.api}/${selectedRows.toString()}`, HeaderConfig).then(res => {
+      setResponse(res.data);
+      setProcess(false);
+      if (res.data.alert === "success") {
+        setRows(rows.filter(x => selectedRows.indexOf(x.id) === -1));
+        setSelectedRows([]);
+      }
     })
+  }
+
+  const reload = () => {
+    setResponse();
+
+    if (!!response && response.alert !== "success")
+      return;
+    
+    setSelectedRows([]);
+    getList();
   }
 
   return (
     <div className='wrapper'>
-      <Heading 
-      title={props.title} 
-      button={props.button} 
-      selected={selectedRows}
-      response={response}
-      deleteSelected={() => {
-        deleteSelected();
-        setProcess(true);
-       }}
-      reset={() => setSelectedRows([])} />
+      <Heading
+        title={props.title}
+        button={props.button}
+        selected={selectedRows}
+        response={response}
+        deleteSelected={() => {
+          deleteSelected();
+          setProcess(true);
+        }}
+        reload={reload} />
 
       {/* Loading */}
       {!!loading && <Loading />}

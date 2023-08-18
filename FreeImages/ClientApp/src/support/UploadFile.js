@@ -168,7 +168,7 @@ function UploadFile(props) {
 
     return (
         <div className='wrapper'>
-            <Heading title="Form" />
+            <Heading title="Form"/>
             <Form
                 heading="Upload an image"
                 inputs={{

@@ -29,26 +29,30 @@ function FileFormPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!!id) {
-            (async () => {
-                const res = await axios.get(`image/${id}`, HeaderConfig);
-                if (!!res?.data)
-                    setImage(res?.data);
-                else
-                    setResponse({ alert: "error", message: "Image data not found!" });
-
-                setLoading(false);
-            })();
-        } else
+        if (!!id) 
+            getItem();
+        else
             setLoading(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id])
+
+    const getItem = async () => {
+        const res = await axios.get(`image/${id}`, HeaderConfig);
+        if (!!res?.data)
+            setImage(res?.data);
+        else
+            setResponse({ alert: "error", message: "Image data not found!" });
+
+        setLoading(false);
+    }
 
 
     const submitForm = async (formData) => {
         setResponse();
         await axios.put(`image/update/${id}`, formData, HeaderConfig).then(res => {
-            setResponse(res.data)
+            setResponse(res.data);
+            if(res.data.alert === "success")
+                getItem();
         }, error => {
             setResponse({ alert: "error", message: error?.message });
         });
@@ -67,7 +71,7 @@ function FileFormPage() {
 
     return (
         <div className='wrapper form-wrapper'>
-            <Heading title="Form" />
+            <Heading title="Form" reload={getItem}/>
             {(!!image && !loading) && <div className='image-wrapper d-column'>
                 <img src={image?.path} alt={image?.viewName} />
             </div>}
