@@ -30,7 +30,7 @@ namespace FreeImages.Controllers
         {
             get
             {
-                return _db.ListImages?.ToList() ?? Enumerable.Empty<ListImage>();
+                return _db.ListImages?.OrderByDescending(x => x.Id).ToList() ?? Enumerable.Empty<ListImage>();
             }
         }
 
@@ -48,8 +48,23 @@ namespace FreeImages.Controllers
 
         [HttpGet("{page}/{count}")]
         [AllowAnonymous]
-        public IEnumerable<ListImage> GetImages(int page, int count) =>
-            AllListImages?.OrderByDescending(x => x.Id).Skip(count * (page - 1))?.Take(count).ToList() ?? Enumerable.Empty<ListImage>();
+        public JsonResult GetImages(int page, int count)
+        {
+            var images = AllListImages?.Skip(count * (page - 1))?.Take(count)?.ToList();
+            return new JsonResult(new { images, count = images?.Count });
+        }
+
+        [HttpGet("{page}/{count}/{keywords}")]
+        [AllowAnonymous]
+        public JsonResult? GetByKeywords(int page, int count, string? keywords = null)
+        {
+            if (keywords == null) return null;
+
+            List<string>? keys = keywords?.Split(",").ToList();
+            var images = AllListImages?.Where(x => x.Keywords != null && keys.Any(k => x.Keywords.Contains(k)))?.Skip(count * (page - 1))?.Take(count)?.ToList();
+            return new JsonResult(new { images, count = images?.Count });
+        }
+
 
         [HttpGet("{id:int}")]
         public async Task<Image?> GetById(int id)
@@ -65,7 +80,12 @@ namespace FreeImages.Controllers
                 var image = await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
                 var imageName = image.Name;
                 var nameIsChanged = (image?.ViewName != model?.Name);
-                if(nameIsChanged)                    
+                var keywords = model.Keywords;
+
+                if (model?.Keywords?.IndexOf(model.Name?.ToLower()) > -1)
+                    keywords += $", {model.Name?.ToLower()}";
+
+                if (nameIsChanged)
                     imageName = $"{model?.Name?.ToLower().Replace(" ", "")}_{DateTime.Now:yyyyMMddHHmmss}{image?.Name[image.Name.LastIndexOf(".")..]}";
 
                 if (image == null)
@@ -85,7 +105,7 @@ namespace FreeImages.Controllers
                 }
 
                 image.Name = imageName;
-                image.Keywords = model?.Keywords;
+                image.Keywords = keywords;
 
                 var listImage = await _db.ListImages.FirstOrDefaultAsync(x => x.ImageId == id);
                 if (listImage == null)
@@ -93,14 +113,14 @@ namespace FreeImages.Controllers
                     var newlistImage = new ListImage
                     {
                         Name = imageName,
-                        Keywords = image.Keywords,
+                        Keywords = keywords,
                         ImageId = image.Id
                     };
                 }
                 else
                 {
                     listImage.Name = imageName;
-                    listImage.Keywords = model?.Keywords;
+                    listImage.Keywords = keywords;
                 }
 
                 if (!await _help.Save())
@@ -182,7 +202,7 @@ namespace FreeImages.Controllers
             {
                 var str = base64string.Substring(base64string.IndexOf(",") + 1);
                 byte[] bytes = Convert.FromBase64String(str);
-                MemoryStream stream = new (bytes);
+                MemoryStream stream = new(bytes);
 
                 return new FormFile(stream, 0, bytes.Length, "image/jpeg", name)
                 {

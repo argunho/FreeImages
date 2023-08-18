@@ -27,6 +27,14 @@ const AppRoutes = [
       {
         path: "/",
         element: <Home />
+      },
+      {
+        path: "/:number",
+        element: <Home />
+      },
+      {
+        path: "/:keywords/:number",
+        element: <Home />
       }
     ]
   },

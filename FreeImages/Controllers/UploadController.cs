@@ -164,6 +164,9 @@ public class UploadController : ControllerBase
             var visible = Permission("Admin,Support,Manager");
             var author = await _db.Users.FirstOrDefaultAsync(x => x.Email == GetClaimsData("Email"));
 
+            if (model?.Keywords?.IndexOf(model.Name?.ToLower()) > -1)
+                model.Keywords += $", {model.Name?.ToLower()}";
+
             var imgData = new Models.Image
             {
                 Name = imgName,

@@ -30,7 +30,7 @@ function Form({ children, ...props }) {
         if (!!res) {
             setChanged(false)
             setLoading(false);
-            console.log(!!res.start, res, res.status, props.inputs)
+
             if (res?.alert === "success")
                     setFormData(props.inputs)
             else
