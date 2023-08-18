@@ -4,6 +4,7 @@ using FreeImages.Services;
 using FreeImages.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Security;
 
 namespace FreeImages.Controllers
@@ -51,7 +52,8 @@ namespace FreeImages.Controllers
         public JsonResult GetImages(int page, int count)
         {
             var images = AllListImages;
-            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count)?.ToList(), count = images?.Count() });
+            Random random = new();
+            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count)?.OrderBy(x => random.Next()).ToList(), count = images?.Count() });
         }
 
         [HttpGet("{page}/{count}/{keywords}")]
@@ -60,9 +62,11 @@ namespace FreeImages.Controllers
         {
             if (keywords == null) return null;
 
+            Random random = new();
+
             List<string>? keys = keywords?.Split(",").ToList();
-            var images = AllListImages?.Where(x => x.Keywords != null && keys.Any(k => x.Keywords.Contains(k)))?.ToList();
-            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count).ToList(), count = images?.Count });
+            var images = AllListImages?.Where(x => x.Keywords != null && keys.Any(k => x.Keywords.Contains(k.ToLower())))?.ToList();
+            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count)?.OrderBy(x => random.Next()).ToList(), count = images?.Count });
         }
 
 
@@ -80,9 +84,9 @@ namespace FreeImages.Controllers
                 var image = await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
                 var imageName = image.Name;
                 var nameIsChanged = (image?.ViewName != model?.Name);
-                var keywords = model.Keywords;
+                var keywords = model?.Keywords?.ToLower();
 
-                if (model?.Keywords?.IndexOf(model.Name?.ToLower()) > -1)
+                if (keywords?.IndexOf(model.Name?.ToLower()) > -1)
                     keywords += $", {model.Name?.ToLower()}";
 
                 if (nameIsChanged)

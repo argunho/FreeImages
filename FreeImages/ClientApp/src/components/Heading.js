@@ -44,29 +44,31 @@ function Heading({ title, button, selected, response, sortByKeyword, deleteSelec
                 <h4 className='heading-title'>{title}</h4>
 
                 <div className='d-row'>
-                    {/* Sort by keyword */}
-                    <div className="sort-wrapper d-column">
-                        <TextField
-                            name="sort"
-                            className="sort-input"
-                            placeholder='Quick search ...'
-                            value={keyword}
-                            onChange={(e) => {
-                                sortByKeyword(e.target.value?.toLowerCase());
-                                setKeyword(e.target.value);
-                            }}
-                        />
-                        {keyword?.length === 0 ? <Search color="action" /> :
-                            <Close color="error"
-                                onClick={() => {
-                                    sortByKeyword("");
-                                    setKeyword("");
-                                }} />}
 
-                    </div>
-
-                    {/*  Add new item */}
+                    {/* List actions */}
                     {!!button && <>
+
+                        {/* Sort by keyword */}
+                        <div className="sort-wrapper d-column">
+                            <TextField
+                                name="sort"
+                                className="sort-input"
+                                placeholder='Quick search ...'
+                                value={keyword}
+                                onChange={(e) => {
+                                    sortByKeyword(e.target.value?.toLowerCase());
+                                    setKeyword(e.target.value);
+                                }}
+                            />
+                            {keyword?.length === 0 ? <Search color="action" /> :
+                                <Close color="error"
+                                    onClick={() => {
+                                        sortByKeyword("");
+                                        setKeyword("");
+                                    }} />}
+                        </div>
+
+                        {/*  Add new item */}
                         <IconButton
                             onClick={() => navigate(button.url)}
                             title={button.title}

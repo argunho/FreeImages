@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 
 // Installed
-import { TextField, Button, FormControl, Pagination } from '@mui/material';
-import { ImageNotSupportedOutlined, Search } from '@mui/icons-material';
+import { TextField, Pagination, IconButton } from '@mui/material';
+import { Close, ImageNotSupportedOutlined, Search } from '@mui/icons-material';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import FlatList from 'flatlist-react/lib';
 
 // Components
 import Loading from '../components/Loading';
 
-
 // Css
 import '../css/gallery.css';
+// import '../assets/gallery.css';
 
 function Home() {
   Home.displayName = "Home";
@@ -37,18 +37,12 @@ function Home() {
 
   const get = async () => {
     setImgs([]);
-    const apiRequest = `` + (!!keyword) ? `/${keyword}` : null;
-    console.log(47, apiRequest)
-    console.log(48,num)
-    console.log(49,page)
-    console.log(50,perPage)
-    console.log(51,num || page)
 
     const res = await fetch(`image/${page}/${perPage}` + (!!keyword ? `/${keyword}` : ""));
     const data = await res.json();
     if (!!data) {
       const imgs = data?.images;
-      const images = [[],[],[],[]];
+      const images = [[], [], [], []];
       for (var i = 0; i < imgs?.length; i++) {
         if ([3, 7, 11, 15, 19].indexOf(i) > -1)
           images[3].push(imgs[i])
@@ -62,20 +56,21 @@ function Home() {
       setLoading(false);
       setPageCount(countOfPages(data?.count));
       setImgs(images);
+      setSearchKeyword("");
     }
   }
 
   const countOfPages = (count) => {
     let number = count / perPage;
-    console.log(typeof number)
-    if(Number(number) === number && number % 1 !== 0)
+
+    if (Number(number) === number && number % 1 !== 0)
       number = Math.floor(number) + 1;
-    
+
     return number;
   }
 
   const search = () => {
-    navigate(`search/${searchKeyword}/${page > 1 ? page : ""}`)
+    navigate(`/search/${searchKeyword}${page > 1 ? "/" + page : ""}`)
   }
 
   const renderImg = (img, ind) => {
@@ -84,7 +79,7 @@ function Home() {
     return <div key={ind} className='gallery-img-wrapper d-column'>
       <img src={img?.base64String}
         className="gallery-img"
-        onClick={() => navigate(`view/img/${img.imageId}`)}
+        onClick={() => navigate(`/view/img/${img.imageId}`)}
         alt={window.location.origin} /></div>
   }
 
@@ -98,7 +93,9 @@ function Home() {
 
   return (
     <div className='gallery-container'>
-      <FormControl className="search-wrapper d-row">
+
+      {/* Search */}
+      <div className="search-wrapper d-row">
         <TextField
           placeholder="Find image ..."
           className="search-input"
@@ -109,28 +106,41 @@ function Home() {
             maxLength: 30
           }}
           disabled={loading || (!keyword && imgs?.length === 0)}
-          onChange={(e) => setSearchKeyword(e.target.value)} 
+          onChange={(e) => setSearchKeyword(e.target.value)}
           onKeyDown={(e) => {
-            if(e.key === "Enter")
+            if (e.key === "Enter")
               setSearchKeyword(e.target.value);
-          }}/>
-        <Button variant='text'
-          className='search-button'
-          onClick={() => search()}
-          disabled={loading || searchKeyword.length < 3}>
-          <Search />
-        </Button>
-      </FormControl>
-      
+          }} />
+
+        <div className='search-buttons d-row'>
+
+          {/* Reset search */}
+          {searchKeyword?.length > 3 && <IconButton
+            className='reset-search'
+            onClick={() => setSearchKeyword("")}
+            disabled={loading || searchKeyword.length < 3}>
+            <Close />
+          </IconButton>}
+
+          {/* Search */}
+          <IconButton
+            className='search-button'
+            onClick={() => search()}
+            disabled={loading || searchKeyword.length < 3}>
+            <Search />
+          </IconButton>
+        </div>
+      </div>
+
       {/* Gallery */}
       {/* <div className="gallery-wrapper" >
           <FlatList
-            list={imgs}
+            list={imgs[0]?.concat(imgs[1])?.concat(imgs[2])?.concat(imgs[3])}
             renderItem={(img) => {
               return <div className="gallery-img-wrapper" key={img.id}>
                 <img
                   className="gallery-img"
-                  src={img.path.replace("resized_", "")}
+                  src={img.base64String}
                   alt={img.name}
                 />
               </div>

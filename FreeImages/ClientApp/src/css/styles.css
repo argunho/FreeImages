@@ -149,24 +149,31 @@ div.search-wrapper {
   border-color: #943553 !important;
 }
 
-.search-button {
+.search-buttons {
   position: absolute !important;
-  margin-right: 20px !important;
-  margin-top: 3px !important;
   right: 0;
-  border-radius: 50% !important;
-  min-width: 48px !important;
+  margin-top: 3px;
+  z-index: 3000;
+  width: max-content;
+  padding: 0 10px;
 }
 
 .search-button:disabled {
   opacity: 0.6;
 }
 
-.search-button svg {
-  font-size: 40px !important;
-  color: #943553;
+.reset-search {
+  margin-right: 10px !important;
 }
 
+.search-button svg,
+.reset-search svg {
+  font-size: 40px !important;
+}
+
+.search-button svg {
+  color: #943553;
+}
 /* #endregion */
 
 /* #region Heading */

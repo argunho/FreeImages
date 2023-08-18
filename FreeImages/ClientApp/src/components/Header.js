@@ -21,6 +21,7 @@ function Header({ children, authorized, cls }) {
     <header className={`d-row jc-between ${cls}`} style={!!bgImg ? { background: `url(${bgImg})` } : null}>
       <p className='logotype d-column' onClick={() => navigate("/")}>
         Free images
+        <span>100% free to use</span>
       </p>
 
       <div className='header-buttons d-row'>

@@ -15,14 +15,25 @@ header {
   letter-spacing: 6px;
   width: max-content;
   color: #FFFFFF;
+  height: max-content;
   text-transform: capitalize;
   font-family: faishal;
+  margin: 0 !important;
   /* font-family: coventry; */
   /* font-family: enough; */
   /* font-family: idilica; */
   /* font-family: pneumati; */
   /* font-family: pneutall; */
   /* font-family: pneuwide; */
+}
+
+.logotype span {
+  font-size: 20px;
+  width: 100%;
+  text-align: right;
+  margin-top: -30px;
+  font-family: pneuwide;
+  letter-spacing: 1px;
 }
 
 header.support {

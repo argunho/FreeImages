@@ -88,9 +88,13 @@ public class UploadController : ControllerBase
         // New image name
         var imgName = $"{model?.Name?.ToLower().Replace(" ", "")}_{DateTime.Now:yyyyMMddHHmmss}." +
                             $"{uploadedFile?.ContentType[(uploadedFile.ContentType.IndexOf("/") + 1)..]}";
+        var keywords = model?.Keywords?.ToLower();
+        if (keywords?.IndexOf(model?.Name?.ToLower()) > -1)
+            keywords += $", {model?.Name?.ToLower()}";
+
+        var path = @$"Download/{imgName}";
         try
         {
-            var path = @$"Download/{imgName}";
 
             using var stream = uploadedFile?.OpenReadStream();
 
@@ -170,7 +174,7 @@ public class UploadController : ControllerBase
             var imgData = new Models.Image
             {
                 Name = imgName,
-                Keywords = model?.Keywords,
+                Keywords = keywords,
                 Author = author,
                 Width = img.Width,
                 Height = img.Height,
@@ -184,11 +188,11 @@ public class UploadController : ControllerBase
                 ListImage listImage = new()
                 {
                     Name = imgName,
-                    Keywords = model?.Keywords,
+                    Keywords = keywords,
                     ImageId = imgData.Id
                 };
 
-                listImage.Base64 =  ImageToBase64(uploadedFile, 500);
+                listImage.Base64 = ImageToBase64(uploadedFile, 500);
                 _db.ListImages?.Add(listImage);
                 if (!await _help.Save())
                     return _help.Response("warning");
