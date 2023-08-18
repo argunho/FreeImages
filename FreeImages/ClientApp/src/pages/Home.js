@@ -18,28 +18,33 @@ function Home() {
 
   const [imgs, setImgs] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [count, setCount] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const loc = useLocation();
-  const { number, keywords } = useParams();
-  const perPage = 4;
+  const { num, keyword } = useParams();
+  const perPage = 20;
 
   useEffect(() => {
     setLoading(true);
-    console.log(number)
-    if (!!number)
-      setPage(parseInt(number));
+    if (!!num)
+      setPage(parseInt(num));
     get();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loc])
 
   const get = async () => {
-    setImgs(null);
-    const res = (!!keywords) ? await fetch(`image/${number || page}/${perPage}/${keywords}`)
-      : await fetch(`image/${number || page}/${perPage}`);
+    setImgs([]);
+    const apiRequest = `` + (!!keyword) ? `/${keyword}` : null;
+    console.log(47, apiRequest)
+    console.log(48,num)
+    console.log(49,page)
+    console.log(50,perPage)
+    console.log(51,num || page)
+
+    const res = await fetch(`image/${page}/${perPage}` + (!!keyword ? `/${keyword}` : ""));
     const data = await res.json();
     if (!!data) {
       const imgs = data?.images;
@@ -55,13 +60,22 @@ function Home() {
           images[0].push(imgs[i])
       }
       setLoading(false);
-      setCount(data?.count);
+      setPageCount(countOfPages(data?.count));
       setImgs(images);
     }
   }
 
+  const countOfPages = (count) => {
+    let number = count / perPage;
+    console.log(typeof number)
+    if(Number(number) === number && number % 1 !== 0)
+      number = Math.floor(number) + 1;
+    
+    return number;
+  }
+
   const search = () => {
-    navigate(`/${searchKeyword}/${page > 1 ? page : ""}`)
+    navigate(`search/${searchKeyword}/${page > 1 ? page : ""}`)
   }
 
   const renderImg = (img, ind) => {
@@ -76,7 +90,7 @@ function Home() {
 
   const paginate = (e, value) => {
     setPage(value);
-    if (!!keywords)
+    if (!!keyword)
       search();
     else
       navigate("/" + (value > 1 ? value : ""));
@@ -94,8 +108,12 @@ function Home() {
           inputProps={{
             maxLength: 30
           }}
-          disabled={loading && (!keywords && imgs?.length === 0)}
-          onChange={(e) => setSearchKeyword(e.target.value)} />
+          disabled={loading || (!keyword && imgs?.length === 0)}
+          onChange={(e) => setSearchKeyword(e.target.value)} 
+          onKeyDown={(e) => {
+            if(e.key === "Enter")
+              setSearchKeyword(e.target.value);
+          }}/>
         <Button variant='text'
           className='search-button'
           onClick={() => search()}
@@ -103,7 +121,7 @@ function Home() {
           <Search />
         </Button>
       </FormControl>
-
+      
       {/* Gallery */}
       {/* <div className="gallery-wrapper" >
           <FlatList
@@ -134,8 +152,8 @@ function Home() {
         })}
 
         {/* Pagination */}
-        {count > perPage && <div className='buttons-wrapper d-row'>
-          <Pagination variant="outlined" color="secondary" count={count % perPage} page={page} onChange={paginate} />
+        {pageCount > 1 && <div className='buttons-wrapper d-row'>
+          <Pagination variant="outlined" color="secondary" count={pageCount} page={page} onChange={paginate} />
         </div>}
 
       </div>}

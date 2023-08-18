@@ -1,7 +1,3 @@
-/* body {
-  background: url('./../assets/images/photostudio.jpg') center 100% fixed no-repeat;
-} */
-
 html {
   font-size: 14px;
 }
@@ -107,6 +103,12 @@ body {
   width: 100%;
   height: 300px;
 }
+
+.loading-container p {
+  font-size: 18px;
+  letter-spacing: 1px;
+  font-family: dancing;
+}
 /* #endregion */
 
 /* #region Search */
@@ -205,6 +207,28 @@ div.search-wrapper {
   text-indent: 10px;
   font-size: 20px;
   letter-spacing: 2px;
+}
+
+.sort-wrapper {
+  width: calc(100% - 20px);
+  max-width: 300px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+  margin: auto 10px;
+  height: 100%;
+}
+
+.sort-input > * {
+  width: 100%;
+  height: 40px !important;
+  border-radius: 5px !important;
+}
+
+.sort-wrapper svg {
+  position: absolute;
+  z-index: 3000;
+  right: 10px;
 }
 /* #endregion */
 

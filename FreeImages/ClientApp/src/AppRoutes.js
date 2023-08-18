@@ -29,11 +29,15 @@ const AppRoutes = [
         element: <Home />
       },
       {
-        path: "/:number",
+        path: "/:num",
         element: <Home />
       },
       {
-        path: "/:keywords/:number",
+        path: "/search/:keyword",
+        element: <Home />
+      },
+      {
+        path: "search/:keyword/:num",
         element: <Home />
       }
     ]

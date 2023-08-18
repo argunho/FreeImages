@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 
 // Installed 
-import { Alert, IconButton } from '@mui/material';
+import { Alert, FormControl, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { Edit, Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +25,7 @@ function List(props) {
 
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [keyword, setKeyword] = useState("");
   const [columns, setColumns] = useState([]);
   const [inProcess, setProcess] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -105,17 +106,18 @@ function List(props) {
           deleteSelected();
           setProcess(true);
         }}
-        reload={reload} />
+        reload={reload} 
+        sortByKeyword={(value) => setKeyword(value)}/>
 
       {/* Loading */}
-      {!!loading && <Loading />}
+      {loading && <Loading />}
 
       {/* Content */}
       {(!loading && rows.length > 0) && <>
 
         {/* Items list} */}
         <DataGrid
-          rows={rows}
+          rows={keyword?.length > 0 ? rows.filter(x => x?.name?.toLowerCase().includes(keyword) || x?.keywords?.toLowerCase().includes(keyword)) : rows}
           columns={columns}
           pageSize={10}
           rowsPerPageOptions={[10]}
