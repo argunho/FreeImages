@@ -77,6 +77,7 @@ function UserForm({ children, api, inputs, heading, confirmInputs, permission, d
                 confirmInputs={confirmInputs}
                 response={response}
                 disabled={disabled}
+                required={true}
                 onSubmit={submitForm}>
                 {(!!token && !!permission) && <div className='d-column ai-start'>
                     {["Admin", "Manager"].map((role, i) => {

@@ -21,7 +21,7 @@ function UploadFile(props) {
     UploadFile.displayName = "UploadFile";
 
     const [loading, setLoading] = useState(false);
-    const [image, setImage] = useState();
+    const [image, setImage] = useState(props?.image);
     const [error, setError] = useState();
     const [file, setFile] = useState(null);
     const [response, setResponse] = useState();
@@ -112,7 +112,7 @@ function UploadFile(props) {
         setError();
         setLoading(true);
 
-        if (ev.target.files && ev.target.files.length > 0) {
+        if (ev.target.files && ev.target.files?.length > 0) {
 
             const file = ev.target.files[0];
 
@@ -151,8 +151,10 @@ function UploadFile(props) {
     const submitForm = async (formData) => {
 
         // If this component uses as a component in other parent component
-        if (!!props?.import) {
-            props?.submit(image);
+        if (!!props?.inputs) {
+            let data = formData;
+            data.imgString = image;
+            props?.submit(data);
             return;
         }
 
@@ -186,14 +188,15 @@ function UploadFile(props) {
 
     return (
         <div className='wrapper'>
-            {!props.import && <Heading title="Form" />}
+            {!props.inputs && <Heading title="Form" />}
             <Form
-                heading="Upload an image"
-                inputs={!!props.import ? {} : {
+                heading={props?.label || "Upload an image"}
+                inputs={props?.inputs || {
                     name: "",
                     keywords: ""
                 }}
                 response={response}
+                required={!props?.inputs}
                 onSubmit={submitForm}
                 reset={() => setFile()}>
 

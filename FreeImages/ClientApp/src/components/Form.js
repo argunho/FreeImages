@@ -66,7 +66,7 @@ function Form({ children, ...props }) {
             // Form validation
             let invalidForm = false;
             inputs.forEach(input => {
-                if (formData[input].length < 2) {
+                if (formData[input]?.length < 2 && props?.required) {
                     invalidForm = true;
                     setErrors(errors => [...errors, input])
                 }
@@ -101,7 +101,7 @@ function Form({ children, ...props }) {
                     label={capitalize(x)}
                     className='fields'
                     size="medium"
-                    required
+                    required={props?.required}
                     disabled={loading || props.disabled}
                     name={x}
                     type={x.toLowerCase().indexOf("password") > -1 ? "password" : (x === "email" ? x : "text")}

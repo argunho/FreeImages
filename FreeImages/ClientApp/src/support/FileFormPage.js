@@ -81,6 +81,8 @@ function FileFormPage() {
                     name: image?.viewName,
                     keywords: image?.keywords
                 }}
+               
+                required={true}
                 response={response}
                 onSubmit={submitForm} />}
 

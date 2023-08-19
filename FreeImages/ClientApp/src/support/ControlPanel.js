@@ -19,9 +19,7 @@ import configJson from '../assets/json/configuration.json';
 import HeaderConfig from '../functions/HeaderConfig';
 
 const dropdownMenu = [
-  { name: "Header background", value: "bg" },
-  { name: "Ads", value: "ads" },
-  { name: "Paypal account", value: "paypal" },
+  { name: "Page settings", value: "config" },
   { name: "Seo", value: "seo" }
 ];
 
@@ -30,13 +28,13 @@ function ControlPanel() {
 
   const [dropdown, setDropdown] = useState(false);
   const [overflow, setOverflow] = useState(true);
-  const [form, setForm] = useState("bg");
+  const [form, setForm] = useState("config");
   const [response, setResponse] = useState();
   // const [jsonContent, setJsonContent] = useState(JSON.stringify(configJson, null, 2));
 
   useEffect(() => {
-console.log(configJson)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log(configJson)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const dropdownHandle = (value) => {
@@ -54,22 +52,14 @@ console.log(configJson)
     setDropdown(false);
   }
 
-  const onSubmitImage = async (value) => {
-    const data = {
-      jsonString: value,
-      fileName: "configuration.json",
-      name: "headerBackground"
-    }
-
-    onSubmit(data);
-  }
-
   const onSubmit = async (data) => {
-    await axios.post("data/updateJsonFile", data, HeaderConfig).then(res => {
-      setResponse(res.data);
-    }, error => {
-      console.log(error);
-    })
+    if (form === "config") {
+      await axios.post("data/updateJsonFile", data, HeaderConfig).then(res => {
+        setResponse(res.data);
+      }, error => {
+        console.log(error);
+      })
+    }
   }
 
   return (
@@ -88,7 +78,13 @@ console.log(configJson)
         </div>
       </Heading>
 
-      {form === "bg" && <UploadFile import={true} submit={onSubmitImage} response={response} />}
+      {form === "config" && <UploadFile inputs={{
+        name: configJson?.name,
+        text: configJson?.text,
+        adsApi: configJson?.adsApi,
+        paypal: configJson?.paypal,
+        instagram: configJson?.instagram
+      }} label={dropdownMenu.find(x => x.value === form)?.name} image={configJson.imageString} submit={onSubmit} response={response} />}
     </div>
   )
 }

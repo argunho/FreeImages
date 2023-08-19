@@ -15,7 +15,8 @@ public class DataController : ControllerBase
     private readonly IHelpFunctions _help;
     private readonly ConfigurationService _config;
 
-    public DataController(IHelpFunctions help) { 
+    public DataController(IHelpFunctions help)
+    {
         _help = help;
         _config = ConfigurationService.Load("BlobStorage");
     }
@@ -27,31 +28,43 @@ public class DataController : ControllerBase
 
     #region POST
     [HttpPost("updateJsonFile")]
-    public async Task<JsonResult> PostJson(JsonViewModel model) 
+    public async Task<JsonResult> PostJson(PageConfigViewModel model)
     {
 
         if (!ModelState.IsValid)
             return _help.Response("warning", "Incorrect form data");
 
-        var pathName = @$"ClientApp/src/assets/json/{model.FileName}";
-        if (System.IO.File.Exists(pathName))
-        {
-            try
-            {
-                var jsonFile = System.IO.File.ReadAllText(pathName);
-                var currentJsonContent = JsonConvert.DeserializeObject<JsonContent>(jsonFile);
-                //var img = currentJsonContent[model.Name?.ToString()];
-                // currentJsonContent[model.Name?.ToString()] = model.JsonString;
+        var pathName = PathName("ClientApp/src/assets/json") + "/configuration.json";
 
-                var updatedJsonContent = JsonConvert.SerializeObject(currentJsonContent);
-                await System.IO.File.WriteAllTextAsync(pathName, updatedJsonContent);
-            } catch (Exception ex)
-            {
-                return _help.Response("error", ex.Message);
-            }
+        if (!System.IO.File.Exists(pathName))
+            return _help.Response("error", "Json file not found");
+
+        try
+        {
+            var jsonFile = System.IO.File.ReadAllText(pathName);
+            var currentJsonContent = JsonConvert.DeserializeObject<PageConfigViewModel>(jsonFile);
+            //currentJsonContent[model.Name?.ToString()] = model.ImgString;
+
+            var updatedJsonContent = JsonConvert.SerializeObject(model);
+            await System.IO.File.WriteAllTextAsync(pathName, updatedJsonContent);
+        }
+        catch (Exception ex)
+        {
+            return _help.Response("error", ex.Message);
         }
 
         return _help.Response("success");
+    }
+    #endregion
+
+    #region Helpers
+    public string PathName(string path)
+    {
+        var pathName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, path));
+        if (!Directory.Exists(pathName))
+            pathName = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "wwwroot/static"));
+
+        return pathName;
     }
     #endregion
 }
