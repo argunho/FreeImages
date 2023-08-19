@@ -15,6 +15,7 @@ import UserFormPage from "./support/UserFormPage";
 // Pages
 import Home from "./pages/Home";
 import FileFormPage from "./support/FileFormPage";
+import ControlPanel from "./support/ControlPanel";
 
 const AppRoutes = [
   {
@@ -106,6 +107,10 @@ const AppRoutes = [
       {
         path: '/sp/images/edit/:id',
         element: <FileFormPage />
+      },
+      {
+        path: "/sp/control/panel",
+        element: <ControlPanel />
       }
     ]
   }

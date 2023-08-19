@@ -14,7 +14,7 @@ import Form from '../components/Form';
 import HeaderConfig from '../functions/HeaderConfig';
 
 // Css
-import './../css/fileUpload.css';
+import './../assets/css/fileUpload.css';
 import 'react-image-crop/dist/ReactCrop.css';
 
 function UploadFile(props) {
@@ -138,6 +138,13 @@ function UploadFile(props) {
     }
 
     const submitForm = async (formData) => {
+
+        // If this component uses as a component in other parent component
+        if (!!props?.import) {
+            props?.submit(image);
+            return;
+        }
+
         let data = new FormData();
         data.append("uploadedFile", file);
 
@@ -168,10 +175,10 @@ function UploadFile(props) {
 
     return (
         <div className='wrapper'>
-            <Heading title="Form"/>
+            {!props.import && <Heading title="Form" />}
             <Form
                 heading="Upload an image"
-                inputs={{
+                inputs={!!props.import ? {} : {
                     name: "",
                     keywords: ""
                 }}

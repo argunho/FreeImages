@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 // Installed
-import { Button, CircularProgress, TextField } from '@mui/material';
+import { Button, CircularProgress, TextField, inputClasses } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -14,8 +14,8 @@ import Response from './Response';
 function Form({ children, ...props }) {
     Form.displayName = "Form";
 
-    const inputs = Object.keys(props.inputs);
-    const [formData, setFormData] = useState(props.inputs);
+    const inputs = Object.keys(props?.inputs);
+    const [formData, setFormData] = useState(props?.inputs);
     const [changed, setChanged] = useState(false);
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState(null);
@@ -32,7 +32,7 @@ function Form({ children, ...props }) {
             setLoading(false);
 
             if (res?.alert === "success")
-                    setFormData(props.inputs)
+                setFormData(props.inputs)
             else
                 console.warn(res);
         }
@@ -52,24 +52,28 @@ function Form({ children, ...props }) {
         e.preventDefault();
 
         setResponse();
-        const confirm = props?.confirmInputs;
 
-        // If exists inputs to validate
-        if (!!props?.confirmInputs && formData[confirm[0]] !== formData[confirm[1]]) {
-            setErrors(confirm);
-            return;
-        }
+        // If parent component has active text fields 
+        if(inputs !== {}){
+            const confirm = props?.confirmInputs;
 
-        // Form validation
-        let invalidForm = false;
-        inputs.forEach(input => {
-            if (formData[input].length < 2) {
-                invalidForm = true;
-                setErrors(errors => [...errors, input])
+            // If exists inputs to validate
+            if (!!props?.confirmInputs && formData[confirm[0]] !== formData[confirm[1]]) {
+                setErrors(confirm);
+                return;
             }
-        })
 
-        if (invalidForm) return;
+            // Form validation
+            let invalidForm = false;
+            inputs.forEach(input => {
+                if (formData[input].length < 2) {
+                    invalidForm = true;
+                    setErrors(errors => [...errors, input])
+                }
+            })
+
+            if (invalidForm) return;
+        }
 
         setLoading(true);
         props.onSubmit(formData);
@@ -92,7 +96,7 @@ function Form({ children, ...props }) {
     return (
         <form onSubmit={submitForm}>
             <h4 className='form-title'>{props.heading}</h4>
-            {inputs.map((x, ind) => (
+            {!!inputs && inputs?.map((x, ind) => (
                 <TextField key={ind}
                     label={capitalize(x)}
                     className='fields'
@@ -117,7 +121,7 @@ function Form({ children, ...props }) {
                 {changed && <Button color="error" variant='outlined' onClick={reload} disabled={loading}>
                     <Close />
                 </Button>}
-                <Button type="submit" variant='outlined' color="inherit" disabled={props.disabled || !changed}>
+                <Button type="submit" variant='outlined' color="inherit" disabled={!inputs && (props.disabled || !changed)}>
                     {loading ? <CircularProgress className='loading-circular' /> : "Save"}
                 </Button>
             </div>

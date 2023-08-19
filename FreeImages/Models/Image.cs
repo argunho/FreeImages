@@ -31,6 +31,8 @@ public class Image
     public User? Author { get; set; }
     public int? Width { get; set; }
     public int? Height { get; set; }
+    public long? View { get; set; }
+    public int? Downloaded { get; set; }
     public bool Visible { get; set; }
     public DateTime Date { get; set; } = DateTime.Now;
 }

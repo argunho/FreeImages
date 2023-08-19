@@ -11,7 +11,7 @@ import Header from '../components/Header';
 import SideMenu from '../components/SideMenu';
 
 // Css
-import './../css/support.css';
+import './../assets/css/support.css';
 
 function SupportLayout({ children }) {
   SupportLayout.displayName = "SupportLayout";

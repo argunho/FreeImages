@@ -10,7 +10,7 @@ import FlatList from 'flatlist-react/lib';
 import Loading from '../components/Loading';
 
 // Css
-import '../css/gallery.css';
+import '../assets/css/gallery.css';
 // import '../assets/gallery.css';
 
 function Home() {

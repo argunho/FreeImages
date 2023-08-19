@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react';
 
 // Installed 
-import { Alert, FormControl, IconButton, TextField } from '@mui/material';
+import { Alert, CircularProgress, IconButton, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import { Edit, Search } from '@mui/icons-material';
+import { Close, DeleteForever, Edit, Refresh, Search } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -16,7 +16,7 @@ import Loading from './Loading';
 import HeaderConfig from '../functions/HeaderConfig';
 
 // Css
-import '../css/form.css';
+import '../assets/css/form.css';
 
 function List(props) {
   List.displayName = "List";
@@ -30,6 +30,7 @@ function List(props) {
   const [inProcess, setProcess] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [response, setResponse] = useState(null);
+  const [confirm, setConfirm] = useState(false);
 
   const defaultColumn = [
     {
@@ -90,7 +91,7 @@ function List(props) {
 
     if (!!response && response.alert !== "success")
       return;
-    
+
     setSelectedRows([]);
     getList();
   }
@@ -99,15 +100,51 @@ function List(props) {
     <div className='wrapper'>
       <Heading
         title={props.title}
-        button={props.button}
-        selected={selectedRows}
         response={response}
-        deleteSelected={() => {
+        isConfirmed={() => {
           deleteSelected();
-          setProcess(true);
+          setConfirm(false);
         }}
-        reload={reload} 
-        sortByKeyword={(value) => setKeyword(value)}/>
+        confirm={confirm}
+        reload={reload}>
+
+        {/* Sort by keyword */}
+        <div className="sort-wrapper d-column">
+          <TextField
+            name="sort"
+            className="sort-input"
+            placeholder='Quick search ...'
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+          {keyword?.length === 0 ? <Search color="action" /> :
+            <Close color="error"
+              onClick={() => setKeyword("")} />}
+        </div>
+
+        {/*  Add new item */}
+        <IconButton
+          onClick={() => navigate(props.button.url)}
+          title={props.button.title}
+          color='info'>
+          {props.button.icon}
+        </IconButton>
+
+        {/* Reload page */}
+        <IconButton onClick={reload} color="secondary" title="Reload page">
+          <Refresh />
+        </IconButton>
+
+        {/* Delete selected */}
+        <IconButton onClick={() => {
+          setConfirm(true);
+          setProcess(true);
+        }} color='error' title="Delete selected"
+          disabled={selectedRows?.length === 0 || inProcess} className='delete-btn'>
+          {inProcess ? <CircularProgress size={20} color='inherit' /> : <DeleteForever />}
+        </IconButton>
+
+      </Heading>
 
       {/* Loading */}
       {loading && <Loading />}
@@ -160,11 +197,12 @@ function List(props) {
           }}
         />
 
-      </>}
+      </>
+      }
 
       {/* Empty list */}
       {(!loading && rows.length === 0) && <Alert severity='info'>Nothing is found.</Alert>}
-    </div>
+    </div >
   )
 }
 

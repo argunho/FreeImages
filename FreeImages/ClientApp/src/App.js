@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
 
+// Installed
+
 // Components
 import Loading from './components/Loading';
 
-
 // Css
-import './css/styles.css';
-import './css/fonts.css';
+import './assets/css/styles.css';
+import './assets/css/fonts.css';
 
 function App() {
   App.displayName = "App";
@@ -16,6 +17,7 @@ function App() {
   const [currentLayout, setLayout] = useState(null);
 
   const loc = useLocation();
+
 
   useEffect(() => {
     setLayout(AppRoutes[loc.pathname.indexOf("sp/") === -1 ? 0 : 1]);

@@ -53,7 +53,7 @@ namespace FreeImages.Controllers
         {
             var images = AllListImages;
             Random random = new();
-            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count)?.OrderBy(x => random.Next()).ToList(), count = images?.Count() });
+            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count)?.OrderBy(x => random.Next(20)).ToList(), count = images?.Count() });
         }
 
         [HttpGet("{page}/{count}/{keywords}")]
@@ -66,7 +66,7 @@ namespace FreeImages.Controllers
 
             List<string>? keys = keywords?.Split(",").ToList();
             var images = AllListImages?.Where(x => x.Keywords != null && keys.Any(k => x.Keywords.Contains(k.ToLower())))?.ToList();
-            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count)?.OrderBy(x => random.Next()).ToList(), count = images?.Count });
+            return new JsonResult(new { images = images?.Skip(count * (page - 1))?.Take(count)?.OrderBy(x => random.Next(20)).ToList(), count = images?.Count });
         }
 
 

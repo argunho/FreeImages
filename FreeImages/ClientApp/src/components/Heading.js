@@ -1,94 +1,27 @@
-import { useEffect, useState } from 'react';
-
 // Installed
-import { CircularProgress, IconButton, TextField } from '@mui/material'
-import { Close, DeleteForever, KeyboardReturnTwoTone, Refresh, Search } from '@mui/icons-material'
+import { IconButton } from '@mui/material'
+import { KeyboardReturnTwoTone} from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom';
 
 // Components
 import Confirm from './Confirm';
 import Response from './Response';
 
-function Heading({ title, button, selected, response, sortByKeyword, deleteSelected, reload }) {
+function Heading({ children, title, visible, confirm, response, isConfirmed, reload }) {
     Heading.displayName = "Heading";
-
-    const [confirm, setConfirm] = useState(false);
-    const [inProcess, setProcess] = useState(false);
-    const [keyword, setKeyword] = useState("");
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!!response)
-            setProcess(false);
-    }, [response])
-
-    const clickHandle = () => {
-        setConfirm(!confirm);
-        setProcess(!inProcess);
-    }
-
-    const deleteItems = () => {
-        setConfirm(false);
-        deleteSelected();
-    }
-
-    const cancelActon = () => {
-        clickHandle();
-        reload();
-    }
-
     return (
-        <div className={"d-column jc-start heading" + (confirm ? " expanded" : "")} >
+        <div className={"d-column jc-start heading" + (confirm ? " expanded" : "")} 
+            style={{overflow: !!visible ? "visible" : "hidden"}}>
             <div className='d-row jc-between'>
                 <h4 className='heading-title'>{title}</h4>
 
                 <div className='d-row'>
 
-                    {/* List actions */}
-                    {!!button && <>
-
-                        {/* Sort by keyword */}
-                        <div className="sort-wrapper d-column">
-                            <TextField
-                                name="sort"
-                                className="sort-input"
-                                placeholder='Quick search ...'
-                                value={keyword}
-                                onChange={(e) => {
-                                    sortByKeyword(e.target.value?.toLowerCase());
-                                    setKeyword(e.target.value);
-                                }}
-                            />
-                            {keyword?.length === 0 ? <Search color="action" /> :
-                                <Close color="error"
-                                    onClick={() => {
-                                        sortByKeyword("");
-                                        setKeyword("");
-                                    }} />}
-                        </div>
-
-                        {/*  Add new item */}
-                        <IconButton
-                            onClick={() => navigate(button.url)}
-                            title={button.title}
-                            color='info'>
-                            {button.icon}
-                        </IconButton>
-
-                        {/* Reload page */}
-                        <IconButton onClick={reload} color="secondary" title="Reload page">
-                            <Refresh />
-                        </IconButton>
-
-                        {/* Delete selected */}
-                        <IconButton onClick={clickHandle}
-                            color='error' title="Delete selected"
-                            disabled={selected?.length === 0 || inProcess} className='delete-btn'>
-                            {inProcess ? <CircularProgress size={20} color='inherit' />
-                                : <DeleteForever />}
-                        </IconButton>
-                    </>}
+                    {/* Children */}
+                    {!!children && children}
 
                     {/* Go back */}
                     <IconButton
@@ -101,7 +34,7 @@ function Heading({ title, button, selected, response, sortByKeyword, deleteSelec
             </div>
 
             {/* Confirm alert */}
-            {confirm && <Confirm confirm={deleteItems} reset={cancelActon} />}
+            {!!confirm && <Confirm confirm={isConfirmed} reset={reload} />}
 
             {!!response && <Response res={response} close={reload} />}
         </div >

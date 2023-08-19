@@ -1,0 +1,11 @@
+{
+    "name": "JSON Editor",
+    "description": "A viewer/editor for JSON files, providing code folding and structured editing",
+    "tags": ["editor"], 
+    "fileHandlers": [
+        {
+          "glob": "*.json",
+          "handler": "/"
+        }
+      ]
+  }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Logout, FeaturedPlayList, Image, Close, Home } from '@mui/icons-material';
+import { Logout, FeaturedPlayList, Image, Close, Home, Settings } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { Button, List, ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar } from '@mui/material';
 
@@ -8,6 +8,7 @@ const menu = [
     // { name: "Register user", link: "register", icon: <FeaturedPlayList />, submenu: true },
     { name: "Images", link: "images", icon: <Image /> },
     // { name: "Upload image", link: "upload-image", icon: <UploadFile />, submenu: true },
+    { name: "Control panel", link: "control/panel", icon: <Settings />},
     { name: "Logout", link: "logout", icon: <Logout /> }
 ]
 

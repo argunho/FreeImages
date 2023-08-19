@@ -15,7 +15,7 @@ import Confirm from '../components/Confirm';
 import HeaderConfig from '../functions/HeaderConfig';
 
 // Css
-import './../css/form.css';
+import './../assets/css/form.css';
 
 function FileFormPage() {
     FileFormPage.displayName = "FileFormPage";

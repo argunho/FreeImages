@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
 
 // Css
-import './../css/login.css';
+import './../assets/css/login.css';
 import Response from '../components/Response';
 
 const defaultHeight = window.innerHeight;

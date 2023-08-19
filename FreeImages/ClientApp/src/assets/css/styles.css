@@ -182,7 +182,6 @@ div.search-wrapper {
   margin: 25px 0 10px 0;
   height: 50px;
   transition: all 0.7s ease-in-out;
-  overflow: hidden;
   position: relative;
   border: 1px solid #bebebeb6;
 }
