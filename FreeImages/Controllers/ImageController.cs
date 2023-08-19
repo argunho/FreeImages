@@ -4,8 +4,6 @@ using FreeImages.Services;
 using FreeImages.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Security;
 
 namespace FreeImages.Controllers
 {

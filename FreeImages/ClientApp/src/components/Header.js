@@ -9,18 +9,19 @@ import { Home } from '@mui/icons-material';
 // Css
 import './../assets/css/header.css';
 
+// Json
+import jsonConfig from "../assets/json/configuration.json";
+
 function Header({ children, authorized, cls }) {
   Header.displayName = "Header";
-
-  const [bgImg, setBgImg] = useState();
 
   const navigate = useNavigate();
 
 
   return (
-    <header className={`d-row jc-between ${cls}`} style={!!bgImg ? { background: `url(${bgImg})` } : null}>
+    <header className={`d-row jc-between ${cls}`} style={{ background: `url(${jsonConfig.headerBackground})` }}>
       <p className='logotype d-column' onClick={() => navigate("/")}>
-        Free images
+        {jsonConfig.name}
         <span>100% free to use</span>
       </p>
 

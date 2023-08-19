@@ -50,6 +50,17 @@ function UploadFile(props) {
     const previewCanvasRef = useRef(null);
 
     useEffect(() => {
+        const res = props?.response;
+        if(!res) return;
+        setLoading(false);
+        setResponse(res)
+        if(res?.alert === "success"){
+            setFile();
+            setImage(null);
+        }
+    }, [props?.response])
+
+    useEffect(() => {
         if (image && props.reset)
             setImage(null);
         // eslint-disable-next-line react-hooks/exhaustive-deps

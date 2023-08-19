@@ -12,6 +12,7 @@ public class JsonViewModel
     [Required]
     [Column(TypeName = "varchar(MAX)")]
     public string? JsonString { get; set; }
+
     [Required]
     public string? Name { get; set; }
 }

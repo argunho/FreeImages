@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 // Installed
 import { IconButton } from '@mui/material';
 import { Close, List } from '@mui/icons-material';
+import axios from 'axios';
 
 // Pages
 import UploadFile from './UploadFile';
@@ -13,7 +14,9 @@ import Heading from '../components/Heading';
 
 // Json
 import configJson from '../assets/json/configuration.json';
-import axios from 'axios';
+
+// Functions
+import HeaderConfig from '../functions/HeaderConfig';
 
 const dropdownMenu = [
   { name: "Header background", value: "bg" },
@@ -28,6 +31,7 @@ function ControlPanel() {
   const [dropdown, setDropdown] = useState(false);
   const [overflow, setOverflow] = useState(true);
   const [form, setForm] = useState("bg");
+  const [response, setResponse] = useState();
   // const [jsonContent, setJsonContent] = useState(JSON.stringify(configJson, null, 2));
 
   useEffect(() => {
@@ -50,25 +54,21 @@ console.log(configJson)
     setDropdown(false);
   }
 
-  const handleChange = (newValue) => {
-  //   setJsonContent(newValue);
-  //   console.log(newValue)
-  // }
-
   const onSubmitImage = async (value) => {
-    const json = configJson;
-    json.bgImage = value;
     const data = {
-      jsonString: JSON.stringify(json),
-      name: "configuration.json"
+      jsonString: value,
+      fileName: "configuration.json",
+      name: "headerBackground"
     }
 
-    await onSubmit(data);
+    onSubmit(data);
   }
 
   const onSubmit = async (data) => {
-    await axios.post("data/updateJsonFile").then(res => {
-      console.log(res)
+    await axios.post("data/updateJsonFile", data, HeaderConfig).then(res => {
+      setResponse(res.data);
+    }, error => {
+      console.log(error);
     })
   }
 
@@ -88,9 +88,9 @@ console.log(configJson)
         </div>
       </Heading>
 
-      {form === "bg" && <UploadFile import={true} submit={onSubmitImage}/>}
+      {form === "bg" && <UploadFile import={true} submit={onSubmitImage} response={response} />}
     </div>
   )
 }
 
-export default ControlPanel;
+export default ControlPanel

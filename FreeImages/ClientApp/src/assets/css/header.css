@@ -2,9 +2,12 @@
 header {
   height: 300px;
   background: url("../images/header-bg.jpg");
-  background-position: top;
+  /* background-position: top;
   background-size: 100% 400px;
-  background-repeat: no-repeat;
+  background-repeat: no-repeat; */
+  background-position: top !important;
+  background-size: 100% auto !important;
+  background-repeat: no-repeat !important;
   position: relative;
   padding: 0 50px;
 }

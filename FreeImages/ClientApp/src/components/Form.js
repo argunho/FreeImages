@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 
 // Installed
-import { Button, CircularProgress, TextField, inputClasses } from '@mui/material';
+import { Button, CircularProgress, TextField } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 
