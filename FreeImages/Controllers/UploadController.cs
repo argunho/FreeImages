@@ -18,17 +18,18 @@ public class UploadController : ControllerBase
     private readonly BlobContainerClient _blobContainer;
     private readonly DbConnect _db;
     private readonly IHelpFunctions _help;
+    private readonly IHandleImage _image;
     private readonly ConfigurationService _config;
 
-    public UploadController(DbConnect db, IHelpFunctions help)
+    public UploadController(DbConnect db, IHelpFunctions help, IHandleImage image)
     {
         _db = db;
         _help = help;
         _config = ConfigurationService.Load("BlobStorage");
         _blobContainer = new(_config.ConnectionString, "freeimagescontainer");
         _blobContainer.CreateIfNotExists();
+        _image = image;
     }
-
 
     #region POST
     [HttpPost("{name}/{keywords}/{background}")]
@@ -56,7 +57,7 @@ public class UploadController : ControllerBase
     {
         try
         {
-            model.FormFile = Base64ToIFormFile(model?.CroppedFile, model?.Name);
+            model.FormFile = _image.Base64ToIFormFile(model?.CroppedFile, model?.Name);
             return await SaveImage(model);
 
         }
@@ -176,8 +177,8 @@ public class UploadController : ControllerBase
                 Name = imgName,
                 Keywords = keywords,
                 Author = author,
-                Width = img.Width,
-                Height = img.Height,
+                Width = img?.Width,
+                Height = img?.Height,
                 Visible = visible
             };
 
@@ -211,29 +212,29 @@ public class UploadController : ControllerBase
     }
     
     // Convert Base64 image string to IFormFile
-    public IFormFile? Base64ToIFormFile(string base64string, string name)
-    {
-        if (base64string == null || name == null)
-            return null;
-        try
-        {
-            var str = base64string[(base64string.IndexOf(",") + 1)..];
-            byte[] bytes = Convert.FromBase64String(str);
-            MemoryStream stream = new(bytes);
+    //public IFormFile? Base64ToIFormFile(string base64string, string name)
+    //{
+    //    if (base64string == null || name == null)
+    //        return null;
+    //    try
+    //    {
+    //        var str = base64string[(base64string.IndexOf(",") + 1)..];
+    //        byte[] bytes = Convert.FromBase64String(str);
+    //        MemoryStream stream = new(bytes);
 
-            return new FormFile(stream, 0, bytes.Length, "image/jpeg", name)
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = "image/jpeg"
-            };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return null;
-        }
+    //        return new FormFile(stream, 0, bytes.Length, "image/jpeg", name)
+    //        {
+    //            Headers = new HeaderDictionary(),
+    //            ContentType = "image/jpeg"
+    //        };
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Console.WriteLine(ex.Message);
+    //        return null;
+    //    }
 
-    }
+    //}
 
     // Convert image from path to base64 string
     public string? ImageToBase64(IFormFile file, int resizeNumber = 0)

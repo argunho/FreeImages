@@ -14,9 +14,12 @@ import Heading from '../components/Heading';
 
 // Json
 import configJson from '../assets/json/configuration.json';
+import backgroundJson from '../assets/json/background.json';
+import seoJson from '../assets/json/seo.json';
 
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const dropdownMenu = [
   { name: "Page settings", value: "config" },
@@ -26,9 +29,11 @@ const dropdownMenu = [
 function ControlPanel() {
   ControlPanel.displayName = "ControlPanel";
 
+  const { param } = useParams();
+  const navigate = useNavigate();
+
   const [dropdown, setDropdown] = useState(false);
   const [overflow, setOverflow] = useState(true);
-  const [form, setForm] = useState("config");
   const [response, setResponse] = useState();
   // const [jsonContent, setJsonContent] = useState(JSON.stringify(configJson, null, 2));
 
@@ -47,19 +52,26 @@ function ControlPanel() {
       setOverflow(!overflow);
   }
 
-  const clickHandle = (e) => {
-    setForm(e.target.name);
+  const clickHandle = (value) => {
+    navigate("/sp/control/panel/" + value);
     setDropdown(false);
   }
 
-  const onSubmit = async (data) => {
-    if (form === "config") {
-      await axios.post("data/updateJsonFile", data, HeaderConfig).then(res => {
+  const onSubmitJson = async (data) => {
+      await axios.post("data/config", data, HeaderConfig).then(res => {
         setResponse(res.data);
       }, error => {
         console.log(error);
       })
-    }
+  }
+
+  const onSubmitSeo = async (data) => {
+      data.url = window.location.href;
+      await axios.post("data/seo", data, HeaderConfig).then(res => {
+        setResponse(res.data);
+      }, error => {
+        console.log(error);
+      })
   }
 
   return (
@@ -71,20 +83,32 @@ function ControlPanel() {
           </IconButton>
           <div className={'dropdown-list' + (dropdown ? " open" : "")}>
             {dropdownMenu.map((i, ind) => {
-              return <p key={ind} name={i.value} onClick={clickHandle}
-                className={i.value === form ? "active" : ""}> - {i.name}</p>
+              return <p key={ind} onClick={() => clickHandle(i.value)}
+                className={i.value === param ? "active" : ""}> - {i.name}</p>
             })}
           </div>
         </div>
       </Heading>
 
-      {form === "config" && <UploadFile inputs={{
-        name: configJson?.name,
-        text: configJson?.text,
-        adsApi: configJson?.adsApi,
-        paypal: configJson?.paypal,
-        instagram: configJson?.instagram
-      }} label={dropdownMenu.find(x => x.value === form)?.name} image={configJson.imageString} submit={onSubmit} response={response} />}
+      {/* Page configuration form */}
+      {param === "config" && 
+        <UploadFile inputs={{
+                name: configJson?.Name,
+                text: configJson?.Text,
+                textColor: configJson?.TextColor,
+                adsApi: configJson?.AdsApi,
+                paypal: configJson?.Paypal,
+                instagram: configJson?.Instagram
+              }}  label="Page configuration" image={backgroundJson?.ImgString} response={response} submit={onSubmitJson} />}
+
+      {/* Seo form */}
+      {param === "seo" && 
+        <UploadFile inputs={{
+                title: seoJson?.Title,
+                keywords: seoJson?.Keywords,
+                description: seoJson?.Description,
+                type: seoJson?.Type
+              }} label="Page seo" image={backgroundJson?.ImageUrl} response={response} submit={onSubmitSeo} />}
     </div>
   )
 }

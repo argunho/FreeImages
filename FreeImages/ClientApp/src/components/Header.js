@@ -18,8 +18,8 @@ function Header({ children, authorized, cls }) {
 
 
   return (
-    <header className={`d-row jc-between ${cls}`} style={{ background: `url(${jsonBackground.ImgString})` }}>
-        <p className='logotype d-column' onClick={() => navigate("/")}>
+    <header className={`d-row jc-between ${cls}`} style={{ background: `url(${jsonBackground?.ImgString})` }}>
+        <p className='logotype d-column' style={{color: !authorized ? jsonConfig?.TextColor || "#FFFFFF" : "#000000"}} onClick={() => navigate("/")}>
           {jsonConfig.Name}
           {jsonConfig?.Text && <span>{jsonConfig?.Text}</span>}
         </p>

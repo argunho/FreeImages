@@ -44,6 +44,7 @@ function Register(){
     const verifyPassword = () => {
         var date = new Date();
         var currentDate = (date.toISOString()).slice(0, 10);
+
         if (password === `BismiLLAHI! ${currentDate}`) {
             setModal(false);
             setError(false);

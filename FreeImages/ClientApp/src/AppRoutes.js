@@ -109,7 +109,7 @@ const AppRoutes = [
         element: <FileFormPage />
       },
       {
-        path: "/sp/control/panel",
+        path: "/sp/control/panel/:param",
         element: <ControlPanel />
       }
     ]

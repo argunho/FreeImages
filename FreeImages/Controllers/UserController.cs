@@ -84,18 +84,36 @@ public class UserController : ControllerBase
     [Authorize(Roles = "Admin,Support")]
     public async Task<JsonResult> Delete(string? ids)
     {
-        if (string.IsNullOrEmpty(ids))
-            return _help.Response("error", "Id missing!");
+        try
+        {
+            if (string.IsNullOrEmpty(ids))
+                return _help.Response("error", "Id missing!");
 
-        List<string> idsList = ids.Split(",").ToList();
-        var users = AllUsers.Where(x => idsList.Any(i => i == x.Id)).ToList();
-        var permission = Permission("Support");
-        if (users.Count(x => x.Roles?.IndexOf("Admin") > -1) > 0 && !permission)
-            return _help.Response("error", "Permission denied!");
+            List<string> idsList = ids.Split(",").ToList();
+            var users = AllUsers.Where(x => idsList.Any(i => i == x.Id)).ToList();
+            var permission = Permission("Support");
+            if (users.Any(x => x.Roles?.IndexOf("Admin") > -1) && !permission)
+                return _help.Response("error", "Permission denied!");
 
-        _db.Users?.RemoveRange(users);
-        if (!await _help.Save())
-            return _help.Response("error");
+            var images = _db.Images.Where(x => users.Any(u => u == x.Author)).ToList();
+            if(images.Count > 0)
+            {
+                foreach (var image in images)
+                {
+                    image.Author = null;
+                }
+
+                await _help.Save();
+            }
+
+            _db.Users?.RemoveRange(users);
+            if (!await _help.Save())
+                return _help.Response("error");
+
+        } catch(Exception ex)
+        {
+            return _help.Response("error", ex.Message);
+        }
 
         return _help.Response("success");
     }

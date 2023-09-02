@@ -106,6 +106,8 @@ function Form({ children, ...props }) {
                     name={x}
                     type={x.toLowerCase().indexOf("password") > -1 ? "password" : (x === "email" ? x : "text")}
                     value={formData[x] || ""}
+                    multiline
+                    minRows={x.toLowerCase() === "description" || x.toLowerCase() === "keywords" ? 6 : 1}
                     variant="outlined"
                     inputProps={{
                         minLength: x.toLowerCase().indexOf("password") > -1 ? 6 : 2
