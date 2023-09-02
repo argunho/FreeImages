@@ -49,5 +49,6 @@ public class PageConfigModel
 
 public class StorageConfigModel
 {
+    [Required]
     public string? Connection { get; set; }
 }

@@ -3,7 +3,6 @@
 public class ConfigurationService
 {
     public string? ConnectionString { get; set; }
-    public string? StringConnection { get; set; }
 
     public static ConfigurationService Load(string name)
     {

@@ -126,8 +126,10 @@ public class DataController : ControllerBase
     [HttpPost("storage")]
     public async Task<JsonResult> PostStorage(StorageConfigModel model)
     {
+        if (!ModelState.IsValid)
+            return _help.Response("warning", "Incorrect form data");
         try {
-            _config.StringConnection = model.Connection;
+            _config.ConnectionString = model.Connection;
             var configFile = System.IO.File.ReadAllText("appsettings.json");
             var currentConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(configFile);
             if (currentConfig["BlobStorage"] != null)
