@@ -21,9 +21,9 @@
   position: fixed;
   width: 98%;
   max-width: 415px;
-  top: 200px;
+  top: 150px;
   right: -415px;
-  height: calc(100vh - 240px);
+  height: calc(100vh - 190px);
   overflow-y: auto;
   display: block;
   background-color: #fff;
@@ -200,16 +200,17 @@ button.menu-close:hover {
   transition: all 0.7s ease-in-out;
   opacity: 0;
   position: absolute;
-  bottom: -160px;
+  top: 120px;
   right: -39px;
   z-index: -1;
   visibility: hidden;
   background-color: #FFFFFF;
   box-shadow: 0 0 2px 2px #aaa8a894;
+  height: max-content;
 }
 
 .dropdown-list.open {
-  bottom: -105px;
+  top: 50px;
   opacity: 1;
   visibility: visible;
   z-index: 3000;

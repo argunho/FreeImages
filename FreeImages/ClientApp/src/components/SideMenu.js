@@ -8,7 +8,7 @@ const menu = [
     // { name: "Register user", link: "register", icon: <FeaturedPlayList />, submenu: true },
     { name: "Images", link: "images", icon: <Image /> },
     // { name: "Upload image", link: "upload-image", icon: <UploadFile />, submenu: true },
-    { name: "Control panel", link: "control/panel/config", icon: <Settings />},
+    { name: "Control panel", link: "control/panel/page", icon: <Settings />},
     { name: "Logout", link: "logout", icon: <Logout /> }
 ]
 

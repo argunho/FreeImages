@@ -12,6 +12,8 @@ public class ConfigsViewModel
 
     public string? TextColor { get; set; }
 
+    public string? SearchColor { get; set; }
+
     public string? AdsApi { get; set; }
 
     public string? PayPal { get; set; }
@@ -24,13 +26,13 @@ public class ConfigsViewModel
     public bool ConvertToBase64 { get; set; }
 }
 
-public class BackgroundConfig
+public class BackgroundConfigModel
 {
     [Column(TypeName = "varchar(MAX)")]
     public string? ImgString { get; set; }
 }
 
-public class PageConfig
+public class PageConfigModel
 {
     public string? Name { get; set; }
 
@@ -43,4 +45,9 @@ public class PageConfig
     public string? PayPal { get; set; }
 
     public string? Instagram { get; set; }
+}
+
+public class StorageConfigModel
+{
+    public string? Connection { get; set; }
 }

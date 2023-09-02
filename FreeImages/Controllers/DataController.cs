@@ -30,7 +30,7 @@ public class DataController : ControllerBase
     #endregion
 
     #region POST
-    [HttpPost("config")]
+    [HttpPost("page")]
     public async Task<JsonResult> PostConfig(ConfigsViewModel model)
     {
         if (!ModelState.IsValid)
@@ -48,7 +48,7 @@ public class DataController : ControllerBase
         try
         {
             var configFile = System.IO.File.ReadAllText(configDataPath);
-            var currentConfig = JsonConvert.DeserializeObject<PageConfig>(configFile);
+            var currentConfig = JsonConvert.DeserializeObject<PageConfigModel>(configFile);
             currentConfig.Name = model.Name;
             currentConfig.Text = model.Text;
             currentConfig.TextColor = model.TextColor;
@@ -59,7 +59,7 @@ public class DataController : ControllerBase
             await System.IO.File.WriteAllTextAsync(configDataPath, JsonConvert.SerializeObject(currentConfig));
 
             var backgroundFile = System.IO.File.ReadAllText(configBackgroundPath);
-            var currentBackground = JsonConvert.DeserializeObject<BackgroundConfig>(backgroundFile);
+            var currentBackground = JsonConvert.DeserializeObject<BackgroundConfigModel>(backgroundFile);
             if (model.ImgString != null && model.ImgString != currentBackground.ImgString)
             {
                 currentBackground.ImgString = model.ImgString;
@@ -99,7 +99,7 @@ public class DataController : ControllerBase
             currentSeo.Url = model.Url;
             currentSeo.Type = model.Type;
 
-            if(!model.ImgString.IsNullOrEmpty() && model.ImgString != currentSeo?.ImgString && _image.Base64StringControl(model.ImgString))
+            if (!model.ImgString.IsNullOrEmpty() && model.ImgString != currentSeo?.ImgString && _image.Base64StringControl(model.ImgString))
             {
                 IFormFile? uploadedFile = _image.Base64ToIFormFile(model?.ImgString, "seo");
                 if (uploadedFile != null)
@@ -114,6 +114,27 @@ public class DataController : ControllerBase
 
             await System.IO.File.WriteAllTextAsync(pathName, JsonConvert.SerializeObject(currentSeo));
 
+        }
+        catch (Exception ex)
+        {
+            return _help.Response("error", ex.Message);
+        }
+
+        return _help.Response("success");
+    }
+
+    [HttpPost("storage")]
+    public async Task<JsonResult> PostStorage(StorageConfigModel model)
+    {
+        try {
+            _config.StringConnection = model.Connection;
+            var configFile = System.IO.File.ReadAllText("appsettings.json");
+            var currentConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(configFile);
+            if (currentConfig["BlobStorage"] != null)
+                currentConfig["BlobStorage"] = _config;
+
+            var configToUpdate = JsonConvert.SerializeObject(currentConfig);
+            System.IO.File.WriteAllText("appsettings.json", configToUpdate);
         }
         catch (Exception ex)
         {

@@ -11,6 +11,8 @@ import UploadFile from './UploadFile';
 
 // Components
 import Heading from '../components/Heading';
+import Form from '../components/Form';
+
 
 // Json
 import configJson from '../assets/json/configuration.json';
@@ -20,10 +22,10 @@ import seoJson from '../assets/json/seo.json';
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
 import { useNavigate, useParams } from 'react-router-dom';
-
 const dropdownMenu = [
-  { name: "Page settings", value: "config" },
-  { name: "Seo", value: "seo" }
+  { name: "Page settings", value: "page" },
+  { name: "Storage connection", value: "storage" },
+  { name: "Seo data", value: "seo" }
 ];
 
 function ControlPanel() {
@@ -57,17 +59,10 @@ function ControlPanel() {
     setDropdown(false);
   }
 
-  const onSubmitJson = async (data) => {
-      await axios.post("data/config", data, HeaderConfig).then(res => {
-        setResponse(res.data);
-      }, error => {
-        console.log(error);
-      })
-  }
-
-  const onSubmitSeo = async (data) => {
+  const onSubmit = async (data) => {
+    if(param === "seo")
       data.url = window.location.href;
-      await axios.post("data/seo", data, HeaderConfig).then(res => {
+      await axios.post(`data/${param}`, data, HeaderConfig).then(res => {
         setResponse(res.data);
       }, error => {
         console.log(error);
@@ -91,15 +86,16 @@ function ControlPanel() {
       </Heading>
 
       {/* Page configuration form */}
-      {param === "config" && 
+      {param === "page" && 
         <UploadFile inputs={{
                 name: configJson?.Name,
                 text: configJson?.Text,
                 textColor: configJson?.TextColor,
+                searchColor: configJson?.SearchColor,
                 adsApi: configJson?.AdsApi,
                 paypal: configJson?.Paypal,
                 instagram: configJson?.Instagram
-              }}  label="Page configuration" image={backgroundJson?.ImgString} response={response} submit={onSubmitJson} />}
+              }}  label="Page configuration" image={backgroundJson?.ImgString} response={response} submit={onSubmit} />}
 
       {/* Seo form */}
       {param === "seo" && 
@@ -108,7 +104,16 @@ function ControlPanel() {
                 keywords: seoJson?.Keywords,
                 description: seoJson?.Description,
                 type: seoJson?.Type
-              }} label="Page seo" image={seoJson?.ImgString} response={response} submit={onSubmitSeo} />}
+              }} label="Page seo" image={seoJson?.ImgString} response={response} submit={onSubmit} />}
+
+      {/* Storage */}
+      {param === "storage" && 
+        <Form inputs={{connection: ""}}
+              heading={"Storage configuration"}                
+              response={response}
+              required={true}
+              onSubmit={onSubmit} />}
+
     </div>
   )
 }

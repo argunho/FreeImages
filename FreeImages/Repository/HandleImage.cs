@@ -27,10 +27,10 @@ public class HandleImage : IHandleImage
         }
     }
 
-    public bool Base64StringControl(string img)
+    public bool Base64StringControl(string imgString)
     {
-        Span<byte> bytes = new Span<byte>(new byte[img.Length]);
-        return Convert.TryFromBase64String(img[(img.IndexOf(",") + 1)..], bytes, out int _);
+        Span<byte> bytes = new(new byte[imgString.Length]);
+        return Convert.TryFromBase64String(imgString[(imgString.IndexOf(",") + 1)..], bytes, out int _);
     }
 
 

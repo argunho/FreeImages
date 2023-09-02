@@ -141,12 +141,12 @@ div.search-wrapper {
   font-family: dancing;
   font-size: 18px;
   letter-spacing: 2px;;
-  color: rgba(148, 53, 83, 0.603);
+  color: rgba(155, 155, 155, 0.6);
 }
 
 .search-input fieldset {
   border-width: 3px !important;
-  border-color: #943553 !important;
+  border-color: rgba(155, 155, 155, 0.5) !important;
 }
 
 .search-buttons {
@@ -172,7 +172,7 @@ div.search-wrapper {
 }
 
 .search-button svg {
-  color: #943553;
+  color: #9b9b9b;
 }
 /* #endregion */
 

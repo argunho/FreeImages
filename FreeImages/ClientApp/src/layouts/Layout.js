@@ -13,6 +13,7 @@ function Layout({ children }) {
 
   const [isReliable, setReliable] = useState(false);
   const [authorized, setAuthorized] = useState(false);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
