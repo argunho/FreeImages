@@ -11,7 +11,7 @@ public class SeoViewModel
     public string? Keywords { get; set; }
 
     [Column(TypeName = "varchar(MAX)")]
-    public string? ImageUrl { get; set; }
+    public string? ImgString { get; set; }
     public string? Url { get; set; }
     public string? Type { get; set; }
 }

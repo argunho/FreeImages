@@ -99,16 +99,16 @@ public class DataController : ControllerBase
             currentSeo.Url = model.Url;
             currentSeo.Type = model.Type;
 
-            if(!model.ImageUrl.IsNullOrEmpty() && model.ImageUrl != currentSeo?.ImageUrl && _image.Base64StringControl(model.ImageUrl))
+            if(!model.ImgString.IsNullOrEmpty() && model.ImgString != currentSeo?.ImgString && _image.Base64StringControl(model.ImgString))
             {
-                IFormFile? uploadedFile = _image.Base64ToIFormFile(model?.ImageUrl, "seo");
-                if (uploadedFile == null)
+                IFormFile? uploadedFile = _image.Base64ToIFormFile(model?.ImgString, "seo");
+                if (uploadedFile != null)
                 {
-                    var imgPath = PathName("ClientApp/src/assets") + "/seo" + $"{uploadedFile?.ContentType[(uploadedFile.ContentType.IndexOf("/") + 1)..]}";
+                    var imgPath = PathName("ClientApp/src/assets") + "/seo." + $"{uploadedFile?.ContentType[(uploadedFile.ContentType.IndexOf("/") + 1)..]}";
                     using var stream = uploadedFile?.OpenReadStream();
                     var img = System.Drawing.Image.FromStream(stream);
                     img.Save(imgPath);
-                    currentSeo.ImageUrl = imgPath;
+                    currentSeo.ImgString = imgPath;
                 }
             }
 

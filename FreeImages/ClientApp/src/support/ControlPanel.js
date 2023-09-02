@@ -108,7 +108,7 @@ function ControlPanel() {
                 keywords: seoJson?.Keywords,
                 description: seoJson?.Description,
                 type: seoJson?.Type
-              }} label="Page seo" image={backgroundJson?.ImageUrl} response={response} submit={onSubmitSeo} />}
+              }} label="Page seo" image={seoJson?.ImgString} response={response} submit={onSubmitSeo} />}
     </div>
   )
 }

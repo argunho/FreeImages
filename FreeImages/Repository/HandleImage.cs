@@ -30,7 +30,7 @@ public class HandleImage : IHandleImage
     public bool Base64StringControl(string img)
     {
         Span<byte> bytes = new Span<byte>(new byte[img.Length]);
-        return Convert.TryFromBase64String(img, bytes, out int _);
+        return Convert.TryFromBase64String(img[(img.IndexOf(",") + 1)..], bytes, out int _);
     }
 
 
