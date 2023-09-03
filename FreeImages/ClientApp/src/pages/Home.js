@@ -79,7 +79,7 @@ function Home() {
     return <div key={ind} className='gallery-img-wrapper d-column'>
       <img src={img?.base64String}
         className="gallery-img"
-        onClick={() => navigate(`/view/img/${img.imageId}`)}
+        onClick={() => navigate(`/view/img/${img.imageHash}`)}
         alt={window.location.origin} /></div>
   }
 
@@ -88,7 +88,7 @@ function Home() {
     if (!!keyword)
       search();
     else
-      navigate("/" + (value > 1 ? value : ""));
+      navigate("/image/view/" + (value > 1 ? value : ""));
   }
 
   return (

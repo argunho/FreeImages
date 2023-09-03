@@ -16,6 +16,7 @@ import UserFormPage from "./support/UserFormPage";
 import Home from "./pages/Home";
 import FileFormPage from "./support/FileFormPage";
 import ControlPanel from "./support/ControlPanel";
+import Image from "./pages/Image";
 
 const AppRoutes = [
   {
@@ -40,6 +41,10 @@ const AppRoutes = [
       {
         path: "search/:keyword/:num",
         element: <Home />
+      },
+      {
+        path: "view/img/:hash",
+        element: <Image />
       }
     ]
   },

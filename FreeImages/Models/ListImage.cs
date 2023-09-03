@@ -31,6 +31,11 @@ public class ListImage
         }
     }
 
+    [NotMapped]
+    public string ImageHash => Name.GetHashCode().ToString();
+            //return Name?.ToLower().Replace("_", "")[Name.IndexOf(".")..];
+            
+
     [Required]
     public int ImageId { get; set; }
 }

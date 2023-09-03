@@ -15,7 +15,7 @@ public class Image
     {
         get
         {
-            return string.IsNullOrEmpty(Name) ? String.Empty 
+            return string.IsNullOrEmpty(Name) ? String.Empty
                 : $"{((string.Concat(Name[..1].ToUpper(), Name[1..]))[..(Name.IndexOf("_") > -1 ? Name.LastIndexOf("_") : Name.Length)])}";
         }
     }
@@ -27,6 +27,19 @@ public class Image
             return $"https://uploadfilerepository.blob.core.windows.net/freeimagescontainer/{Name}";
         }
     }
+    [NotMapped]
+    public string ImageHash
+    {
+        get
+        {
+           return Name.GetHashCode().ToString();
+        }
+        set
+        {
+            Name = value;
+        }
+    }
+
     public byte[]? ImgInByte { get; set; }
     public User? Author { get; set; }
     public int? Width { get; set; }

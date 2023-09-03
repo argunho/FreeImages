@@ -71,6 +71,23 @@ namespace FreeImages.Controllers
         [HttpGet("{id:int}")]
         public async Task<Image?> GetById(int id)
             => await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
+
+        [HttpGet("getImage/{hash}")]
+        [AllowAnonymous]
+        public Image? GetByName(string hash)
+        {
+            try
+            {
+                var imgs = AllImages;
+                return imgs.FirstOrDefault(x => x.ImageHash == hash);;
+
+            }
+            catch (Exception ex)
+            {
+                var erro = ex.Message;
+                return null;
+            }
+        }
         #endregion
 
         #region PUT
