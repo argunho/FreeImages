@@ -18,7 +18,7 @@ body {
   border-top: 0.5px solid transparent;
   border-bottom: 0.5px solid transparent;
   max-width: unset !important;
-  min-height: calc(100vh - 300px);
+  min-height: calc(100vh - 250px);
 }
 
 .wrapper {
@@ -61,6 +61,7 @@ body {
 .d-row, 
 .d-column {
   display: flex !important;
+  display: -webkit-flex;
   justify-content: center !important;
   align-items: center !important;
 }

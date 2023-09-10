@@ -1,6 +1,6 @@
 ﻿/* Header content */
 header {
-  height: 300px;
+  height: 250px;
   background: url("../images/header-bg.jpg");
   /* background-position: top;
   background-size: 100% 400px;
@@ -12,8 +12,20 @@ header {
   padding: 0 50px;
 }
 
+.background {
+  position: absolute;
+  left: 0;
+  top: o;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
 .logotype {
-  font-size: 150px;
+  font-size: 130px;
   /* transform: scaleX(2); */
   letter-spacing: 6px;
   width: max-content;
@@ -22,6 +34,7 @@ header {
   text-transform: capitalize;
   font-family: faishal;
   margin: 0 !important;
+  z-index: 1000;
   /* font-family: coventry; */
   /* font-family: enough; */
   /* font-family: idilica; */
@@ -58,6 +71,7 @@ header.support {
 
 .header-buttons {
   width: max-content;
+  z-index: 1000;
 }
 
 .header-buttons>button {

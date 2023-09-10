@@ -22,6 +22,7 @@ import seoJson from '../assets/json/seo.json';
 // Functions
 import HeaderConfig from '../functions/HeaderConfig';
 import { useNavigate, useParams } from 'react-router-dom';
+
 const dropdownMenu = [
   { name: "Page settings", value: "page" },
   { name: "Storage connection", value: "storage" },

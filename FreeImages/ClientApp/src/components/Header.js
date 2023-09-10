@@ -31,6 +31,7 @@ function Header({ children, authorized, cls }) {
 
           {!!children && children}
         </div>
+        <div className='background'></div>
     </header>
   )
 }
