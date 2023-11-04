@@ -18,7 +18,7 @@ function Login() {
     const defaultForm = {
         email: "",
         password: "",
-        remember: false
+        remember: !!localStorage.getItem("reliable")
     }
 
     const [form, setForm] = useState(defaultForm);

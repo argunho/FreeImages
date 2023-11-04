@@ -75,6 +75,7 @@ public class UploadController : ControllerBase
         var claimRoles = User.Claims?.FirstOrDefault(x => x.Type == "Roles")?.Value.Split(",").ToList();
         return claimRoles?.Count(x => roles.Split(",").Any(r => r == x)) > 0;
     }
+
     private string? GetClaimsData(string? value) =>
         User.Claims?.FirstOrDefault(x => x?.Type == value)?.Value.ToString();
 
@@ -87,8 +88,9 @@ public class UploadController : ControllerBase
             return _help.Response("warning", "An image file or image information missing!");
 
         // New image name
-        var imgName = $"{model?.Name?.ToLower().Replace(" ", "")}_{DateTime.Now:yyyyMMddHHmmss}." +
+        var imgName = $"{model?.Name?.ToLower().Replace(" ", "_")}_{DateTime.Now:yyyyMMddHHmmss}." +
                             $"{uploadedFile?.ContentType[(uploadedFile.ContentType.IndexOf("/") + 1)..]}";
+
         var keywords = model?.Keywords?.ToLower();
         if (keywords?.IndexOf(model?.Name?.ToLower()) > -1)
             keywords += $", {model?.Name?.ToLower()}";
@@ -249,7 +251,7 @@ public class UploadController : ControllerBase
             using MemoryStream m = new();
             System.Drawing.Image imageToConvert = img;
             if (resizeNumber > 0)
-                imageToConvert = ResizedImage(img, resizeNumber);
+                imageToConvert = ResizeImage(img, resizeNumber);
 
             imageToConvert?.Save(m, img?.RawFormat);
 
@@ -267,7 +269,7 @@ public class UploadController : ControllerBase
     }
 
     // Resize image
-    public System.Drawing.Image ResizedImage(System.Drawing.Image img, int resizeNumber)
+    public System.Drawing.Image ResizeImage(System.Drawing.Image img, int resizeNumber)
     {
         var devisionNumber = img.Width / resizeNumber;
         //var summa = img.Width / devisionNumber;

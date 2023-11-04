@@ -16,7 +16,7 @@ public class Image
         get
         {
             return string.IsNullOrEmpty(Name) ? String.Empty
-                : $"{((string.Concat(Name[..1].ToUpper(), Name[1..]))[..(Name.IndexOf("_") > -1 ? Name.LastIndexOf("_") : Name.Length)])}";
+                : $"{(((string.Concat(Name[..1].ToUpper(), Name[1..]))[..(Name.IndexOf("_") > -1 ? Name.LastIndexOf("_") : Name.Length)])).Replace("_", " ")}";
         }
     }
     [NotMapped]

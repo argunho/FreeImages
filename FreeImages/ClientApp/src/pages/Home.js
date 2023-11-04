@@ -17,7 +17,7 @@ function Home() {
   Home.displayName = "Home";
 
   const [imgs, setImgs] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  // const [searchKeyword, setSearchKeyword] = useState("");
   const [pageCount, setPageCount] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -56,7 +56,7 @@ function Home() {
       setLoading(false);
       setPageCount(countOfPages(data?.count));
       setImgs(images);
-      setSearchKeyword("");
+      // setSearchKeyword("");
     }
   }
 
@@ -69,9 +69,9 @@ function Home() {
     return number;
   }
 
-  const search = () => {
-    navigate(`/search/${searchKeyword}${page > 1 ? "/" + page : ""}`)
-  }
+  // const search = () => {
+  //   navigate(`/search/${searchKeyword}${page > 1 ? "/" + page : ""}`)
+  // }
 
   const renderImg = (img, ind) => {
     if (!img?.base64)
@@ -85,52 +85,15 @@ function Home() {
 
   const paginate = (e, value) => {
     setPage(value);
-    if (!!keyword)
-      search();
-    else
+    // if (!!keyword)
+    //   search();
+    // else
       navigate("/image/view/" + (value > 1 ? value : ""));
   }
 
   return (
     <div className='gallery-container'>
 
-      {/* Search */}
-      <div className="search-wrapper d-row">
-        <TextField
-          placeholder="Find image ..."
-          className="search-input"
-          variant="outlined"
-          name="searchKeywords"
-          value={searchKeyword}
-          inputProps={{
-            maxLength: 30
-          }}
-          disabled={loading || (!keyword && imgs?.length === 0)}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter")
-              setSearchKeyword(e.target.value);
-          }} />
-
-        <div className='search-buttons d-row'>
-
-          {/* Reset search */}
-          {searchKeyword?.length > 3 && <IconButton
-            className='reset-search'
-            onClick={() => setSearchKeyword("")}
-            disabled={loading || searchKeyword.length < 3}>
-            <Close />
-          </IconButton>}
-
-          {/* Search */}
-          <IconButton
-            className='search-button'
-            onClick={() => search()}
-            disabled={loading || searchKeyword.length < 3}>
-            <Search />
-          </IconButton>
-        </div>
-      </div>
 
       {/* Gallery */}
       {/* <div className="gallery-wrapper" >

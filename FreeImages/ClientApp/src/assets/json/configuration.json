@@ -1,1 +1,8 @@
-{"Name":"Free images","Text":"100% free to use","TextColor":"","AdsApi":null,"PayPal":null,"Instagram":null}
+{
+  "Name": "Free images",
+  "Text": "100% free to use",
+  "TextColor": "",
+  "AdsApi": null,
+  "PayPal": null,
+  "Instagram": ["https://www.instagram.com/life.arround/", "https://www.instagram.com/simple.recreation/"]
+}

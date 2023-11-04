@@ -4,6 +4,12 @@ using FreeImages.Services;
 using FreeImages.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Net;
+using System.Runtime.InteropServices;
+using DImage = System.Drawing.Image;
+using ModelImage = FreeImages.Models.Image;
 
 namespace FreeImages.Controllers
 {
@@ -16,6 +22,12 @@ namespace FreeImages.Controllers
         private readonly IHelpFunctions _help;
         private readonly ConfigurationService _config;
         private readonly BlobContainerClient _blobContainer;
+
+
+        // To get window donload folder pathname
+        private static Guid FolderDownloads = new("374DE290-123F-4565-9164-39C4925E467B");
+        [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+        private static extern int SHGetKnownFolderPath(ref Guid id, int flags, IntPtr token, out IntPtr path);
 
         public ImageController(DbConnect db, IHelpFunctions help)
         {
@@ -33,17 +45,17 @@ namespace FreeImages.Controllers
             }
         }
 
-        public IEnumerable<Image> AllImages
+        public IEnumerable<ModelImage> AllImages
         {
             get
             {
-                return _db.Images?.ToList() ?? Enumerable.Empty<Image>();
+                return _db.Images?.ToList() ?? Enumerable.Empty<ModelImage>();
             }
         }
 
         #region GET
         [HttpGet]
-        public IEnumerable<Image> Get() => AllImages.OrderByDescending(x => x.Id).ToList();
+        public IEnumerable<ModelImage> Get() => AllImages.OrderByDescending(x => x.Id).ToList();
 
         [HttpGet("{page}/{count}")]
         [AllowAnonymous]
@@ -69,17 +81,17 @@ namespace FreeImages.Controllers
 
 
         [HttpGet("{id:int}")]
-        public async Task<Image?> GetById(int id)
+        public async Task<ModelImage?> GetById(int id)
             => await _db.Images.FirstOrDefaultAsync(x => x.Id == id);
 
         [HttpGet("getImage/{hash}")]
         [AllowAnonymous]
-        public Image? GetByName(string hash)
+        public ModelImage? GetByName(string hash)
         {
             try
             {
                 var imgs = AllImages;
-                return imgs.FirstOrDefault(x => x.ImageHash == hash);;
+                return imgs.FirstOrDefault(x => x.ImageHash == hash); ;
 
             }
             catch (Exception ex)
@@ -87,6 +99,44 @@ namespace FreeImages.Controllers
                 var erro = ex.Message;
                 return null;
             }
+        }
+
+        [HttpGet("download/{id}/{value}")]
+        [AllowAnonymous]
+        public IActionResult DownloadImage(int? id, double value)
+        {
+            try
+            {
+                var image = _db.Images.FirstOrDefault(x => x.Id == id);
+
+                if (image == null)
+                    return NotFound();
+
+                //var url = image.Path;
+                //var imageName = new Uri(url).Segments.LastOrDefault();
+                //var imageFromBlob = _blobContainer.GetBlobClient(imageName);
+
+
+                // Resize image
+                WebClient web = new();
+                byte[] bytes = web.DownloadData(image.Path);
+                using var stream = new MemoryStream(bytes);
+                using DImage img = DImage.FromStream(stream);
+                DImage resizedImg = ResizeImage(img, value);
+                var imgName = $"{image.ViewName}_{resizedImg.Width}x{resizedImg.Height}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.{img.RawFormat}";
+                var downloadPath = Path.Combine(GetWindowsDownloadsPath(), imgName);
+                resizedImg.Save(downloadPath, img.RawFormat);
+                stream.Position = 0;
+                img.Dispose();
+                stream.Dispose();
+            }
+            catch (Exception ex)
+            {
+                return Ok($"Something went wrong.\nError: {ex.Message}");
+            }
+
+
+            return Ok("Image downloaded successfully!");
         }
         #endregion
 
@@ -105,7 +155,7 @@ namespace FreeImages.Controllers
                     keywords += $", {model.Name?.ToLower()}";
 
                 if (nameIsChanged)
-                    imageName = $"{model?.Name?.ToLower().Replace(" ", "")}_{DateTime.Now:yyyyMMddHHmmss}{image?.Name[image.Name.LastIndexOf(".")..]}";
+                    imageName = $"{model?.Name?.ToLower().Replace(" ", "_")}_{DateTime.Now:yyyyMMddHHmmss}{image?.Name[image.Name.LastIndexOf(".")..]}";
 
                 if (image == null)
                     return _help.Response("warning", "No image found with matching Id.");
@@ -235,6 +285,35 @@ namespace FreeImages.Controllers
                 return null;
             }
 
+        }
+
+        // Resize image
+        public DImage ResizeImage(DImage img, double resizeValue)
+        {
+            var devisionNumber = img.Width / resizeValue;
+            if (devisionNumber > 100)
+                devisionNumber = img.Width / devisionNumber;
+
+            int height = Convert.ToInt32(img.Height / devisionNumber);
+            int width = Convert.ToInt32(img.Width / devisionNumber);
+            return new Bitmap(img, new Size(width, height)) as DImage;
+        }
+
+        public static string GetWindowsDownloadsPath()
+        {
+            if (Environment.OSVersion.Version.Major < 6) throw new NotSupportedException();
+
+            IntPtr pathPtr = IntPtr.Zero;
+
+            try
+            {
+                SHGetKnownFolderPath(ref FolderDownloads, 0, IntPtr.Zero, out pathPtr);
+                return Marshal.PtrToStringUni(pathPtr);
+            }
+            finally
+            {
+                Marshal.FreeCoTaskMem(pathPtr);
+            }
         }
         #endregion
     }

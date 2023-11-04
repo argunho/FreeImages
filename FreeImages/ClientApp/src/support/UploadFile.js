@@ -19,9 +19,9 @@ import 'react-image-crop/dist/ReactCrop.css';
 
 function UploadFile(props) {
     UploadFile.displayName = "UploadFile";
-
+console.log(props?.image )
     const [loading, setLoading] = useState(false);
-    const [image, setImage] = useState(props?.image);
+    const [image, setImage] = useState(props?.image ?? null);
     const [error, setError] = useState();
     const [file, setFile] = useState(null);
     const [response, setResponse] = useState();
@@ -153,7 +153,7 @@ function UploadFile(props) {
         // If this component uses as a component in other parent component
         if (!!props?.inputs) {
             let data = formData;
-            data.imgString = image;
+            data.imgString = croppedImage ?? image;
             props?.submit(data);
             return;
         }

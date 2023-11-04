@@ -10,6 +10,7 @@ import Loading from './components/Loading';
 // Css
 import './assets/css/styles.css';
 import './assets/css/fonts.css';
+import './assets/css/animation.css';
 
 function App() {
   App.displayName = "App";
@@ -17,7 +18,6 @@ function App() {
   const [currentLayout, setLayout] = useState(null);
 
   const loc = useLocation();
-
 
   useEffect(() => {
     setLayout(AppRoutes[loc.pathname.indexOf("sp/") === -1 ? 0 : 1]);
@@ -27,14 +27,6 @@ function App() {
     return <Loading />;
 
   return (
-    // <Layout>
-    //   <Routes>
-    //     {AppRoutes.map((route, index) => {
-    //       const { element, ...rest } = route;
-    //       return <Route key={index} {...rest} element={element} />;
-    //     })}
-    //   </Routes>
-    // </Layout>
     <currentLayout.layout>
       <Routes>
         {currentLayout.routes.map((route, ind) => {

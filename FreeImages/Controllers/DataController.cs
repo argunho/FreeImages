@@ -104,7 +104,7 @@ public class DataController : ControllerBase
                 IFormFile? uploadedFile = _image.Base64ToIFormFile(model?.ImgString, "seo");
                 if (uploadedFile != null)
                 {
-                    var imgPath = PathName("ClientApp/src/assets") + "/seo." + $"{uploadedFile?.ContentType[(uploadedFile.ContentType.IndexOf("/") + 1)..]}";
+                    var imgPath = PathName($@"wwwroot/seo.{uploadedFile?.ContentType[(uploadedFile.ContentType.IndexOf("/") + 1)..]}");
                     using var stream = uploadedFile?.OpenReadStream();
                     var img = System.Drawing.Image.FromStream(stream);
                     img.Save(imgPath);

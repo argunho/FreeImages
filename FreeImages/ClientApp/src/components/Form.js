@@ -54,7 +54,7 @@ function Form({ children, ...props }) {
         setResponse();
 
         // If parent component has active text fields 
-        if(inputs !== {}){
+        if (!!inputs) {
             const confirm = props?.confirmInputs;
 
             // If exists inputs to validate
@@ -96,8 +96,9 @@ function Form({ children, ...props }) {
     return (
         <form onSubmit={submitForm}>
             <h4 className='form-title'>{props.heading}</h4>
-            {!!inputs && inputs?.map((x, ind) => (
-                <TextField key={ind}
+            {!!inputs && inputs?.map((x, ind) => {
+                let name = x.toLowerCase();
+                return <TextField key={ind}
                     label={capitalize(x)}
                     className='fields'
                     size="medium"
@@ -110,11 +111,12 @@ function Form({ children, ...props }) {
                     minRows={x.toLowerCase() === "description" || x.toLowerCase() === "keywords" ? 6 : 1}
                     variant="outlined"
                     inputProps={{
-                        minLength: x.toLowerCase().indexOf("password") > -1 ? 6 : 2
+                        maxLength: name === "name" ? 20 : 300,
+                        minLength: name.indexOf("password") > -1 ? 6 : 2
                     }}
                     error={errors.indexOf(x) > -1}
                     onChange={handleChange} />
-            ))}
+            })}
 
             {/* File upload */}
             {children && children}

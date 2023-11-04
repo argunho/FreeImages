@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 // Installed
 import { IconButton } from '@mui/material';
@@ -38,12 +38,6 @@ function ControlPanel() {
   const [dropdown, setDropdown] = useState(false);
   const [overflow, setOverflow] = useState(true);
   const [response, setResponse] = useState();
-  // const [jsonContent, setJsonContent] = useState(JSON.stringify(configJson, null, 2));
-
-  useEffect(() => {
-    console.log(configJson)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const dropdownHandle = (value) => {
     setDropdown(!dropdown)
@@ -58,6 +52,7 @@ function ControlPanel() {
   const clickHandle = (value) => {
     navigate("/sp/control/panel/" + value);
     setDropdown(false);
+    setOverflow(!overflow);
   }
 
   const onSubmit = async (data) => {
